@@ -17,8 +17,8 @@
 .hero-card {
   padding: 32px 24px;
   text-align: center;
-  background: linear-gradient(135deg, rgba(242, 215, 238, 0.12) 0%, rgba(242, 215, 238, 0.04) 100%);
-  border: 1px solid rgba(242, 215, 238, 0.15);
+  background: linear-gradient(135deg, rgba(167, 204, 237, 0.12) 0%, rgba(167, 204, 237, 0.04) 100%);
+  border: 1px solid rgba(167, 204, 237, 0.15);
 }
 
 .hero-title {
@@ -94,7 +94,7 @@
 
 .featured-icon {
   font-size: 48px;
-  filter: drop-shadow(0 2px 6px rgba(14, 16, 61, 0.3));
+  filter: drop-shadow(0 2px 6px rgba(48, 77, 109, 0.3));
 }
 
 .featured-body {
@@ -189,7 +189,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(242, 215, 238, 0.08);
+  background: rgba(167, 204, 237, 0.08);
   border-radius: 12px;
 }
 
@@ -216,7 +216,7 @@
   gap: 4px;
   font-size: 0.9em;
   font-weight: 600;
-  background: rgba(242, 215, 238, 0.08);
+  background: rgba(167, 204, 237, 0.08);
   padding: 6px 12px;
   border-radius: 10px;
 }
