@@ -1,0 +1,12 @@
+CREATE DATABASE IF NOT EXISTS reviews_db;
+USE reviews_db;
+
+CREATE TABLE IF NOT EXISTS reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    app_id INT NOT NULL,
+    author VARCHAR(100) NOT NULL,
+    text TEXT NOT NULL,
+    likes INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    INDEX app_id_index (app_id)
+);

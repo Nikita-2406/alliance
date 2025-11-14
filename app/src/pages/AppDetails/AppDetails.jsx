@@ -63,43 +63,125 @@ const AppDetails = () => {
   const oldAppData = {
   };
 
-  const renderStars = (rating) => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    return '⭐'.repeat(fullStars) + (hasHalfStar ? '✨' : '') + '☆'.repeat(5 - fullStars - (hasHalfStar ? 1 : 0));
+  // Загрузка отзывов с сервера
+  const fetchReviews = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`http://localhost:5000/api/apps/${id}/reviews`);
+      const data = await response.json();
+      
+      if (response.ok) {
+        setReviews(data);
+      } else {
+        console.error('Ошибка загрузки отзывов:', data.error);
+      }
+    } catch (error) {
+      console.error('Ошибка сети:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDownload = () => {
-    alert(`Начинается скачивание ${appData.name}...`);
+  const handleAddReview = async () => {
+    if (newReview.author && newReview.text) {
+      try {
+        const response = await fetch(`http://localhost:5000/api/apps/${id}/reviews`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            author: newReview.author,
+            text: newReview.text
+          })
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+          setReviews([data, ...reviews]);
+          setNewReview({ author: '', text: '' });
+          setReviewFormOpen(false);
+        } else {
+          console.error('Ошибка добавления отзыва:', data.error);
+          alert('Ошибка при добавлении отзыва');
+        }
+      } catch (error) {
+        console.error('Ошибка сети:', error);
+        alert('Ошибка сети при добавлении отзыва');
+      }
+    }
   };
+
+  const handleLike = async (reviewId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/reviews/${reviewId}/like`, {
+        method: 'POST'
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        setReviews(reviews.map(review => 
+          review.id === reviewId ? { ...review, likes: data.likes } : review
+        ));
+      } else {
+        console.error('Ошибка лайка:', data.error);
+      }
+    } catch (error) {
+      console.error('Ошибка сети при лайке:', error);
+    }
+  };
+
+  // Функция для отображения звезд рейтинга
+  const renderStars = (rating) => {
+    const fullStars = Math.floor(rating);
+    const halfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+    
+    return (
+      <>
+        {'★'.repeat(fullStars)}
+        {halfStar && '★'}
+        {'☆'.repeat(emptyStars)}
+      </>
+    );
+  };
+
+  if (!appData) {
+    return <div className="app-details-page">Загрузка...</div>;
+  }
 
   return (
     <div className="app-details-page">
       <div className="app-details-content">
         {/* Hero Section */}
         <section className="app-hero">
-          <div className="app-hero-bg" style={{ background: appData.color }}></div>
+          <div className="app-hero-bg" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}></div>
           <div className="app-hero-content glass-card">
             <div className="app-main-info">
-              <div className="app-icon-large">{appData.icon}</div>
+              <div className="app-icon-large">
+                {appData.name.charAt(0)}
+              </div>
               <div className="app-title-section">
                 <h1 className="app-title">{appData.name}</h1>
-                <p className="app-developer">{appData.developer}</p>
-                <p className="app-category-badge">{appData.category}</p>
+                <div className="app-developer">{appData.developer}</div>
+                <span className="app-category-badge">{appData.category}</span>
               </div>
             </div>
+
             <div className="app-quick-stats">
-              <div className="quick-stat">
+              <div className="quick-stat glass-card">
                 <span className="stat-value-large">{appData.rating}</span>
-                <span className="stat-label-small">⭐ Рейтинг</span>
+                <span className="stat-label-small">Рейтинг</span>
               </div>
-              <div className="quick-stat">
+              <div className="quick-stat glass-card">
                 <span className="stat-value-large">{appData.downloads}</span>
-                <span className="stat-label-small">📥 Скачиваний</span>
+                <span className="stat-label-small">Загрузки</span>
               </div>
-              <div className="quick-stat">
+              <div className="quick-stat glass-card">
                 <span className="stat-value-large">{appData.size}</span>
-                <span className="stat-label-small">💾 Размер</span>
+                <span className="stat-label-small">Размер</span>
               </div>
             </div>
             <button className="download-main-btn" onClick={handleDownload}>
@@ -112,9 +194,9 @@ const AppDetails = () => {
         <section className="screenshots-section">
           <h2 className="section-title">Скриншоты</h2>
           <div className="screenshots-grid">
-            {appData.screenshots.map((screenshot, idx) => (
-              <div key={idx} className="screenshot-card glass-card">
-                <span className="screenshot-icon">{screenshot}</span>
+            {[1, 2, 3, 4].map((num) => (
+              <div key={num} className="screenshot-card glass-card">
+                <div className="screenshot-icon">🖼️</div>
               </div>
             ))}
           </div>
@@ -122,17 +204,17 @@ const AppDetails = () => {
 
         {/* Tabs */}
         <div className="details-tabs">
-          <button
+          <button 
             className={`details-tab ${selectedTab === 'about' ? 'active' : ''}`}
             onClick={() => setSelectedTab('about')}
           >
-            📖 О приложении
+            📝 О приложении
           </button>
-          <button
+          <button 
             className={`details-tab ${selectedTab === 'reviews' ? 'active' : ''}`}
             onClick={() => setSelectedTab('reviews')}
           >
-            ⭐ Отзывы ({appData.reviews})
+            💬 Отзывы ({reviews.length})
           </button>
         </div>
 
@@ -149,20 +231,16 @@ const AppDetails = () => {
                 <h3>Информация</h3>
                 <div className="info-list">
                   <div className="info-item">
-                    <span className="info-label">Версия:</span>
+                    <span className="info-label">Версия</span>
                     <span className="info-value">{appData.version}</span>
                   </div>
                   <div className="info-item">
-                    <span className="info-label">Обновлено:</span>
-                    <span className="info-value">{appData.lastUpdate}</span>
-                  </div>
-                  <div className="info-item">
-                    <span className="info-label">Возрастной рейтинг:</span>
-                    <span className="info-value">{appData.ageRating}</span>
-                  </div>
-                  <div className="info-item">
-                    <span className="info-label">Разработчик:</span>
+                    <span className="info-label">Разработчик</span>
                     <span className="info-value">{appData.developer}</span>
+                  </div>
+                  <div className="info-item">
+                    <span className="info-label">Категория</span>
+                    <span className="info-value">{appData.category}</span>
                   </div>
                 </div>
               </div>
@@ -176,35 +254,91 @@ const AppDetails = () => {
                   <span className="rating-large">{appData.rating}</span>
                   <div className="rating-details">
                     <div className="stars-large">{renderStars(appData.rating)}</div>
-                    <span className="reviews-count">{appData.reviews.toLocaleString()} отзывов</span>
+                    <span className="reviews-count">{reviews.length} отзывов</span>
                   </div>
                 </div>
               </div>
 
-              <div className="reviews-list">
-                {appData.userReviews.map((review) => (
-                  <div key={review.id} className="review-card glass-card">
-                    <div className="review-header-detail">
-                      <div className="review-author">
-                        <span className="author-avatar">👤</span>
-                        <div>
-                          <span className="author-name">{review.author}</span>
-                          <span className="review-date-small">{review.date}</span>
-                        </div>
-                      </div>
-                      <div className="review-rating-small">{renderStars(review.rating)}</div>
-                    </div>
-                    <p className="review-text">{review.comment}</p>
-                    <div className="review-helpful">
-                      <button className="helpful-btn">👍 Полезно</button>
-                    </div>
-                  </div>
-                ))}
+              {/* Кнопка добавления отзыва */}
+              <div className="reviews-header">
+                <button 
+                  className="write-review-btn glass-card"
+                  onClick={() => setReviewFormOpen(true)}
+                >
+                  ✏️ Написать отзыв
+                </button>
               </div>
 
-              <button className="write-review-btn glass-card">
-                ✏️ Написать отзыв
-              </button>
+              {/* Модальное окно для нового отзыва */}
+              {isReviewFormOpen && (
+                <div className="modal-overlay">
+                  <div className="modal-content">
+                    <h3>Добавить отзыв</h3>
+                    <input
+                      type="text"
+                      placeholder="Ваше имя"
+                      value={newReview.author}
+                      onChange={(e) => setNewReview({...newReview, author: e.target.value})}
+                      className="review-input"
+                    />
+                    <textarea
+                      placeholder="Текст отзыва"
+                      value={newReview.text}
+                      onChange={(e) => setNewReview({...newReview, text: e.target.value})}
+                      className="review-textarea"
+                    />
+                    <div className="modal-actions">
+                      <button 
+                        className="cancel-btn"
+                        onClick={() => setReviewFormOpen(false)}
+                      >
+                        Отмена
+                      </button>
+                      <button 
+                        className="submit-btn"
+                        onClick={handleAddReview}
+                        disabled={!newReview.author || !newReview.text}
+                      >
+                        Опубликовать
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Список отзывов */}
+              <div className="reviews-list">
+                {loading ? (
+                  <div className="loading-message">Загрузка отзывов...</div>
+                ) : reviews.length === 0 ? (
+                  <div className="no-reviews-message glass-card">
+                    Пока нет отзывов. Будьте первым!
+                  </div>
+                ) : (
+                  reviews.map(review => (
+                    <div key={review.id} className="review-card glass-card">
+                      <div className="review-header">
+                        <div className="review-author">
+                          <span className="author-avatar">👤</span>
+                          <div>
+                            <span className="author-name">{review.author}</span>
+                            <span className="review-date">{review.date}</span>
+                          </div>
+                        </div>
+                      </div>
+                      <p className="review-text">{review.text}</p>
+                      <div className="review-actions">
+                        <button 
+                          className="like-btn"
+                          onClick={() => handleLike(review.id)}
+                        >
+                          👍 Полезно ({review.likes || 0})
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
             </div>
           )}
 
@@ -215,4 +349,3 @@ const AppDetails = () => {
 };
 
 export default AppDetails;
-
