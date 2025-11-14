@@ -2,16 +2,12 @@ import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './AppDetails.css';
 
-
-
 const AppDetails = () => {
-  
   const { id } = useParams();
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState('about');
-  // В файле AppDetails.jsx
 
-const AppDetails = () => {
+  // Состояния для отзывов - ПЕРЕНЕСЕНО В НАЧАЛО КОМПОНЕНТА
   const [reviews, setReviews] = useState([
     {
       id: 1,
@@ -20,7 +16,27 @@ const AppDetails = () => {
       text: "Лучшее приложение для редактирования! Очень довольны функционалом.",
       likes: 0
     },
-    // ... остальные отзывы
+    {
+      id: 2,
+      author: "Мария",
+      date: "1 неделя назад", 
+      text: "Хорошее приложение, но иногда тормозит на слабых устройствах.",
+      likes: 0
+    },
+    {
+      id: 3,
+      author: "Дмитрий",
+      date: "2 недели назад",
+      text: "Профессиональные инструменты по доступной цене. Рекомендуем!",
+      likes: 0
+    },
+    {
+      id: 4,
+      author: "Елена",
+      date: "3 недели назад",
+      text: "Использую каждый день! Интуитивный интерфейс и много возможностей.",
+      likes: 0
+    }
   ]);
   
   const [isReviewFormOpen, setReviewFormOpen] = useState(false);
@@ -41,8 +57,6 @@ const AppDetails = () => {
     }
   };
 
-  // Остальная логика компонента...
-}
   // Mock data - в реальном приложении это будет загружаться по ID
   const appData = {
     id: id,
@@ -74,12 +88,6 @@ const AppDetails = () => {
       storage: '100 MB',
       internet: 'Требуется для некоторых функций'
     },
-    userReviews: [
-      { id: 1, author: 'Александр', rating: 5, date: '2 дня назад', comment: 'Лучшее приложение для редактирования! Очень довольны функционалом.' },
-      { id: 2, author: 'Мария', rating: 4, date: '1 неделя назад', comment: 'Хорошее приложение, но иногда тормозит на слабых устройствах.' },
-      { id: 3, author: 'Дмитрий', rating: 5, date: '2 недели назад', comment: 'Профессиональные инструменты по доступной цене. Рекомендую!' },
-      { id: 4, author: 'Елена', rating: 5, date: '3 недели назад', comment: 'Использую каждый день! Интуитивный интерфейс и много возможностей.' },
-    ],
     changelog: [
       { version: '3.2.1', date: '15 ноября 2024', changes: ['Исправлены ошибки', 'Улучшена производительность', 'Добавлены новые фильтры'] },
       { version: '3.2.0', date: '1 ноября 2024', changes: ['Новый интерфейс', 'Поддержка темной темы', 'Оптимизация работы'] },
@@ -94,6 +102,12 @@ const AppDetails = () => {
 
   const handleDownload = () => {
     alert(`Начинается скачивание ${appData.name}...`);
+  };
+
+  const handleLike = (reviewId) => {
+    setReviews(reviews.map(review => 
+      review.id === reviewId ? { ...review, likes: review.likes + 1 } : review
+    ));
   };
 
   return (
@@ -158,7 +172,7 @@ const AppDetails = () => {
             className={`details-tab ${selectedTab === 'reviews' ? 'active' : ''}`}
             onClick={() => setSelectedTab('reviews')}
           >
-            ⭐ Отзывы ({appData.reviews})
+            ⭐ Отзывы ({reviews.length})
           </button>
           <button
             className={`details-tab ${selectedTab === 'changelog' ? 'active' : ''}`}
@@ -251,35 +265,83 @@ const AppDetails = () => {
                   <span className="rating-large">{appData.rating}</span>
                   <div className="rating-details">
                     <div className="stars-large">{renderStars(appData.rating)}</div>
-                    <span className="reviews-count">{appData.reviews.toLocaleString()} отзывов</span>
+                    <span className="reviews-count">{reviews.length} отзывов</span>
                   </div>
                 </div>
               </div>
 
+              {/* Кнопка добавления отзыва */}
+              <div className="reviews-header">
+                <button 
+                  className="write-review-btn glass-card"
+                  onClick={() => setReviewFormOpen(true)}
+                >
+                  ✏️ Написать отзыв
+                </button>
+              </div>
+
+              {/* Модальное окно для нового отзыва */}
+              {isReviewFormOpen && (
+                <div className="modal-overlay" onClick={() => setReviewFormOpen(false)}>
+                  <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                    <h3>Добавить отзыв</h3>
+                    <input
+                      type="text"
+                      placeholder="Ваше имя"
+                      value={newReview.author}
+                      onChange={(e) => setNewReview({...newReview, author: e.target.value})}
+                      className="review-input"
+                    />
+                    <textarea
+                      placeholder="Текст отзыва"
+                      value={newReview.text}
+                      onChange={(e) => setNewReview({...newReview, text: e.target.value})}
+                      className="review-textarea"
+                      rows="4"
+                    />
+                    <div className="modal-actions">
+                      <button 
+                        className="cancel-btn"
+                        onClick={() => setReviewFormOpen(false)}
+                      >
+                        Отмена
+                      </button>
+                      <button 
+                        className="submit-btn"
+                        onClick={handleAddReview}
+                      >
+                        Опубликовать
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Список отзывов */}
               <div className="reviews-list">
-                {appData.userReviews.map((review) => (
+                {reviews.map(review => (
                   <div key={review.id} className="review-card glass-card">
-                    <div className="review-header-detail">
+                    <div className="review-header">
                       <div className="review-author">
                         <span className="author-avatar">👤</span>
                         <div>
                           <span className="author-name">{review.author}</span>
-                          <span className="review-date-small">{review.date}</span>
+                          <span className="review-date">{review.date}</span>
                         </div>
                       </div>
-                      <div className="review-rating-small">{renderStars(review.rating)}</div>
                     </div>
-                    <p className="review-text">{review.comment}</p>
-                    <div className="review-helpful">
-                      <button className="helpful-btn">👍 Полезно</button>
+                    <p className="review-text">{review.text}</p>
+                    <div className="review-actions">
+                      <button 
+                        className="like-btn"
+                        onClick={() => handleLike(review.id)}
+                      >
+                        👍 Полезно ({review.likes})
+                      </button>
                     </div>
                   </div>
                 ))}
               </div>
-
-              <button className="write-review-btn glass-card">
-                ✏️ Написать отзыв
-              </button>
             </div>
           )}
 
@@ -305,62 +367,5 @@ const AppDetails = () => {
     </div>
   );
 };
-return (
-  <div className="app-details">
-    {/* Существующий контент */}
-
-    <section className="reviews-section">
-      <div className="reviews-header">
-        <h2>Отзывы ({reviews.length})</h2>
-        <button 
-          className="add-review-btn"
-          onClick={() => setReviewFormOpen(true)}
-        >
-          Написать отзыв
-        </button>
-      </div>
-
-      {/* Модальное окно */}
-      {isReviewFormOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h3>Добавить отзыв</h3>
-            <input
-              type="text"
-              placeholder="Ваше имя"
-              value={newReview.author}
-              onChange={(e) => setNewReview({...newReview, author: e.target.value})}
-            />
-            <textarea
-              placeholder="Текст отзыва"
-              value={newReview.text}
-              onChange={(e) => setNewReview({...newReview, text: e.target.value})}
-            />
-            <div className="modal-actions">
-              <button onClick={() => setReviewFormOpen(false)}>Отмена</button>
-              <button onClick={handleAddReview}>Опубликовать</button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Список отзывов */}
-      <div className="reviews-list">
-        {reviews.map(review => (
-          <div key={review.id} className="review-item">
-            <h4>{review.author}</h4>
-            <span className="review-date">{review.date}</span>
-            <p>{review.text}</p>
-            <button className="like-btn">Полезно ({review.likes})</button>
-          </div>
-        ))}
-      </div>
-    </section>
-  </div>
-);
-
-
-
-
 
 export default AppDetails;
