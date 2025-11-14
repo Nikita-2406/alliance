@@ -80,9 +80,6 @@ const AppDetails = () => {
         <section className="app-hero">
           <div className="app-hero-bg" style={{ background: appData.color }}></div>
           <div className="app-hero-content glass-card">
-            <button className="back-btn" onClick={() => navigate(-1)}>
-              ← Назад
-            </button>
             <div className="app-main-info">
               <div className="app-icon-large">{appData.icon}</div>
               <div className="app-title-section">
@@ -106,7 +103,7 @@ const AppDetails = () => {
               </div>
             </div>
             <button className="download-main-btn" onClick={handleDownload}>
-              📥 Скачать сейчас
+              Скачать сейчас
             </button>
           </div>
         </section>
@@ -137,12 +134,6 @@ const AppDetails = () => {
           >
             ⭐ Отзывы ({appData.reviews})
           </button>
-          <button
-            className={`details-tab ${selectedTab === 'changelog' ? 'active' : ''}`}
-            onClick={() => setSelectedTab('changelog')}
-          >
-            📋 История версий
-          </button>
         </div>
 
         {/* Tab Content */}
@@ -152,49 +143,6 @@ const AppDetails = () => {
               <div className="about-card glass-card">
                 <h3>Описание</h3>
                 <p className="app-description">{appData.description}</p>
-              </div>
-
-              <div className="about-card glass-card">
-                <h3>Возможности</h3>
-                <ul className="features-list">
-                  {appData.features.map((feature, idx) => (
-                    <li key={idx}>{feature}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="about-card glass-card">
-                <h3>Системные требования</h3>
-                <div className="requirements-grid">
-                  <div className="requirement-item">
-                    <span className="req-icon">💻</span>
-                    <div>
-                      <span className="req-label">Операционная система:</span>
-                      <span className="req-value">{appData.requirements.os}</span>
-                    </div>
-                  </div>
-                  <div className="requirement-item">
-                    <span className="req-icon">🧠</span>
-                    <div>
-                      <span className="req-label">Оперативная память:</span>
-                      <span className="req-value">{appData.requirements.ram}</span>
-                    </div>
-                  </div>
-                  <div className="requirement-item">
-                    <span className="req-icon">💾</span>
-                    <div>
-                      <span className="req-label">Свободное место:</span>
-                      <span className="req-value">{appData.requirements.storage}</span>
-                    </div>
-                  </div>
-                  <div className="requirement-item">
-                    <span className="req-icon">🌐</span>
-                    <div>
-                      <span className="req-label">Интернет:</span>
-                      <span className="req-value">{appData.requirements.internet}</span>
-                    </div>
-                  </div>
-                </div>
               </div>
 
               <div className="about-card glass-card">
@@ -260,23 +208,6 @@ const AppDetails = () => {
             </div>
           )}
 
-          {selectedTab === 'changelog' && (
-            <div className="changelog-section">
-              {appData.changelog.map((version, idx) => (
-                <div key={idx} className="changelog-card glass-card">
-                  <div className="version-header">
-                    <h3>Версия {version.version}</h3>
-                    <span className="version-date">{version.date}</span>
-                  </div>
-                  <ul className="changes-list">
-                    {version.changes.map((change, changeIdx) => (
-                      <li key={changeIdx}>• {change}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
     </div>

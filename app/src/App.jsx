@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 import Header from './components/Header/Header';
@@ -9,6 +10,11 @@ import AppDetails from './pages/AppDetails/AppDetails';
 
 function AppContent() {
   const location = useLocation();
+  
+  // Прокрутка наверх при смене страницы
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
   
   // Определяем заголовок на основе текущего маршрута
   const getPageTitle = () => {

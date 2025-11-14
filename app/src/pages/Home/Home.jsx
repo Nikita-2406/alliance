@@ -8,6 +8,7 @@ const Home = () => {
   const [topWeek, setTopWeek] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
     const loadData = async () => {
@@ -31,6 +32,31 @@ const Home = () => {
     loadData();
   }, []);
 
+  // Автопрокрутка каждые 5 секунд
+  useEffect(() => {
+    if (featuredApps.length === 0) return;
+    
+    const interval = setInterval(() => {
+      handleNextSlide();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [featuredApps.length, currentSlide]);
+
+  const handlePrevSlide = () => {
+    setCurrentSlide((prev) => {
+      if (prev <= 0) return featuredApps.length - 1;
+      return prev - 1;
+    });
+  };
+
+  const handleNextSlide = () => {
+    setCurrentSlide((prev) => {
+      if (prev >= featuredApps.length - 1) return 0;
+      return prev + 1;
+    });
+  };
+
   if (loading) {
     return (
       <div className="home-page">
@@ -46,24 +72,60 @@ const Home = () => {
   return (
     <div className="home-page">
       <div className="home-content">
-        {/* Featured Apps */}
+        {/* Featured Apps Carousel */}
         <section className="section">
           <h2 className="section-title">Рекомендуемые</h2>
-          <div className="featured-grid">
-            {featuredApps.map((app) => (
-              <Link to={`/app/${app.id}`} key={app.id} className="featured-card glass-card">
-                <div className="featured-header" style={{ background: app.color }}>
-                  <span className="featured-icon">{app.icon}</span>
-                </div>
-                <div className="featured-body">
-                  <h3 className="app-name">{app.name}</h3>
-                  <p className="app-category">{app.category}</p>
-                  <div className="app-stats">
-                    <span className="stat">⭐ {app.rating}</span>
-                    <span className="stat">📥 {app.downloads}</span>
-                  </div>
-                </div>
-              </Link>
+          <div className="featured-carousel">
+            <button className="carousel-arrow carousel-arrow-left" onClick={handlePrevSlide}>
+              ←
+            </button>
+            
+            <div className="carousel-container">
+              <div 
+                className="carousel-track"
+                style={{
+                  transform: `translateX(-${currentSlide * 100}%)`
+                }}
+              >
+                {featuredApps.map((app, index) => {
+                  const isActive = index === currentSlide;
+                  
+                  return (
+                    <div 
+                      key={`${app.id}-${index}`}
+                      className={`carousel-slide ${isActive ? 'active' : ''}`}
+                    >
+                      <Link to={`/app/${app.id}`} className="featured-card glass-card">
+                        <div className="featured-header" style={{ background: app.color }}>
+                          <span className="featured-icon">{app.icon}</span>
+                        </div>
+                        <div className="featured-body">
+                          <h3 className="app-name">{app.name}</h3>
+                          <p className="app-category">{app.category}</p>
+                          <div className="app-stats">
+                            <span className="stat">⭐ {app.rating}</span>
+                            <span className="stat">📥 {app.downloads}</span>
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            
+            <button className="carousel-arrow carousel-arrow-right" onClick={handleNextSlide}>
+              →
+            </button>
+          </div>
+          
+          <div className="carousel-dots">
+            {featuredApps.map((_, index) => (
+              <button
+                key={index}
+                className={`carousel-dot ${index === currentSlide ? 'active' : ''}`}
+                onClick={() => setCurrentSlide(index)}
+              />
             ))}
           </div>
         </section>
@@ -94,11 +156,11 @@ const Home = () => {
                 <div className="app-icon-small">{app.icon}</div>
                 <div className="app-info">
                   <h4 className="app-name">{app.name}</h4>
-                  <p className="app-meta">{app.category} • {app.size}</p>
-                </div>
-                <div className="app-rating">
-                  <span>⭐</span>
-                  <span>{app.rating}</span>
+                  <p className="app-meta">{app.category}</p>
+                  <div className="app-rating">
+                    <span>⭐</span>
+                    <span>{app.rating}</span>
+                  </div>
                 </div>
               </Link>
             ))}
