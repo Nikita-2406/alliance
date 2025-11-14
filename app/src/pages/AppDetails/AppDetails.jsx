@@ -306,37 +306,46 @@ const AppDetails = () => {
 
               {/* Модальное окно для нового отзыва */}
               {isReviewFormOpen && (
-                <div className="modal-overlay">
-                  <div className="modal-content">
-                    <h3>Добавить отзыв</h3>
+                <div style={{
+                  position: 'fixed',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  background: 'rgba(0,0,0,0.8)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  zIndex: 10000
+                }}>
+                  <div style={{
+                    background: 'white',
+                    padding: '30px',
+                    borderRadius: '10px',
+                    width: '500px',
+                    maxWidth: '90vw'
+                  }}>
+                    <h3 style={{ marginTop: 0 }}>Добавить отзыв</h3>
                     <input
                       type="text"
                       placeholder="Ваше имя"
                       value={newReview.author}
                       onChange={(e) => setNewReview({...newReview, author: e.target.value})}
-                      className="review-input"
-                      autoFocus
+                      style={{ width: '100%', padding: '10px', marginBottom: '10px' }}
                     />
                     <textarea
                       placeholder="Текст отзыва"
                       value={newReview.text}
                       onChange={(e) => setNewReview({...newReview, text: e.target.value})}
-                      className="review-textarea"
-                      rows="4"
+                      style={{ width: '100%', padding: '10px', marginBottom: '10px', minHeight: '100px' }}
                     />
-                    <div className="modal-actions">
-                      <button 
-                        className="cancel-btn"
-                        onClick={() => setReviewFormOpen(false)}
-                        type="button"
-                      >
+                    <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                      <button onClick={() => setReviewFormOpen(false)}>
                         Отмена
                       </button>
                       <button 
-                        className="submit-btn"
                         onClick={handleAddReview}
-                        disabled={!newReview.author.trim() || !newReview.text.trim()}
-                        type="button"
+                        disabled={!newReview.author || !newReview.text}
                       >
                         Опубликовать
                       </button>
