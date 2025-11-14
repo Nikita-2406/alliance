@@ -8,6 +8,7 @@ const Home = () => {
   const [topWeek, setTopWeek] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     const loadData = async () => {
@@ -31,6 +32,41 @@ const Home = () => {
     loadData();
   }, []);
 
+  const goToPrev = () => {
+    setCurrentIndex((prev) => (prev === 0 ? featuredApps.length - 1 : prev - 1));
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev === featuredApps.length - 1 ? 0 : prev + 1));
+  };
+
+  const goToSlide = (index) => {
+    setCurrentIndex(index);
+  };
+
+  // Автопрокрутка каждые 5 секунд
+  useEffect(() => {
+    if (featuredApps.length === 0) return;
+    
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev === featuredApps.length - 1 ? 0 : prev + 1));
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [currentIndex, featuredApps.length]);
+
+  // Определяем позицию каждого слайда относительно текущего
+  const getSlidePosition = (index) => {
+    if (index === currentIndex) return 'current';
+    
+    const prev = currentIndex === 0 ? featuredApps.length - 1 : currentIndex - 1;
+    const next = currentIndex === featuredApps.length - 1 ? 0 : currentIndex + 1;
+    
+    if (index === prev) return 'prev';
+    if (index === next) return 'next';
+    return 'hidden';
+  };
+
   if (loading) {
     return (
       <div className="home-page">
@@ -49,21 +85,52 @@ const Home = () => {
         {/* Featured Apps Carousel */}
         <section className="section">
           <h2 className="section-title">Рекомендуемые</h2>
-          <div className="featured-grid">
-            {featuredApps.map((app) => (
-              <Link to={`/app/${app.id}`} key={app.id} className="featured-card glass-card">
-                <div className="featured-header" style={{ background: app.color }}>
-                  <span className="featured-icon">{app.icon}</span>
-                </div>
-                <div className="featured-body">
-                  <h3 className="app-name">{app.name}</h3>
-                  <p className="app-category">{app.category}</p>
-                  <div className="app-stats">
-                    <span className="stat">⭐ {app.rating}</span>
-                    <span className="stat">📥 {app.downloads}</span>
-                  </div>
-                </div>
-              </Link>
+          <div className="featured-carousel">
+            <button className="carousel-arrow" onClick={goToPrev} aria-label="Предыдущее">
+              ←
+            </button>
+            
+            <div className="carousel-container">
+              <div className="carousel-track">
+                {featuredApps.map((app, index) => {
+                  const position = getSlidePosition(index);
+                  return (
+                    <div 
+                      key={app.id}
+                      className={`carousel-slide carousel-slide-${position}`}
+                    >
+                      <Link to={`/app/${app.id}`} className="featured-card glass-card">
+                        <div className="featured-header" style={{ background: app.color }}>
+                          <span className="featured-icon">{app.icon}</span>
+                        </div>
+                        <div className="featured-body">
+                          <h3 className="app-name">{app.name}</h3>
+                          <p className="app-category">{app.category}</p>
+                          <div className="app-stats">
+                            <span className="stat">⭐ {app.rating}</span>
+                            <span className="stat">📥 {app.downloads}</span>
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            
+            <button className="carousel-arrow" onClick={goToNext} aria-label="Следующее">
+              →
+            </button>
+          </div>
+          
+          <div className="carousel-dots">
+            {featuredApps.map((_, index) => (
+              <button
+                key={index}
+                className={`carousel-dot ${index === currentIndex ? 'active' : ''}`}
+                onClick={() => goToSlide(index)}
+                aria-label={`Слайд ${index + 1}`}
+              />
             ))}
           </div>
         </section>
