@@ -1,8 +1,13 @@
+import "./style.css"
+
 const MainPage = () => {
     return (
-        <>Hello, World!
-        <p>Ищи и устанавливай</p>
+        <>
+        <body>
+        <p className = 'typing-text'>Ищи и устанавливай</p>
+        </body>
         </>
+        
         );
 }
 

@@ -1,6 +1,6 @@
 const HeaderPage = () => {
     return (
-        <h1>Alliance Store</h1>
+        <h1 className="Alliance-store">Alliance Store</h1>
     );
 }
 
