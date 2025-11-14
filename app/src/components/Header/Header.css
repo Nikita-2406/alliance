@@ -3,59 +3,109 @@
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(167, 204, 237, 0.08);
   backdrop-filter: blur(30px);
   -webkit-backdrop-filter: blur(30px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid rgba(167, 204, 237, 0.15);
   padding: 16px 20px;
   padding-top: calc(16px + env(safe-area-inset-top));
   z-index: 999;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 30px rgba(48, 77, 109, 0.2);
 }
 
 .header-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 24px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
 }
 
 .header-logo {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-weight: 700;
-  font-size: 1.2em;
+  font-weight: 800;
+  font-size: 1.6em;
 }
 
 .logo-icon {
-  font-size: 28px;
+  font-size: 36px;
 }
 
 .logo-text {
-  background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.7) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #FFFFFF;
 }
 
-.header-title {
-  flex: 1;
-  text-align: center;
-  font-size: 1.3em;
+/* Навигация в header */
+.header-navigation {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(167, 204, 237, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 24px;
+  padding: 4px;
+  position: relative;
+  border: 1px solid rgba(167, 204, 237, 0.15);
+}
+
+/* Анимированный blob в header */
+.nav-blob-header {
+  position: absolute;
+  width: calc(25% - 4px);
+  height: calc(100% - 8px);
+  background: linear-gradient(135deg, rgba(99, 173, 242, 0.3) 0%, rgba(130, 160, 188, 0.3) 100%);
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 
+    0 2px 12px rgba(99, 173, 242, 0.3),
+    inset 0 1px 2px rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(167, 204, 237, 0.25);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  left: 4px;
+  top: 4px;
+  z-index: 0;
+}
+
+.nav-item-header {
+  padding: 10px 24px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 1.05em;
   font-weight: 600;
-  color: var(--text-primary);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 1;
+  white-space: nowrap;
+}
+
+.nav-item-header:hover {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.nav-item-header.active {
+  color: #FFFFFF;
+  font-weight: 800;
 }
 
 .back-button {
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 20px;
+  background: rgba(167, 204, 237, 0.1);
+  border: 1px solid rgba(167, 204, 237, 0.2);
   border-radius: 10px;
-  color: var(--text-primary);
-  font-size: 0.95em;
+  color: #FFFFFF;
+  font-size: 1.05em;
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
@@ -63,7 +113,7 @@
 }
 
 .back-button:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(167, 204, 237, 0.15);
   transform: translateX(-2px);
 }
 
@@ -71,17 +121,74 @@
   min-width: 40px;
 }
 
+@media (max-width: 968px) {
+  .header-navigation {
+    gap: 2px;
+    padding: 3px;
+  }
+
+  .nav-item-header {
+    padding: 8px 16px;
+    font-size: 0.95em;
+  }
+
+  .nav-blob-header {
+    width: calc(25% - 3px);
+    left: 3px;
+    top: 3px;
+  }
+}
+
 @media (max-width: 768px) {
   .app-header {
     padding: 12px 16px;
   }
-  
-  .header-title {
-    font-size: 1.1em;
+
+  .header-content {
+    gap: 12px;
+  }
+
+  .header-logo {
+    font-size: 1.4em;
+  }
+
+  .logo-icon {
+    font-size: 32px;
   }
   
   .logo-text {
     display: none;
+  }
+
+  .header-navigation {
+    gap: 2px;
+    padding: 3px;
+  }
+
+  .nav-item-header {
+    padding: 8px 12px;
+    font-size: 0.9em;
+  }
+}
+
+@media (max-width: 580px) {
+  .header-navigation {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+    padding: 2px;
+  }
+
+  .nav-item-header {
+    padding: 8px 8px;
+    font-size: 0.85em;
+    text-align: center;
+  }
+
+  .nav-blob-header {
+    width: calc(25% - 2px);
+    left: 2px;
+    top: 2px;
   }
 }
 

@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 import Header from './components/Header/Header';
-import Navigation from './components/Navigation/Navigation';
 import Home from './pages/Home/Home';
 import Search from './pages/Search/Search';
 import Categories from './pages/Categories/Categories';
@@ -18,7 +17,7 @@ function AppContent() {
     if (location.pathname === '/categories') return 'Категории';
     if (location.pathname === '/profile') return 'Профиль';
     if (location.pathname.startsWith('/app/')) return 'Приложение';
-    return 'AppStore';
+    return 'RuStore';
   };
 
   const showBackButton = location.pathname.startsWith('/app/');
@@ -35,7 +34,6 @@ function AppContent() {
           <Route path="/app/:id" element={<AppDetails />} />
         </Routes>
       </main>
-      {!showBackButton && <Navigation />}
     </div>
   );
 }
