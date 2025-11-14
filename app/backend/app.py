@@ -29,6 +29,36 @@ def get_db_connection():
         logger.error(f"❌ Ошибка подключения к базе данных: {str(e)}")
         raise
 
+def update_app_rating(app_id):
+    """Обновление среднего рейтинга приложения"""
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            # Вычисляем средний рейтинг
+            cursor.execute("""
+                SELECT AVG(rating) as avg_rating, COUNT(*) as total 
+                FROM reviews 
+                WHERE app_id = %s AND rating > 0
+            """, (app_id,))
+            result = cursor.fetchone()
+            
+            if result and result['avg_rating']:
+                cursor.execute("""
+                    INSERT INTO app_ratings (app_id, average_rating, total_reviews) 
+                    VALUES (%s, %s, %s)
+                    ON DUPLICATE KEY UPDATE 
+                    average_rating = %s, total_reviews = %s, last_updated = CURRENT_TIMESTAMP
+                """, (app_id, result['avg_rating'], result['total'], 
+                      result['avg_rating'], result['total']))
+                conn.commit()
+                
+            return result
+    except Exception as e:
+        logger.error(f"Ошибка обновления рейтинга: {str(e)}")
+        conn.rollback()
+    finally:
+        conn.close()
+
 @app.route('/api/health', methods=['GET'])
 def health_check():
     try:
@@ -64,13 +94,25 @@ def add_review(app_id):
     if not data or not data.get('author') or not data.get('text'):
         return jsonify({'error': 'Author and text are required'}), 400
 
+    # Валидация рейтинга
+    rating = data.get('rating', 0)
+    if not rating or rating < 1 or rating > 5:
+        return jsonify({'error': 'Rating must be between 1 and 5'}), 400
+
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            sql = "INSERT INTO reviews (app_id, author, text, likes) VALUES (%s, %s, %s, %s)"
-            cursor.execute(sql, (app_id, data['author'], data['text'], 0))
+            sql = """
+                INSERT INTO reviews (app_id, author, text, likes, rating, vk_user_id) 
+                VALUES (%s, %s, %s, %s, %s, %s)
+            """
+            cursor.execute(sql, (app_id, data['author'], data['text'], 0, 
+                               rating, data.get('vk_user_id')))
             conn.commit()
             review_id = cursor.lastrowid
+            
+            # Обновляем средний рейтинг приложения
+            update_app_rating(app_id)
             
             cursor.execute("SELECT * FROM reviews WHERE id = %s", (review_id,))
             new_review = cursor.fetchone()
@@ -103,6 +145,28 @@ def like_review(review_id):
     except Exception as e:
         conn.rollback()
         logger.error(f"Ошибка при лайке: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+    finally:
+        conn.close()
+
+@app.route('/api/apps/<int:app_id>/rating', methods=['GET'])
+def get_app_rating(app_id):
+    """Получение среднего рейтинга приложения"""
+    conn = get_db_connection()
+    try:
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT * FROM app_ratings WHERE app_id = %s", (app_id,))
+            rating_data = cursor.fetchone()
+            
+            if not rating_data:
+                return jsonify({'average_rating': 0, 'total_reviews': 0})
+            
+            return jsonify({
+                'average_rating': float(rating_data['average_rating']),
+                'total_reviews': rating_data['total_reviews']
+            })
+    except Exception as e:
+        logger.error(f"Ошибка при получении рейтинга: {str(e)}")
         return jsonify({'error': str(e)}), 500
     finally:
         conn.close()

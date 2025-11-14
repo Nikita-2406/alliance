@@ -9,19 +9,103 @@ const AppDetails = () => {
   
   const [reviews, setReviews] = useState([]);
   const [isReviewFormOpen, setReviewFormOpen] = useState(false);
-  const [newReview, setNewReview] = useState({ author: '', text: '' });
+  const [newReview, setNewReview] = useState({ 
+    author: '', 
+    text: '', 
+    rating: 0,
+    vk_user_id: null 
+  });
   const [loading, setLoading] = useState(false);
   const [appData, setAppData] = useState(null);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [vkUser, setVkUser] = useState(null);
+
+  // Функция для инициализации VK SDK
+  const initVK = () => {
+    if (window.VK) {
+      window.VK.init({
+        apiId: process.env.REACT_APP_VK_APP_ID
+      });
+      console.log('VK SDK инициализирован');
+    } else {
+      console.log('VK SDK не загружен');
+    }
+  };
+
+  // Проверка авторизации VK
+  const checkVKAuth = () => {
+    const savedVkUser = localStorage.getItem('vk_user');
+    if (savedVkUser) {
+      setVkUser(JSON.parse(savedVkUser));
+      setNewReview(prev => ({
+        ...prev,
+        author: JSON.parse(savedVkUser).first_name,
+        vk_user_id: JSON.parse(savedVkUser).id
+      }));
+    }
+  };
+
+  // Авторизация через VK
+  const handleVKLogin = () => {
+    if (!window.VK) {
+      alert('VK SDK не загружен. Пожалуйста, обновите страницу.');
+      return;
+    }
+
+    window.VK.Auth.login((response) => {
+      if (response.session) {
+        // Получаем информацию о пользователе
+        window.VK.Api.call('users.get', { fields: 'photo_100' }, (r) => {
+          if (r.response) {
+            const user = r.response[0];
+            const vkUserData = {
+              id: user.id,
+              first_name: user.first_name,
+              last_name: user.last_name,
+              photo_100: user.photo_100
+            };
+            
+            setVkUser(vkUserData);
+            localStorage.setItem('vk_user', JSON.stringify(vkUserData));
+            setNewReview(prev => ({
+              ...prev,
+              author: `${user.first_name} ${user.last_name}`,
+              vk_user_id: user.id
+            }));
+            
+            alert(`Успешная авторизация через VK! Добро пожаловать, ${user.first_name}!`);
+          }
+        });
+      } else {
+        alert('Авторизация через VK не удалась');
+      }
+    }, 4); // 4 - права доступа к базовой информации
+  };
+
+  const handleVKLogout = () => {
+    if (window.VK) {
+      window.VK.Auth.logout();
+    }
+    setVkUser(null);
+    localStorage.removeItem('vk_user');
+    setNewReview(prev => ({
+      ...prev,
+      author: '',
+      vk_user_id: null
+    }));
+    alert('Вы вышли из VK');
+  };
 
   // Загрузка данных приложения и отзывов
   useEffect(() => {
     fetchAppData();
     fetchReviews();
+    initVK();
+    checkVKAuth();
   }, [id]);
 
-  // Функция для загрузки данных приложения (заглушка - замените на реальный API)
+  // Функция для загрузки данных приложения
   const fetchAppData = async () => {
-    // Временные данные - замените на реальный запрос к вашему API
     const mockAppData = {
       id: parseInt(id),
       name: `Приложение ${id}`,
@@ -48,6 +132,19 @@ const AppDetails = () => {
         { version: '1.2.2', date: '01.12.2023', changes: ['Оптимизация производительности'] }
       ]
     };
+    
+    // Загружаем актуальный рейтинг
+    try {
+      const response = await fetch(`http://localhost:5000/api/apps/${id}/rating`);
+      if (response.ok) {
+        const ratingData = await response.json();
+        mockAppData.rating = ratingData.average_rating || 4.5;
+        mockAppData.totalReviews = ratingData.total_reviews || 0;
+      }
+    } catch (error) {
+      console.error('Ошибка загрузки рейтинга:', error);
+    }
+    
     setAppData(mockAppData);
   };
 
@@ -71,7 +168,7 @@ const AppDetails = () => {
   };
 
   const handleAddReview = async () => {
-    if (newReview.author && newReview.text) {
+    if (newReview.author && newReview.text && newReview.rating > 0) {
       try {
         const response = await fetch(`http://localhost:5000/api/apps/${id}/reviews`, {
           method: 'POST',
@@ -80,7 +177,9 @@ const AppDetails = () => {
           },
           body: JSON.stringify({
             author: newReview.author,
-            text: newReview.text
+            text: newReview.text,
+            rating: newReview.rating,
+            vk_user_id: newReview.vk_user_id
           })
         });
 
@@ -88,16 +187,25 @@ const AppDetails = () => {
         
         if (response.ok) {
           setReviews([data, ...reviews]);
-          setNewReview({ author: '', text: '' });
+          setNewReview({ 
+            author: vkUser ? `${vkUser.first_name} ${vkUser.last_name}` : '', 
+            text: '', 
+            rating: 0, 
+            vk_user_id: vkUser?.id || null 
+          });
           setReviewFormOpen(false);
+          // Обновляем данные приложения для актуального рейтинга
+          fetchAppData();
         } else {
           console.error('Ошибка добавления отзыва:', data.error);
-          alert('Ошибка при добавлении отзыва');
+          alert('Ошибка при добавлении отзыва: ' + data.error);
         }
       } catch (error) {
         console.error('Ошибка сети:', error);
         alert('Ошибка сети при добавлении отзыва');
       }
+    } else {
+      alert('Пожалуйста, заполните все поля и поставьте оценку');
     }
   };
 
@@ -121,18 +229,46 @@ const AppDetails = () => {
     }
   };
 
-  // Функция для отображения звезд рейтинга
-  const renderStars = (rating) => {
+  // Компонент выбора рейтинга (встроенный)
+  const StarRating = ({ rating, onRatingChange, hoverRating, onHoverChange, readonly = false }) => {
+    return (
+      <div className="star-rating">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <button
+            key={star}
+            type="button"
+            className={`star-btn ${star <= (hoverRating || rating) ? 'active' : ''} ${readonly ? 'readonly' : ''}`}
+            onClick={() => !readonly && onRatingChange(star)}
+            onMouseEnter={() => !readonly && onHoverChange(star)}
+            onMouseLeave={() => !readonly && onHoverChange(0)}
+            disabled={readonly}
+          >
+            ★
+          </button>
+        ))}
+        {!readonly && (
+          <span className="rating-text">
+            {rating > 0 ? `Ваша оценка: ${rating}` : 'Выберите оценку'}
+          </span>
+        )}
+      </div>
+    );
+  };
+
+  // Функция для отображения звезд рейтинга (только чтение)
+  const renderStars = (rating, size = 'normal') => {
     const fullStars = Math.floor(rating);
     const halfStar = rating % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
     
+    const starClass = size === 'large' ? 'stars-large' : 'stars-normal';
+    
     return (
-      <>
+      <span className={starClass}>
         {'★'.repeat(fullStars)}
         {halfStar && '★'}
         {'☆'.repeat(emptyStars)}
-      </>
+      </span>
     );
   };
 
@@ -164,7 +300,10 @@ const AppDetails = () => {
 
             <div className="app-quick-stats">
               <div className="quick-stat glass-card">
-                <span className="stat-value-large">{appData.rating}</span>
+                <span className="stat-value-large">{appData.rating.toFixed(1)}</span>
+                <div className="stat-stars">
+                  {renderStars(appData.rating)}
+                </div>
                 <span className="stat-label-small">Рейтинг</span>
               </div>
               <div className="quick-stat glass-card">
@@ -183,37 +322,25 @@ const AppDetails = () => {
           </div>
         </section>
 
-        {/* Screenshots */}
-        <section className="screenshots-section">
-          <h2 className="section-title">Скриншоты</h2>
-          <div className="screenshots-grid">
-            {[1, 2, 3, 4].map((num) => (
-              <div key={num} className="screenshot-card glass-card">
-                <div className="screenshot-icon">🖼️</div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Tabs */}
+        {/* Tabs Navigation */}
         <div className="details-tabs">
           <button 
             className={`details-tab ${selectedTab === 'about' ? 'active' : ''}`}
             onClick={() => setSelectedTab('about')}
           >
-            📝 О приложении
+            О приложении
           </button>
           <button 
             className={`details-tab ${selectedTab === 'reviews' ? 'active' : ''}`}
             onClick={() => setSelectedTab('reviews')}
           >
-            💬 Отзывы ({reviews.length})
+            Отзывы ({reviews.length})
           </button>
           <button 
             className={`details-tab ${selectedTab === 'changelog' ? 'active' : ''}`}
             onClick={() => setSelectedTab('changelog')}
           >
-            📋 История версий
+            История версий
           </button>
         </div>
 
@@ -227,10 +354,10 @@ const AppDetails = () => {
               </div>
 
               <div className="about-card glass-card">
-                <h3>Основные функции</h3>
+                <h3>Особенности</h3>
                 <ul className="features-list">
                   {appData.features.map((feature, index) => (
-                    <li key={index}>✓ {feature}</li>
+                    <li key={index}>{feature}</li>
                   ))}
                 </ul>
               </div>
@@ -239,23 +366,23 @@ const AppDetails = () => {
                 <h3>Системные требования</h3>
                 <div className="requirements-grid">
                   <div className="requirement-item">
-                    <div className="req-icon">📱</div>
+                    <span className="req-icon">📱</span>
                     <div>
                       <span className="req-label">ОС</span>
                       <span className="req-value">{appData.requirements.os}</span>
                     </div>
                   </div>
                   <div className="requirement-item">
-                    <div className="req-icon">💾</div>
+                    <span className="req-icon">💾</span>
                     <div>
                       <span className="req-label">Память</span>
                       <span className="req-value">{appData.requirements.storage}</span>
                     </div>
                   </div>
                   <div className="requirement-item">
-                    <div className="req-icon">⚡</div>
+                    <span className="req-icon">⚡</span>
                     <div>
-                      <span className="req-label">ОЗУ</span>
+                      <span className="req-label">Оперативная память</span>
                       <span className="req-value">{appData.requirements.ram}</span>
                     </div>
                   </div>
@@ -286,16 +413,31 @@ const AppDetails = () => {
             <div className="reviews-section">
               <div className="reviews-summary glass-card">
                 <div className="rating-overview">
-                  <span className="rating-large">{appData.rating}</span>
+                  <span className="rating-large">{appData.rating.toFixed(1)}</span>
                   <div className="rating-details">
-                    <div className="stars-large">{renderStars(appData.rating)}</div>
-                    <span className="reviews-count">{reviews.length} отзывов</span>
+                    <div className="stars-large">{renderStars(appData.rating, 'large')}</div>
+                    <span className="reviews-count">{appData.totalReviews || reviews.length} отзывов</span>
                   </div>
                 </div>
               </div>
 
               {/* Кнопка добавления отзыва */}
               <div className="reviews-header">
+                {vkUser ? (
+                  <div className="vk-user-info">
+                    <img src={vkUser.photo_100} alt="VK Avatar" className="vk-avatar" />
+                    <span>Вы вошли как {vkUser.first_name}</span>
+                    <button className="vk-logout-btn" onClick={handleVKLogout}>
+                      Выйти
+                    </button>
+                  </div>
+                ) : (
+                  <button className="vk-login-btn" onClick={handleVKLogin}>
+                    <img src="https://vk.com/images/icons/favicons/fav_logo.ico" alt="VK" />
+                    Войти через VK
+                  </button>
+                )}
+                
                 <button 
                   className="write-review-btn glass-card"
                   onClick={() => setReviewFormOpen(true)}
@@ -309,19 +451,35 @@ const AppDetails = () => {
                 <div className="modal-overlay">
                   <div className="modal-content">
                     <h3>Добавить отзыв</h3>
-                    <input
-                      type="text"
-                      placeholder="Ваше имя"
-                      value={newReview.author}
-                      onChange={(e) => setNewReview({...newReview, author: e.target.value})}
-                      className="review-input"
-                    />
+                    
+                    {!vkUser && (
+                      <input
+                        type="text"
+                        placeholder="Ваше имя"
+                        value={newReview.author}
+                        onChange={(e) => setNewReview({...newReview, author: e.target.value})}
+                        className="review-input"
+                      />
+                    )}
+                    
+                    <div className="rating-section">
+                      <label>Ваша оценка:</label>
+                      <StarRating
+                        rating={newReview.rating}
+                        onRatingChange={(rating) => setNewReview({...newReview, rating})}
+                        hoverRating={hoverRating}
+                        onHoverChange={setHoverRating}
+                      />
+                    </div>
+                    
                     <textarea
                       placeholder="Текст отзыва"
                       value={newReview.text}
                       onChange={(e) => setNewReview({...newReview, text: e.target.value})}
                       className="review-textarea"
+                      rows="4"
                     />
+                    
                     <div className="modal-actions">
                       <button 
                         className="cancel-btn"
@@ -332,7 +490,7 @@ const AppDetails = () => {
                       <button 
                         className="submit-btn"
                         onClick={handleAddReview}
-                        disabled={!newReview.author || !newReview.text}
+                        disabled={!newReview.author || !newReview.text || !newReview.rating}
                       >
                         Опубликовать
                       </button>
@@ -354,11 +512,27 @@ const AppDetails = () => {
                     <div key={review.id} className="review-card glass-card">
                       <div className="review-header">
                         <div className="review-author">
-                          <span className="author-avatar">👤</span>
+                          {review.vk_user_id ? (
+                            <img 
+                              src="https://via.placeholder.com/40" 
+                              alt="VK" 
+                              className="author-avatar vk-avatar"
+                            />
+                          ) : (
+                            <span className="author-avatar">👤</span>
+                          )}
                           <div>
-                            <span className="author-name">{review.author}</span>
+                            <div className="author-info">
+                              <span className="author-name">{review.author}</span>
+                              {review.vk_user_id && (
+                                <span className="vk-badge">VK</span>
+                              )}
+                            </div>
                             <span className="review-date">{review.date}</span>
                           </div>
+                        </div>
+                        <div className="review-rating">
+                          {renderStars(review.rating)}
                         </div>
                       </div>
                       <p className="review-text">{review.text}</p>
