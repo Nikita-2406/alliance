@@ -19,7 +19,7 @@ const Header = ({ title, showBack = false }) => {
         ) : (
           <div className="header-logo">
             <span className="logo-icon">📱</span>
-            <span className="logo-text">AppStore</span>
+            <span className="logo-text">RuStore</span>
           </div>
         )}
         <h1 className="header-title">{title}</h1>

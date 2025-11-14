@@ -19,9 +19,9 @@ const Categories = () => {
       ]
     },
     {
-      id: 'social',
-      name: 'Социальные',
-      icon: '💬',
+      id: 'gos',
+      name: 'Государственные',
+      icon: '🇷🇺',
       color: 'linear-gradient(135deg, #5856D6 0%, #8E8FFA 100%)',
       count: 156,
       apps: [
