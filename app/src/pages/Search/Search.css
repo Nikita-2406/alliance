@@ -36,33 +36,10 @@
   margin: 0 auto 24px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
-  min-height: 56px;
-  background: rgba(255, 255, 255, 0.7) !important;
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(33, 150, 243, 0.2);
-  border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(33, 150, 243, 0.12),
-              inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-}
-
-.search-bar:hover {
-  background: rgba(255, 255, 255, 0.85) !important;
-  border-color: rgba(33, 150, 243, 0.3);
-  box-shadow: 0 8px 40px rgba(33, 150, 243, 0.15),
-              inset 0 1px 0 rgba(255, 255, 255, 1);
-  transform: none !important;
-}
-
-.search-bar:focus-within {
-  background: rgba(255, 255, 255, 0.95) !important;
-  border-color: rgba(33, 150, 243, 0.4);
-  box-shadow: 0 12px 48px rgba(33, 150, 243, 0.2),
-              inset 0 1px 0 rgba(255, 255, 255, 1);
-  transform: none !important;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(33, 150, 243, 0.15);
 }
 
 .search-icon {
@@ -98,28 +75,18 @@
 }
 
 .clear-button {
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(33, 150, 243, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(33, 150, 243, 0.2);
-  border-radius: 50%;
-  color: var(--color-primary);
+  padding: 4px 10px;
+  background: rgba(33, 150, 243, 0.08);
+  border: none;
+  border-radius: 6px;
+  color: var(--text-primary);
   cursor: pointer;
-  transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.1);
-  flex-shrink: 0;
+  font-size: 0.85em;
+  transition: all 0.3s ease;
 }
 
 .clear-button:hover {
-  background: rgba(33, 150, 243, 0.2);
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
-  border-color: rgba(33, 150, 243, 0.3);
+  background: rgba(33, 150, 243, 0.15);
 }
 
 /* Filters */
@@ -131,39 +98,33 @@
 }
 
 .filter-chip {
-  padding: 10px 24px;
-  background: rgba(33, 150, 243, 0.08);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(33, 150, 243, 0.15);
-  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: rgba(33, 150, 243, 0.06);
+  border: 1px solid rgba(33, 150, 243, 0.12);
+  border-radius: 16px;
   color: var(--text-secondary);
   font-size: 0.95em;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.08),
-              inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .filter-chip:hover {
-  background: rgba(33, 150, 243, 0.15);
-  color: var(--color-primary);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.12),
-              inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  border-color: rgba(33, 150, 243, 0.25);
+  background: rgba(33, 150, 243, 0.1);
+  color: var(--text-primary);
 }
 
 .filter-chip.active {
-  background: rgba(33, 150, 243, 0.25);
-  border-color: rgba(33, 150, 243, 0.35);
+  background: rgba(33, 150, 243, 0.15);
+  border-color: var(--primary-color);
   color: var(--primary-color);
-  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.2),
-              inset 0 1px 0 rgba(255, 255, 255, 0.5);
-  font-weight: 700;
-  transform: translateY(-2px);
+  box-shadow: 0 2px 10px rgba(33, 150, 243, 0.15);
 }
 
 /* Results Section */
@@ -214,33 +175,23 @@
   box-shadow: 0 4px 16px rgba(33, 150, 243, 0.1),
               inset 0 1px 0 rgba(255, 255, 255, 0.8);
   transition: all 0.3s ease;
-  cursor: pointer;
-  text-decoration: none;
-  color: inherit;
 }
 
-.app-card:hover {
-  transform: translateY(-4px);
-  background: rgba(255, 255, 255, 0.8) !important;
-  box-shadow: 0 12px 32px rgba(33, 150, 243, 0.18),
-              inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  border-color: rgba(33, 150, 243, 0.25);
+.search-app-card:hover {
+  transform: translateX(8px);
 }
 
-.app-card-icon {
-  font-size: 72px;
-  width: 80px;
-  height: 80px;
+.search-app-icon {
+  font-size: 56px;
+  width: 64px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(33, 150, 243, 0.12) 0%, rgba(227, 242, 253, 0.2) 100%);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border-radius: 20px;
-  border: 1px solid rgba(33, 150, 243, 0.15);
-  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
   flex-shrink: 0;
+  border: 1px solid rgba(33, 150, 243, 0.15);
 }
 
 .app-card-content {
@@ -272,40 +223,25 @@
   gap: 12px;
   font-size: 0.9em;
   color: var(--text-secondary);
+}
+
+.download-btn {
+  padding: 10px 24px;
+  background: var(--primary-color);
+  border: none;
+  border-radius: 20px;
+  color: white;
   font-weight: 600;
-  margin-top: 8px;
-}
-
-.app-card-rating {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: var(--color-primary);
-}
-
-.app-card-download {
-  width: 100%;
-  padding: 12px 24px;
-  background: rgba(33, 150, 243, 0.15);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid rgba(33, 150, 243, 0.25);
-  border-radius: 14px;
-  color: var(--color-primary);
-  font-weight: 700;
-  font-size: 1em;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15),
-              inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
 }
 
-.app-card-download:hover {
-  background: rgba(33, 150, 243, 0.25);
+.download-btn:hover {
+  background: var(--color-primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(33, 150, 243, 0.2),
-              inset 0 1px 0 rgba(255, 255, 255, 0.6);
-  border-color: rgba(33, 150, 243, 0.35);
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
 }
 
 /* No Results */

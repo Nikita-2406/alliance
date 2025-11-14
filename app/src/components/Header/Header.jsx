@@ -26,6 +26,8 @@ const Header = ({ title, showBack = false }) => {
   }, [location.pathname]);
 
   useEffect(() => {
+    let resizeTimer;
+    
     const updateBlobPosition = () => {
       const activeElement = navItemsRef.current[activeIndex];
       const container = navContainerRef.current;
@@ -35,25 +37,38 @@ const Header = ({ title, showBack = false }) => {
         const elementRect = activeElement.getBoundingClientRect();
         
         // Вычисляем позицию относительно контейнера
-        const left = elementRect.left - containerRect.left;
-        const width = elementRect.width;
+        let left = elementRect.left - containerRect.left;
+        let width = elementRect.width;
+        
+        // Проверка границ - не даем выйти за пределы контейнера
+        if (left < 0) left = 0;
+        if (left + width > containerRect.width) {
+          width = containerRect.width - left;
+        }
         
         setBlobStyle({
-          width: width,
-          left: left
+          width: Math.max(0, width),
+          left: Math.max(0, left)
         });
       }
     };
 
+    // Debounce для resize
+    const handleResize = () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(updateBlobPosition, 100);
+    };
+
     updateBlobPosition();
-    window.addEventListener('resize', updateBlobPosition);
+    window.addEventListener('resize', handleResize);
     
     // Небольшая задержка для корректного расчета после рендера
     const timer = setTimeout(updateBlobPosition, 50);
 
     return () => {
-      window.removeEventListener('resize', updateBlobPosition);
+      window.removeEventListener('resize', handleResize);
       clearTimeout(timer);
+      clearTimeout(resizeTimer);
     };
   }, [activeIndex]);
 
