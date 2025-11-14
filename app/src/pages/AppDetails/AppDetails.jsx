@@ -282,106 +282,43 @@ const AppDetails = () => {
 
               {/* Модальное окно для нового отзыва */}
               {isReviewFormOpen && (
-                <div className="modal-overlay" onClick={() => setReviewFormOpen(false)}>
-                  <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                    <h3>✏️ Написать отзыв</h3>
-                    <input
-                      type="text"
-                      placeholder="Ваше имя"
-                      value={newReview.author}
-                      onChange={(e) => setNewReview({...newReview, author: e.target.value})}
-                      className="review-input"
-                    />
-                    <textarea
-                      placeholder="Расскажите о вашем опыте использования приложения..."
-                      value={newReview.text}
-                      onChange={(e) => setNewReview({...newReview, text: e.target.value})}
-                      className="review-textarea"
-                      rows="5"
-                    />
-                    <div className="modal-actions">
-                      <button 
-                        className="cancel-btn"
-                        onClick={() => setReviewFormOpen(false)}
-                      >
-                        Отмена
-                      </button>
-                      <button 
-                        className="submit-btn"
-                        onClick={handleAddReview}
-                        disabled={!newReview.author.trim() || !newReview.text.trim()}
-                      >
-                        Опубликовать отзыв
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Список отзывов */}
-              {selectedTab === 'reviews' && (
-                <div className="reviews-section">
-                  <div className="reviews-summary glass-card">
-                    <div className="rating-overview">
-                      <span className="rating-large">{appData.rating}</span>
-                      <div className="rating-details">
-                        <div className="stars-large">{renderStars(appData.rating)}</div>
-                        <span className="reviews-count">{reviews.length} отзывов</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Кнопка добавления отзыва */}
-                  <div className="reviews-header" style={{marginBottom: '30px'}}>
+              <div className="modal-overlay" onClick={() => setReviewFormOpen(false)}>
+                <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                  <h3>✏️ Написать отзыв</h3>
+                  <input
+                    type="text"
+                    placeholder="Ваше имя"
+                    value={newReview.author}
+                    onChange={(e) => setNewReview({...newReview, author: e.target.value})}
+                    className="review-input"
+                  />
+                  <textarea
+                    placeholder="Расскажите о вашем опыте использования приложения..."
+                    value={newReview.text}
+                    onChange={(e) => setNewReview({...newReview, text: e.target.value})}
+                    className="review-textarea"
+                    rows="5"
+                  />
+                  <div className="modal-actions">
                     <button 
-                      className="write-review-btn glass-card"
-                      onClick={() => setReviewFormOpen(true)}
-                      style={{
-                        background: '#007bff',
-                        color: 'white',
-                        border: 'none',
-                        padding: '15px 30px',
-                        borderRadius: '10px',
-                        cursor: 'pointer',
-                        fontSize: '16px',
-                        fontWeight: '600',
-                        width: '100%'
-                      }}
+                      className="cancel-btn"
+                      onClick={() => setReviewFormOpen(false)}
                     >
-                      ✏️ Написать отзыв
+                      Отмена
+                    </button>
+                    <button 
+                      className="submit-btn"
+                      onClick={handleAddReview}
+                      disabled={!newReview.author.trim() || !newReview.text.trim()}
+                    >
+                      Опубликовать отзыв
                     </button>
                   </div>
-
-                  {/* Модальное окно - код из пункта 2 выше */}
-
-                  {/* Список отзывов */}
-                  <div className="reviews-list">
-                    {reviews.map(review => (
-                      <div key={review.id} className="review-card glass-card">
-                        <div className="review-header">
-                          <div className="review-author">
-                            <span className="author-avatar">👤</span>
-                            <div>
-                              <span className="author-name">{review.author}</span>
-                              <span className="review-date">{review.date}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <p className="review-text">{review.text}</p>
-                        <div className="review-actions">
-                          <button 
-                            className="like-btn"
-                            onClick={() => handleLike(review.id)}
-                          >
-                            👍 Полезно ({review.likes})
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
                 </div>
-              )}
+              </div>
+            )}
 
+              {/* Список отзывов */}
               <div className="reviews-list">
                 {reviews.map(review => (
                   <div key={review.id} className="review-card glass-card">
