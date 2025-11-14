@@ -1,27 +1,33 @@
-.typing-text {
-    color: rgb(48, 48, 48);
-    font-weight: 500;
-    overflow: hidden;
-    border-right: 2px solid #000;
-    white-space: nowrap;
-    margin: 0 auto;
-    animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
+.Header-Text {
+    /* Позиционирование и выравнивание */
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    
+    /* Шрифт и текст */
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 3rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    
+    /* Внешний вид */
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin: 0;
+    padding: 15px 30px;
+    
+    /* Фон и границы */
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    
+    /* Гарантия поверх других элементов */
+    z-index: 1000;
+    
+    /* Плавные переходы */
+    transition: all 0.3s ease;
 }
-body{
-    background-color: #f2d7ee;
-}
-.Alliance-store{
-
-    color:rgb(48, 48, 48);
-
-}
-@keyframes typing {
-    from { width: 0 }
-    to { width: 100% }
-}
-
-@keyframes blink-caret {
-    from, to { border-color: transparent }
-    50% { border-color: #000 }
-}
-
