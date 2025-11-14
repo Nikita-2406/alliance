@@ -306,8 +306,8 @@ const AppDetails = () => {
 
               {/* Модальное окно для нового отзыва */}
               {isReviewFormOpen && (
-                <div className="modal-overlay" onClick={() => setReviewFormOpen(false)}>
-                  <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-overlay">
+                  <div className="modal-content">
                     <h3>Добавить отзыв</h3>
                     <input
                       type="text"
@@ -315,6 +315,7 @@ const AppDetails = () => {
                       value={newReview.author}
                       onChange={(e) => setNewReview({...newReview, author: e.target.value})}
                       className="review-input"
+                      autoFocus
                     />
                     <textarea
                       placeholder="Текст отзыва"
@@ -327,13 +328,15 @@ const AppDetails = () => {
                       <button 
                         className="cancel-btn"
                         onClick={() => setReviewFormOpen(false)}
+                        type="button"
                       >
                         Отмена
                       </button>
                       <button 
                         className="submit-btn"
                         onClick={handleAddReview}
-                        disabled={!newReview.author || !newReview.text}
+                        disabled={!newReview.author.trim() || !newReview.text.trim()}
+                        type="button"
                       >
                         Опубликовать
                       </button>
