@@ -2,41 +2,65 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import pymysql
 from config import Config
+import logging
+
+# Настройка логирования
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173"])  # Разрешить CORS для всех доменов
+CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173"])
 
 def get_db_connection():
-    return pymysql.connect(
-        host=Config.MYSQL_HOST,
-        user=Config.MYSQL_USER,
-        password=Config.MYSQL_PASSWORD,
-        database=Config.MYSQL_DB,
-        charset='utf8mb4',
-        cursorclass=pymysql.cursors.DictCursor
-    )
+    try:
+        connection = pymysql.connect(
+            host=Config.MYSQL_HOST,
+            user=Config.MYSQL_USER,
+            password=Config.MYSQL_PASSWORD,
+            database=Config.MYSQL_DB,
+            port=Config.MYSQL_PORT,
+            charset='utf8mb4',
+            cursorclass=pymysql.cursors.DictCursor,
+            connect_timeout=30
+        )
+        logger.info("✅ Успешное подключение к базе данных")
+        return connection
+    except Exception as e:
+        logger.error(f"❌ Ошибка подключения к базе данных: {str(e)}")
+        raise
 
-# Маршрут для получения отзывов по app_id
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    try:
+        conn = get_db_connection()
+        conn.close()
+        return jsonify({'status': 'healthy', 'database': 'connected'})
+    except Exception as e:
+        return jsonify({'status': 'unhealthy', 'database': 'disconnected', 'error': str(e)}), 500
+
 @app.route('/api/apps/<int:app_id>/reviews', methods=['GET'])
 def get_reviews(app_id):
+    logger.info(f"Получение отзывов для app_id: {app_id}")
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
             cursor.execute("SELECT * FROM reviews WHERE app_id = %s ORDER BY created_at DESC", (app_id,))
             reviews = cursor.fetchall()
-            # Преобразуем дату в строку для JSON
             for review in reviews:
                 review['date'] = review['created_at'].strftime('%d.%m.%Y')
+            logger.info(f"Найдено {len(reviews)} отзывов")
             return jsonify(reviews)
     except Exception as e:
+        logger.error(f"Ошибка при получении отзывов: {str(e)}")
         return jsonify({'error': str(e)}), 500
     finally:
         conn.close()
 
-# Маршрут для добавления отзыва
 @app.route('/api/apps/<int:app_id>/reviews', methods=['POST'])
 def add_review(app_id):
     data = request.get_json()
+    logger.info(f"Добавление отзыва для app_id: {app_id}, данные: {data}")
+    
     if not data or not data.get('author') or not data.get('text'):
         return jsonify({'error': 'Author and text are required'}), 400
 
@@ -46,29 +70,30 @@ def add_review(app_id):
             sql = "INSERT INTO reviews (app_id, author, text, likes) VALUES (%s, %s, %s, %s)"
             cursor.execute(sql, (app_id, data['author'], data['text'], 0))
             conn.commit()
-            # Получаем ID вставленной записи
             review_id = cursor.lastrowid
-            # Теперь получаем полную запись
+            
             cursor.execute("SELECT * FROM reviews WHERE id = %s", (review_id,))
             new_review = cursor.fetchone()
             new_review['date'] = new_review['created_at'].strftime('%d.%m.%Y')
+            
+            logger.info(f"Отзыв успешно добавлен с ID: {review_id}")
             return jsonify(new_review), 201
     except Exception as e:
         conn.rollback()
+        logger.error(f"Ошибка при добавлении отзыва: {str(e)}")
         return jsonify({'error': str(e)}), 500
     finally:
         conn.close()
 
-# Маршрут для лайка отзыва
 @app.route('/api/reviews/<int:review_id>/like', methods=['POST'])
 def like_review(review_id):
+    logger.info(f"Лайк отзыва: {review_id}")
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            # Увеличиваем количество лайков на 1
             cursor.execute("UPDATE reviews SET likes = likes + 1 WHERE id = %s", (review_id,))
             conn.commit()
-            # Получаем обновленное количество лайков
+            
             cursor.execute("SELECT likes FROM reviews WHERE id = %s", (review_id,))
             result = cursor.fetchone()
             if result:
@@ -77,6 +102,7 @@ def like_review(review_id):
                 return jsonify({'error': 'Review not found'}), 404
     except Exception as e:
         conn.rollback()
+        logger.error(f"Ошибка при лайке: {str(e)}")
         return jsonify({'error': str(e)}), 500
     finally:
         conn.close()
