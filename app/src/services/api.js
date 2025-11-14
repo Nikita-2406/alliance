@@ -320,14 +320,11 @@ const MOCK_APPS = [
 ];
 
 const MOCK_CATEGORIES = [
-  { id: 'games', name: 'Игры', icon: '🎮', color: '#A5668B', count: 245 },
-  { id: 'social', name: 'Социальные', icon: '💬', color: '#69306D', count: 156 },
-  { id: 'entertainment', name: 'Развлечения', icon: '🎬', color: '#D3BCC0', count: 189 },
-  { id: 'productivity', name: 'Продуктивность', icon: '⚡', color: '#A5668B', count: 312 },
-  { id: 'photo', name: 'Фото и видео', icon: '📸', color: '#69306D', count: 167 },
-  { id: 'health', name: 'Здоровье', icon: '💪', color: '#D3BCC0', count: 234 },
-  { id: 'education', name: 'Образование', icon: '🌍', color: '#A5668B', count: 278 },
-  { id: 'music', name: 'Музыка', icon: '🎵', color: '#69306D', count: 145 }
+  { id: 'finance', name: 'Финансы', icon: '💰', color: '#2196F3', count: 145 },
+  { id: 'tools', name: 'Инструменты', icon: '🔧', color: '#64B5F6', count: 289 },
+  { id: 'games', name: 'Игры', icon: '🎮', color: '#2196F3', count: 567 },
+  { id: 'government', name: 'Государственные', icon: '🏛️', color: '#64B5F6', count: 78 },
+  { id: 'transport', name: 'Транспорт', icon: '🚗', color: '#2196F3', count: 123 }
 ];
 
 const MOCK_REVIEWS = [

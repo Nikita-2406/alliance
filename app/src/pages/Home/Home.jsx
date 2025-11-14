@@ -20,7 +20,7 @@ const Home = () => {
 
         if (featured.success) setFeaturedApps(featured.data);
         if (top.success) setTopWeek(top.data);
-        if (cats.success) setCategories(cats.data.slice(0, 4));
+        if (cats.success) setCategories(cats.data.slice(0, 5));
       } catch (error) {
         console.error('Error loading data:', error);
       } finally {
