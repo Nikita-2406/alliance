@@ -4,7 +4,7 @@ import pymysql
 from config import Config
 
 app = Flask(__name__)
-CORS(app)  # Разрешить CORS для всех доменов
+CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173"])  # Разрешить CORS для всех доменов
 
 def get_db_connection():
     return pymysql.connect(
