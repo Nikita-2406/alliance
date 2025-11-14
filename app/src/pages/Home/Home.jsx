@@ -8,7 +8,7 @@ const Home = () => {
   const [topWeek, setTopWeek] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     const loadData = async () => {
@@ -32,29 +32,39 @@ const Home = () => {
     loadData();
   }, []);
 
+  const goToPrev = () => {
+    setCurrentIndex((prev) => (prev === 0 ? featuredApps.length - 1 : prev - 1));
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev === featuredApps.length - 1 ? 0 : prev + 1));
+  };
+
+  const goToSlide = (index) => {
+    setCurrentIndex(index);
+  };
+
   // Автопрокрутка каждые 5 секунд
   useEffect(() => {
     if (featuredApps.length === 0) return;
     
     const interval = setInterval(() => {
-      handleNextSlide();
+      setCurrentIndex((prev) => (prev === featuredApps.length - 1 ? 0 : prev + 1));
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [featuredApps.length, currentSlide]);
+  }, [currentIndex, featuredApps.length]);
 
-  const handlePrevSlide = () => {
-    setCurrentSlide((prev) => {
-      if (prev <= 0) return featuredApps.length - 1;
-      return prev - 1;
-    });
-  };
-
-  const handleNextSlide = () => {
-    setCurrentSlide((prev) => {
-      if (prev >= featuredApps.length - 1) return 0;
-      return prev + 1;
-    });
+  // Определяем позицию каждого слайда относительно текущего
+  const getSlidePosition = (index) => {
+    if (index === currentIndex) return 'current';
+    
+    const prev = currentIndex === 0 ? featuredApps.length - 1 : currentIndex - 1;
+    const next = currentIndex === featuredApps.length - 1 ? 0 : currentIndex + 1;
+    
+    if (index === prev) return 'prev';
+    if (index === next) return 'next';
+    return 'hidden';
   };
 
   if (loading) {
@@ -76,24 +86,18 @@ const Home = () => {
         <section className="section">
           <h2 className="section-title">Рекомендуемые</h2>
           <div className="featured-carousel">
-            <button className="carousel-arrow carousel-arrow-left" onClick={handlePrevSlide}>
+            <button className="carousel-arrow" onClick={goToPrev} aria-label="Предыдущее">
               ←
             </button>
             
             <div className="carousel-container">
-              <div 
-                className="carousel-track"
-                style={{
-                  transform: `translateX(-${currentSlide * 100}%)`
-                }}
-              >
+              <div className="carousel-track">
                 {featuredApps.map((app, index) => {
-                  const isActive = index === currentSlide;
-                  
+                  const position = getSlidePosition(index);
                   return (
                     <div 
-                      key={`${app.id}-${index}`}
-                      className={`carousel-slide ${isActive ? 'active' : ''}`}
+                      key={app.id}
+                      className={`carousel-slide carousel-slide-${position}`}
                     >
                       <Link to={`/app/${app.id}`} className="featured-card glass-card">
                         <div className="featured-header" style={{ background: app.color }}>
@@ -114,7 +118,7 @@ const Home = () => {
               </div>
             </div>
             
-            <button className="carousel-arrow carousel-arrow-right" onClick={handleNextSlide}>
+            <button className="carousel-arrow" onClick={goToNext} aria-label="Следующее">
               →
             </button>
           </div>
@@ -123,8 +127,9 @@ const Home = () => {
             {featuredApps.map((_, index) => (
               <button
                 key={index}
-                className={`carousel-dot ${index === currentSlide ? 'active' : ''}`}
-                onClick={() => setCurrentSlide(index)}
+                className={`carousel-dot ${index === currentIndex ? 'active' : ''}`}
+                onClick={() => goToSlide(index)}
+                aria-label={`Слайд ${index + 1}`}
               />
             ))}
           </div>
