@@ -19,8 +19,8 @@
   align-items: center;
   gap: 10px;
   padding: 10px 14px;
-  background: rgba(167, 204, 237, 0.08);
-  border: 1px solid rgba(167, 204, 237, 0.18);
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(33, 150, 243, 0.15);
 }
 
 .search-icon {
@@ -44,7 +44,7 @@
 
 .clear-button {
   padding: 4px 10px;
-  background: rgba(167, 204, 237, 0.08);
+  background: rgba(33, 150, 243, 0.08);
   border: none;
   border-radius: 6px;
   color: var(--text-primary);
@@ -54,7 +54,7 @@
 }
 
 .clear-button:hover {
-  background: rgba(167, 204, 237, 0.15);
+  background: rgba(33, 150, 243, 0.15);
 }
 
 /* Filters */
@@ -75,8 +75,8 @@
   align-items: center;
   gap: 6px;
   padding: 7px 14px;
-  background: rgba(167, 204, 237, 0.06);
-  border: 1px solid rgba(167, 204, 237, 0.12);
+  background: rgba(33, 150, 243, 0.06);
+  border: 1px solid rgba(33, 150, 243, 0.12);
   border-radius: 16px;
   color: var(--text-secondary);
   font-size: 0.85em;
@@ -88,15 +88,15 @@
 }
 
 .filter-chip:hover {
-  background: rgba(167, 204, 237, 0.1);
+  background: rgba(33, 150, 243, 0.1);
   color: var(--text-primary);
 }
 
 .filter-chip.active {
-  background: rgba(167, 204, 237, 0.15);
-  border-color: rgba(167, 204, 237, 0.25);
-  color: var(--text-primary);
-  box-shadow: 0 2px 10px rgba(48, 77, 109, 0.15);
+  background: rgba(33, 150, 243, 0.15);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  box-shadow: 0 2px 10px rgba(33, 150, 243, 0.15);
 }
 
 /* Results */
@@ -189,13 +189,13 @@
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
-  box-shadow: 0 4px 15px rgba(0, 122, 255, 0.3);
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
 }
 
 .download-btn:hover {
-  background: #0064D2;
+  background: var(--color-primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 122, 255, 0.4);
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.4);
 }
 
 /* No Results */

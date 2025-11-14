@@ -3,14 +3,15 @@
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(167, 204, 237, 0.08);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
-  border-bottom: 1px solid rgba(167, 204, 237, 0.15);
+  background: rgba(240, 247, 252, 0.7);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  border-bottom: 1px solid rgba(33, 150, 243, 0.12);
   padding: 16px 20px;
   padding-top: calc(16px + env(safe-area-inset-top));
   z-index: 999;
-  box-shadow: 0 4px 30px rgba(48, 77, 109, 0.2);
+  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.1),
+              inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .header-content {
@@ -42,7 +43,8 @@
 }
 
 .logo-text {
-  color: #FFFFFF;
+  color: var(--text-primary);
+  font-weight: 900;
 }
 
 /* Навигация в header */
@@ -50,29 +52,29 @@
   display: flex;
   align-items: center;
   gap: 2px;
-  background: rgba(167, 204, 237, 0.08);
+  background: rgba(33, 150, 243, 0.05);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-radius: 24px;
   padding: 3px;
   position: relative;
-  border: 1px solid rgba(167, 204, 237, 0.15);
+  border: 1px solid rgba(33, 150, 243, 0.1);
 }
 
 /* Анимированный blob в header (жидкое стекло) */
 .nav-blob-header {
   position: absolute;
   height: calc(100% - 6px);
-  background: linear-gradient(135deg, rgba(99, 173, 242, 0.2) 0%, rgba(130, 160, 188, 0.2) 100%);
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.12) 0%, rgba(100, 181, 246, 0.12) 100%);
   border-radius: 20px;
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   box-shadow: 
-    0 2px 8px rgba(99, 173, 242, 0.15),
-    inset 0 1px 2px rgba(255, 255, 255, 0.15),
-    inset 0 -1px 2px rgba(48, 77, 109, 0.1);
-  border: 1px solid rgba(167, 204, 237, 0.2);
-  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    0 2px 8px rgba(33, 150, 243, 0.1),
+    inset 0 1px 2px rgba(255, 255, 255, 0.8),
+    inset 0 -1px 2px rgba(33, 150, 243, 0.05);
+  border: 1px solid rgba(33, 150, 243, 0.15);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   left: 0;
   top: 3px;
   z-index: 0;
@@ -92,7 +94,7 @@
 
 .nav-item-header {
   padding: 8px 18px;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   font-size: 1.05em;
   font-weight: 600;
   text-decoration: none;
@@ -105,20 +107,20 @@
 }
 
 .nav-item-header:hover {
-  color: rgba(255, 255, 255, 0.95);
+  color: var(--text-primary);
 }
 
 .nav-item-header.active {
-  color: #FFFFFF;
-  font-weight: 800;
+  color: var(--color-primary);
+  font-weight: 700;
 }
 
 .back-button {
   padding: 10px 20px;
-  background: rgba(167, 204, 237, 0.1);
-  border: 1px solid rgba(167, 204, 237, 0.2);
+  background: rgba(33, 150, 243, 0.08);
+  border: 1px solid rgba(33, 150, 243, 0.15);
   border-radius: 10px;
-  color: #FFFFFF;
+  color: var(--color-primary);
   font-size: 1.05em;
   font-weight: 700;
   cursor: pointer;
@@ -128,7 +130,7 @@
 }
 
 .back-button:hover {
-  background: rgba(167, 204, 237, 0.15);
+  background: rgba(33, 150, 243, 0.12);
   transform: translateX(-2px);
 }
 

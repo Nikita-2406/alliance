@@ -14,7 +14,7 @@
   text-align: center;
   padding: 40px 30px;
   margin-bottom: 30px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.08) 0%, rgba(227, 242, 253, 0.5) 100%);
 }
 
 .categories-intro h1 {
@@ -173,11 +173,11 @@
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
 }
 
 .mini-download-btn:hover {
-  background: #0064D2;
+  background: var(--color-primary-dark);
   transform: translateY(-2px);
 }
 

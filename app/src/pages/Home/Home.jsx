@@ -46,14 +46,6 @@ const Home = () => {
   return (
     <div className="home-page">
       <div className="home-content">
-        {/* Hero Section */}
-        <section className="hero-section">
-          <div className="hero-card glass-card">
-            <h1 className="hero-title">Добро пожаловать!</h1>
-            <p className="hero-subtitle">Откройте для себя лучшие приложения</p>
-          </div>
-        </section>
-
         {/* Featured Apps */}
         <section className="section">
           <h2 className="section-title">Рекомендуемые</h2>
