@@ -31,10 +31,25 @@ type App struct {
 	LastUpdate  string   `json:"last_update"`
 }
 
+// CORS middleware
+func enableCORS(w *http.ResponseWriter, r *http.Request) bool {
+	// Разрешаем запросы с localhost:3000 (React)
+	(*w).Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	(*w).Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+	(*w).Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+	(*w).Header().Set("Access-Control-Allow-Credentials", "true")
+
+	// Обрабатываем preflight OPTIONS запрос
+	if r.Method == "OPTIONS" {
+		(*w).WriteHeader(http.StatusOK)
+		return true
+	}
+	return false
+}
+
 // Initialize database
 func initDB() error {
-	// ИЗМЕНИ ПАРОЛЬ НА СВОЙ!
-	connStr := "root:SQLpassforCon5@tcp(127.0.0.1:3306)/rustore?parseTime=true" // вход в мой MySQL
+	connStr := "root:SQLpassforCon5@tcp(127.0.0.1:3306)/rustore?parseTime=true"
 	var err error
 	DB, err = sql.Open("mysql", connStr)
 	if err != nil {
@@ -50,7 +65,6 @@ func initDB() error {
 	return nil
 }
 
-// Create tables
 // Create tables
 func createTables() error {
 	// Первая таблица - apps
@@ -149,10 +163,43 @@ func seedData() error {
 	return nil
 }
 
+// Fix screenshot paths to be unique for each app
+func fixScreenshotPaths() error {
+	// Удаляем все текущие скриншоты
+	_, err := DB.Exec("DELETE FROM screenshots")
+	if err != nil {
+		return err
+	}
+
+	// Добавляем уникальные пути для каждого приложения
+	screenshotPaths := map[int][]string{
+		1: {"/screenshots/sber_1.jpg", "/screenshots/sber_2.jpg", "/screenshots/sber_3.jpg"},
+		2: {"/screenshots/tinkoff_1.jpg", "/screenshots/tinkoff_2.jpg", "/screenshots/tinkoff_3.jpg"},
+		3: {"/screenshots/clash_1.jpg", "/screenshots/clash_2.jpg", "/screenshots/clash_3.jpg"},
+		4: {"/screenshots/gosuslugi_1.jpg", "/screenshots/gosuslugi_2.jpg", "/screenshots/gosuslugi_3.jpg"},
+		5: {"/screenshots/yandex_go_1.jpg", "/screenshots/yandex_go_2.jpg", "/screenshots/yandex_go_3.jpg"},
+		6: {"/screenshots/calculator_1.jpg", "/screenshots/calculator_2.jpg", "/screenshots/calculator_3.jpg"},
+	}
+
+	for appID, paths := range screenshotPaths {
+		for _, path := range paths {
+			_, err = DB.Exec("INSERT INTO screenshots (app_id, image_url) VALUES (?, ?)", appID, path)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	log.Println("✅ Screenshot paths fixed in database")
+	return nil
+}
+
 // API Handlers
 func getApps(w http.ResponseWriter, r *http.Request) {
+	if enableCORS(&w, r) {
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	category := r.URL.Query().Get("category")
 	var query string
@@ -208,8 +255,10 @@ func getApps(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAppByID(w http.ResponseWriter, r *http.Request) {
+	if enableCORS(&w, r) {
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	idStr := strings.TrimPrefix(r.URL.Path, "/api/apps/")
 	id, err := strconv.Atoi(idStr)
@@ -257,8 +306,10 @@ func getAppByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func getCategories(w http.ResponseWriter, r *http.Request) {
+	if enableCORS(&w, r) {
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	rows, err := DB.Query("SELECT DISTINCT category FROM apps")
 	if err != nil {
@@ -282,8 +333,10 @@ func getCategories(w http.ResponseWriter, r *http.Request) {
 }
 
 func searchApps(w http.ResponseWriter, r *http.Request) {
+	if enableCORS(&w, r) {
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	query := r.URL.Query().Get("q")
 	var results []App
@@ -341,8 +394,10 @@ func searchApps(w http.ResponseWriter, r *http.Request) {
 }
 
 func getFeaturedApps(w http.ResponseWriter, r *http.Request) {
+	if enableCORS(&w, r) {
+		return
+	}
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	rows, err := DB.Query(`
 		SELECT id, name, developer, category, age_rating, description, icon_url, rating, version, size, price, last_update 
@@ -391,37 +446,6 @@ func getFeaturedApps(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(featuredApps)
 }
 
-// Fix screenshot paths to be unique for each app
-func fixScreenshotPaths() error {
-	// Удаляем все текущие скриншоты
-	_, err := DB.Exec("DELETE FROM screenshots")
-	if err != nil {
-		return err
-	}
-
-	// Добавляем уникальные пути для каждого приложения
-	screenshotPaths := map[int][]string{
-		1: {"/screenshots/sber_1.jpg", "/screenshots/sber_2.jpg", "/screenshots/sber_3.jpg"},
-		2: {"/screenshots/tinkoff_1.jpg", "/screenshots/tinkoff_2.jpg", "/screenshots/tinkoff_3.jpg"},
-		3: {"/screenshots/clash_1.jpg", "/screenshots/clash_2.jpg", "/screenshots/clash_3.jpg"},
-		4: {"/screenshots/gosuslugi_1.jpg", "/screenshots/gosuslugi_2.jpg", "/screenshots/gosuslugi_3.jpg"},
-		5: {"/screenshots/yandex_go_1.jpg", "/screenshots/yandex_go_2.jpg", "/screenshots/yandex_go_3.jpg"},
-		6: {"/screenshots/calculator_1.jpg", "/screenshots/calculator_2.jpg", "/screenshots/calculator_3.jpg"},
-	}
-
-	for appID, paths := range screenshotPaths {
-		for _, path := range paths {
-			_, err = DB.Exec("INSERT INTO screenshots (app_id, image_url) VALUES (?, ?)", appID, path)
-			if err != nil {
-				return err
-			}
-		}
-	}
-
-	log.Println("✅ Screenshot paths fixed in database")
-	return nil
-}
-
 func main() {
 	// Initialize database
 	err := initDB()
@@ -441,6 +465,12 @@ func main() {
 		log.Fatal("❌ Data seeding failed:", err)
 	}
 
+	// Fix screenshot paths
+	err = fixScreenshotPaths()
+	if err != nil {
+		log.Fatal("❌ Screenshot paths fix failed:", err)
+	}
+
 	// Routes
 	http.HandleFunc("/api/apps", getApps)
 	http.HandleFunc("/api/apps/", getAppByID)
@@ -452,6 +482,14 @@ func main() {
 	http.Handle("/screenshots/", http.StripPrefix("/screenshots/", http.FileServer(http.Dir("./static/screenshots"))))
 	http.Handle("/icons/", http.StripPrefix("/icons/", http.FileServer(http.Dir("./static/icons"))))
 
+	// Health check endpoint
+	http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+		if enableCORS(&w, r) {
+			return
+		}
+		json.NewEncoder(w).Encode(map[string]string{"status": "ok", "service": "appstore-api"})
+	})
+
 	log.Println("🚀 Server started on http://localhost:8080")
 	log.Println("📱 API available:")
 	log.Println("   GET /api/apps - list all apps")
@@ -460,6 +498,9 @@ func main() {
 	log.Println("   GET /api/apps?category=Финансы - filter by category")
 	log.Println("   GET /api/search?q=банк - search apps")
 	log.Println("   GET /api/featured - featured apps")
+	log.Println("   GET /health - health check")
+
+	log.Println("🌐 React frontend can connect from: http://localhost:3000")
 
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
