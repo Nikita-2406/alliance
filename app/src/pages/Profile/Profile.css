@@ -1,0 +1,380 @@
+.profile-page {
+  min-height: 100vh;
+  padding-bottom: 100px;
+}
+
+.profile-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Profile Header */
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 30px;
+  margin-bottom: 30px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+  position: relative;
+}
+
+.profile-avatar {
+  font-size: 80px;
+  width: 100px;
+  height: 100px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+  flex-shrink: 0;
+}
+
+.profile-info {
+  flex: 1;
+}
+
+.profile-name {
+  font-size: 1.8em;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+}
+
+.profile-email {
+  font-size: 1em;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.profile-member {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+}
+
+.edit-profile-btn {
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.edit-profile-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+/* Stats */
+.profile-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px;
+  text-align: center;
+  cursor: default;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+}
+
+.stat-icon {
+  font-size: 32px;
+  margin-bottom: 12px;
+}
+
+.stat-value {
+  font-size: 2em;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+}
+
+/* Tabs */
+.profile-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 8px;
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 12px 20px;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 0.95em;
+}
+
+.tab-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+.tab-btn.active {
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--text-primary);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Tab Content */
+.tab-content {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Downloads List */
+.downloads-list,
+.favorites-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.download-item,
+.favorite-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.download-item:hover,
+.favorite-item:hover {
+  transform: translateX(8px);
+}
+
+.download-icon,
+.favorite-icon {
+  font-size: 56px;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  flex-shrink: 0;
+}
+
+.download-info,
+.favorite-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.download-info h3,
+.favorite-info h3 {
+  font-size: 1.15em;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--text-primary);
+}
+
+.download-meta,
+.favorite-category {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  margin-bottom: 4px;
+}
+
+.download-date {
+  font-size: 0.85em;
+  color: var(--text-secondary);
+}
+
+.favorite-rating {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+}
+
+.action-btn {
+  padding: 10px 20px;
+  background: var(--primary-color);
+  border: none;
+  border-radius: 20px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  font-size: 0.9em;
+  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+}
+
+.action-btn:hover {
+  background: #0064D2;
+  transform: translateY(-2px);
+}
+
+/* Reviews List */
+.reviews-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.review-item {
+  padding: 20px;
+  cursor: default;
+}
+
+.review-item:hover {
+  transform: translateY(-2px);
+}
+
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.review-app {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.review-app-icon {
+  font-size: 32px;
+}
+
+.review-app-name {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.review-date {
+  font-size: 0.85em;
+  color: var(--text-secondary);
+}
+
+.review-rating {
+  font-size: 1.2em;
+  margin-bottom: 12px;
+}
+
+.review-comment {
+  font-size: 0.95em;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+}
+
+.review-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.review-action-btn {
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  color: var(--text-primary);
+  font-size: 0.85em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.review-action-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .profile-content {
+    padding: 16px;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+    padding: 24px 16px;
+  }
+
+  .profile-avatar {
+    font-size: 64px;
+    width: 80px;
+    height: 80px;
+  }
+
+  .profile-name {
+    font-size: 1.5em;
+  }
+
+  .edit-profile-btn {
+    width: 100%;
+  }
+
+  .profile-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .profile-tabs {
+    flex-direction: column;
+  }
+
+  .download-icon,
+  .favorite-icon {
+    font-size: 48px;
+    width: 56px;
+    height: 56px;
+  }
+
+  .action-btn {
+    padding: 8px 16px;
+    font-size: 0.85em;
+  }
+
+  .review-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+}
+

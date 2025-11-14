@@ -1,0 +1,254 @@
+.home-page {
+  min-height: 100vh;
+  padding-bottom: 100px;
+}
+
+.home-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Hero Section */
+.hero-section {
+  margin-bottom: 40px;
+}
+
+.hero-card {
+  padding: 60px 40px;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.hero-title {
+  font-size: 2.5em;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-subtitle {
+  font-size: 1.2em;
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+/* Section Styles */
+.section {
+  margin-bottom: 40px;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  font-size: 1.8em;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: var(--text-primary);
+}
+
+.see-all {
+  color: var(--text-secondary);
+  font-weight: 600;
+  transition: all 0.3s ease;
+  font-size: 1em;
+}
+
+.see-all:hover {
+  color: var(--text-primary);
+}
+
+/* Featured Apps Grid */
+.featured-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.featured-card {
+  overflow: hidden;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+.featured-card:hover {
+  transform: translateY(-8px) scale(1.02);
+}
+
+.featured-header {
+  height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.featured-icon {
+  font-size: 64px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
+
+.featured-body {
+  padding: 20px;
+}
+
+.app-name {
+  font-size: 1.2em;
+  margin-bottom: 6px;
+  color: var(--text-primary);
+}
+
+.app-category {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.app-stats {
+  display: flex;
+  gap: 16px;
+  font-size: 0.9em;
+}
+
+.stat {
+  color: var(--text-secondary);
+}
+
+/* Categories Quick */
+.categories-quick {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+}
+
+.category-quick {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 16px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.category-icon {
+  font-size: 40px;
+}
+
+.category-name {
+  font-size: 0.95em;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Top List */
+.top-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.app-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.app-item:hover {
+  transform: translateX(8px);
+}
+
+.app-rank {
+  font-size: 1.5em;
+  font-weight: 700;
+  color: var(--text-secondary);
+  min-width: 40px;
+  text-align: center;
+}
+
+.app-icon-small {
+  font-size: 48px;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+}
+
+.app-info {
+  flex: 1;
+}
+
+.app-info .app-name {
+  font-size: 1.1em;
+  margin-bottom: 4px;
+}
+
+.app-meta {
+  font-size: 0.85em;
+  color: var(--text-secondary);
+}
+
+.app-rating {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 1em;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 8px 16px;
+  border-radius: 12px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .home-content {
+    padding: 16px;
+  }
+
+  .hero-card {
+    padding: 40px 20px;
+  }
+
+  .hero-title {
+    font-size: 2em;
+  }
+
+  .hero-subtitle {
+    font-size: 1em;
+  }
+
+  .featured-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .categories-quick {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .app-rank {
+    min-width: 30px;
+    font-size: 1.2em;
+  }
+
+  .app-icon-small {
+    font-size: 40px;
+    width: 48px;
+    height: 48px;
+  }
+}
+
