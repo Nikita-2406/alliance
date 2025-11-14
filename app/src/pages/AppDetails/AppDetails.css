@@ -29,7 +29,7 @@
 
 .app-hero-content {
   padding: 30px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.08) 0%, rgba(227, 242, 253, 0.5) 100%);
 }
 
 .back-btn {
@@ -134,13 +134,13 @@
   font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 24px rgba(0, 122, 255, 0.4);
+  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.4);
 }
 
 .download-main-btn:hover {
-  background: #0064D2;
+  background: var(--color-primary-dark);
   transform: translateY(-4px);
-  box-shadow: 0 12px 32px rgba(0, 122, 255, 0.5);
+  box-shadow: 0 12px 32px rgba(33, 150, 243, 0.5);
 }
 
 /* Screenshots */
