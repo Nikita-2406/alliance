@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException, Depends, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import create_engine, Column, Integer, String, Float, Text, Date, ForeignKey
+from sqlalchemy import create_engine, Column, Integer, String, Float, Text, Date, ForeignKey, text
 from sqlalchemy.orm import sessionmaker, Session, relationship, declarative_base
 from sqlalchemy.exc import SQLAlchemyError
 from pydantic import BaseModel, ConfigDict
@@ -15,17 +15,79 @@ from contextlib import asynccontextmanager
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# Получаем абсолютные пути
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+SCREENSHOTS_DIR = os.path.join(BASE_DIR, "static", "screenshots")
+ICONS_DIR = os.path.join(BASE_DIR, "static", "icons")
+
 # Создаем папки если их нет
-os.makedirs("static/screenshots", exist_ok=True)
-os.makedirs("static/icons", exist_ok=True)
+os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
+os.makedirs(ICONS_DIR, exist_ok=True)
+
+
+def create_test_files():
+    """Только проверяет существование файлов, НЕ создает ничего"""
+
+    # Проверяем иконки (только логируем)
+    icon_files = ["sber.png", "tinkoff.png", "clash_royale.png", "gosuslugi.png", "yandex_go.png", "calculator.png"]
+    existing_icons = []
+
+    for filename in icon_files:
+        file_path = os.path.join(ICONS_DIR, filename)
+        if os.path.exists(file_path):
+            existing_icons.append(filename)
+
+    if existing_icons:
+        logger.info(f"🎯 Found {len(existing_icons)} icon files: {existing_icons}")
+    else:
+        logger.warning("⚠️ No icon files found (recommended to add real icons)")
+
+    # Проверяем скриншоты (только логируем)
+    if os.path.exists(SCREENSHOTS_DIR):
+        files = os.listdir(SCREENSHOTS_DIR)
+        jpg_files = [f for f in files if f.endswith('.jpg')]
+        logger.info(f"📸 Found {len(jpg_files)} screenshot files in directory")
+
+        # Проверяем нужные файлы
+        required_files = [
+            "sber_1.jpg", "sber_2.jpg", "sber_3.jpg",
+            "tinkoff_1.jpg", "tinkoff_2.jpg", "tinkoff_3.jpg",
+            "clash_1.jpg", "clash_2.jpg", "clash_3.jpg",
+            "gosuslugi_1.jpg", "gosuslugi_2.jpg", "gosuslugi_3.jpg",
+            "yandex_go_1.jpg", "yandex_go_2.jpg", "yandex_go_3.jpg",
+            "calculator_1.jpg", "calculator_2.jpg", "calculator_3.jpg"
+        ]
+
+        existing_files = [f for f in required_files if f in files]
+        missing_files = [f for f in required_files if f not in files]
+
+        if existing_files:
+            logger.info(f"✅ Found {len(existing_files)} required screenshot files")
+        if missing_files:
+            logger.warning(f"⚠️ Missing {len(missing_files)} files: {missing_files}")
+
+    logger.info("✅ File check completed")
+
+
+create_test_files()
+
+# Логируем пути
+logger.info(f"📁 BASE_DIR: {BASE_DIR}")
+logger.info(f"📁 SCREENSHOTS_DIR: {SCREENSHOTS_DIR}")
+logger.info(f"📁 SCREENSHOTS_DIR exists: {os.path.exists(SCREENSHOTS_DIR)}")
+
+if os.path.exists(SCREENSHOTS_DIR):
+    files = os.listdir(SCREENSHOTS_DIR)
+    logger.info(f"📸 Found {len(files)} files in screenshots directory")
 
 # MySQL connection string
-DATABASE_URL = "mysql+mysqlconnector://root:SQLpassforCon5@127.0.0.1:3306/rustore"
+DATABASE_URL = "mysql+mysqlconnector://root:SQLpassforCon5@127.0.0.1:3306/rustore2"
 
 # Создание движка и сессии
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
 
 # Модели базы данных
 class AppDB(Base):
@@ -46,6 +108,7 @@ class AppDB(Base):
 
     screenshots = relationship("ScreenshotDB", back_populates="app", cascade="all, delete-orphan")
 
+
 class ScreenshotDB(Base):
     __tablename__ = "screenshots"
 
@@ -55,6 +118,7 @@ class ScreenshotDB(Base):
 
     app = relationship("AppDB", back_populates="screenshots")
 
+
 # Pydantic модели
 class Screenshot(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -62,6 +126,7 @@ class Screenshot(BaseModel):
     id: int
     image_url: str
     app_id: int
+
 
 class App(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -80,14 +145,23 @@ class App(BaseModel):
     last_update: Optional[date] = None
     screenshots: List[str] = []
 
+
 # Создание таблиц
 def create_tables():
     try:
         Base.metadata.create_all(bind=engine)
         logger.info("✅ Database tables created")
+
+        # Проверяем создание таблиц (исправленный синтаксис)
+        with engine.connect() as conn:
+            result = conn.execute(text("SHOW TABLES"))
+            tables = [row[0] for row in result]
+            logger.info(f"📊 Database tables: {tables}")
+
     except Exception as e:
         logger.error(f"❌ Table creation failed: {e}")
         raise
+
 
 # Зависимость для получения сессии БД
 def get_db():
@@ -96,6 +170,7 @@ def get_db():
         yield db
     finally:
         db.close()
+
 
 # Функции для работы с БД
 def seed_data(db: Session):
@@ -196,8 +271,13 @@ def seed_data(db: Session):
             db.flush()  # Получаем ID без коммита
 
             # Добавляем скриншоты
-            screenshots = ["/screenshots/screenshot1.jpg", "/screenshots/screenshot2.jpg",
-                           "/screenshots/screenshot3.jpg"]
+            app_name_lower = app_data["name"].lower().replace(" ", "_").replace("+", "plus").replace("-", "_")
+            screenshots = [
+                f"/screenshots/{app_name_lower}_1.jpg",
+                f"/screenshots/{app_name_lower}_2.jpg",
+                f"/screenshots/{app_name_lower}_3.jpg"
+            ]
+
             for screenshot_url in screenshots:
                 db_screenshot = ScreenshotDB(image_url=screenshot_url, app_id=db_app.id)
                 db.add(db_screenshot)
@@ -205,44 +285,13 @@ def seed_data(db: Session):
         db.commit()
         logger.info("✅ Sample data inserted")
 
-        # Исправляем пути скриншотов
-        fix_screenshot_paths(db)
-
     except Exception as e:
         db.rollback()
         logger.error(f"❌ Data seeding failed: {e}")
         raise
 
-def fix_screenshot_paths(db: Session):
-    """Исправление путей скриншотов для уникальности"""
-    try:
-        # Удаляем все текущие скриншоты
-        db.query(ScreenshotDB).delete()
 
-        # Уникальные пути для каждого приложения
-        screenshot_paths = {
-            1: ["/screenshots/sber_1.jpg", "/screenshots/sber_2.jpg", "/screenshots/sber_3.jpg"],
-            2: ["/screenshots/tinkoff_1.jpg", "/screenshots/tinkoff_2.jpg", "/screenshots/tinkoff_3.jpg"],
-            3: ["/screenshots/clash_1.jpg", "/screenshots/clash_2.jpg", "/screenshots/clash_3.jpg"],
-            4: ["/screenshots/gosuslugi_1.jpg", "/screenshots/gosuslugi_2.jpg", "/screenshots/gosuslugi_3.jpg"],
-            5: ["/screenshots/yandex_go_1.jpg", "/screenshots/yandex_go_2.jpg", "/screenshots/yandex_go_3.jpg"],
-            6: ["/screenshots/calculator_1.jpg", "/screenshots/calculator_2.jpg", "/screenshots/calculator_3.jpg"],
-        }
-
-        for app_id, paths in screenshot_paths.items():
-            for path in paths:
-                db_screenshot = ScreenshotDB(image_url=path, app_id=app_id)
-                db.add(db_screenshot)
-
-        db.commit()
-        logger.info("✅ Screenshot paths fixed in database")
-
-    except Exception as e:
-        db.rollback()
-        logger.error(f"❌ Screenshot paths fix failed: {e}")
-        raise
-
-# Lifespan manager вместо on_event
+# Lifespan manager
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup
@@ -261,7 +310,21 @@ async def lifespan(app: FastAPI):
         logger.info("   GET /api/search?q=банк - search apps")
         logger.info("   GET /api/featured - featured apps")
         logger.info("   GET /health - health check")
+        logger.info("   GET /debug/files - debug static files")
         logger.info("🌐 React frontend can connect from: http://localhost:3000")
+
+        # Информация о статических файлах
+        logger.info("📁 Static files info:")
+        logger.info(f"   Screenshots: http://localhost:8000/screenshots/")
+        logger.info(f"   Icons: http://localhost:8000/icons/")
+
+        if os.path.exists(SCREENSHOTS_DIR):
+            files = os.listdir(SCREENSHOTS_DIR)
+            logger.info(f"   Found {len(files)} screenshot files")
+
+        if os.path.exists(ICONS_DIR):
+            files = os.listdir(ICONS_DIR)
+            logger.info(f"   Found {len(files)} icon files")
 
     except Exception as e:
         logger.error(f"❌ Startup failed: {e}")
@@ -269,8 +332,9 @@ async def lifespan(app: FastAPI):
 
     yield  # Здесь приложение работает
 
-    # Shutdown (если нужно)
+    # Shutdown
     logger.info("🛑 Server shutting down...")
+
 
 # Инициализация приложения с lifespan
 app = FastAPI(
@@ -282,26 +346,64 @@ app = FastAPI(
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=[
+        "http://localhost:3000",    # дефолт реакт
+        "http://localhost:5273",    #никита реакт
+        "http://127.0.0.1:3000",
+        "http://127.0.0.1:5273",
+        "http://localhost:*",       # Любой порт localhost
+        "http://127.0.0.1:*"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-# Статические файлы (только если папки существуют)
-if os.path.exists("static/screenshots"):
-    app.mount("/screenshots", StaticFiles(directory="static/screenshots"), name="screenshots")
-if os.path.exists("static/icons"):
-    app.mount("/icons", StaticFiles(directory="static/icons"), name="icons")
+# Статические файлы с абсолютными путями
+app.mount("/screenshots", StaticFiles(directory=SCREENSHOTS_DIR), name="screenshots")
+app.mount("/icons", StaticFiles(directory=ICONS_DIR), name="icons")
+
+logger.info("✅ Static files mounted successfully")
+
 
 # API endpoints
 @app.get("/")
 async def root():
     return {"message": "Добро пожаловать в Rustore API", "status": "ok"}
 
+
 @app.get("/health")
 async def health_check():
     return {"status": "ok", "service": "appstore-api"}
+
+
+@app.get("/debug/files")
+async def debug_files():
+    """Диагностика статических файлов"""
+    screenshots_files = []
+    icons_files = []
+
+    if os.path.exists(SCREENSHOTS_DIR):
+        screenshots_files = os.listdir(SCREENSHOTS_DIR)
+
+    if os.path.exists(ICONS_DIR):
+        icons_files = os.listdir(ICONS_DIR)
+
+    return {
+        "base_dir": BASE_DIR,
+        "screenshots_dir": SCREENSHOTS_DIR,
+        "screenshots_exists": os.path.exists(SCREENSHOTS_DIR),
+        "screenshots_files": screenshots_files,
+        "icons_dir": ICONS_DIR,
+        "icons_exists": os.path.exists(ICONS_DIR),
+        "icons_files": icons_files,
+        "test_urls": {
+            "sber_screenshot": "http://localhost:8000/screenshots/sber_1.jpg",
+            "tinkoff_screenshot": "http://localhost:8000/screenshots/tinkoff_1.jpg",
+            "sber_icon": "http://localhost:8000/icons/sber.png"
+        }
+    }
+
 
 @app.get("/api/apps", response_model=List[App])
 async def get_apps(
@@ -341,6 +443,7 @@ async def get_apps(
         logger.error(f"Error getting apps: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+
 @app.get("/api/apps/{app_id}", response_model=App)
 async def get_app_by_id(app_id: int, db: Session = Depends(get_db)):
     """Получить приложение по ID"""
@@ -373,6 +476,7 @@ async def get_app_by_id(app_id: int, db: Session = Depends(get_db)):
         logger.error(f"Error getting app by ID: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+
 @app.get("/api/categories")
 async def get_categories(db: Session = Depends(get_db)):
     """Получить список всех категорий"""
@@ -383,6 +487,7 @@ async def get_categories(db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(f"Error getting categories: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
+
 
 @app.get("/api/search", response_model=List[App])
 async def search_apps(
@@ -425,6 +530,7 @@ async def search_apps(
         logger.error(f"Error searching apps: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+
 @app.get("/api/featured", response_model=List[App])
 async def get_featured_apps(db: Session = Depends(get_db)):
     """Получить избранные приложения (с наивысшим рейтингом)"""
@@ -456,6 +562,8 @@ async def get_featured_apps(db: Session = Depends(get_db)):
         logger.error(f"Error getting featured apps: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
+
 if __name__ == "__main__":
     import uvicorn
+
     uvicorn.run(app, host="0.0.0.0", port=8000)
