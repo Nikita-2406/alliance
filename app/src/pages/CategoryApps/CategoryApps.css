@@ -127,7 +127,8 @@
 
 .app-card {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   gap: 20px;
   padding: 24px;
   cursor: pointer;
@@ -151,6 +152,7 @@
   border-radius: 20px;
   flex-shrink: 0;
   transition: all 0.3s ease;
+  margin-top: 4px;
 }
 
 .app-card:hover .app-card-icon {
@@ -161,6 +163,11 @@
 .app-card-info {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  gap: 8px;
 }
 
 .app-card-name {
@@ -185,6 +192,8 @@
 
 .app-card-stats {
   display: flex;
+  align-items: center;
+  justify-content: flex-start;
   gap: 16px;
   font-size: 0.9em;
   font-weight: 600;
@@ -221,8 +230,9 @@
               inset 0 1px 0 rgba(255, 255, 255, 0.5);
   position: relative;
   overflow: hidden;
-  flex-shrink: 0;
   white-space: nowrap;
+  width: fit-content;
+  margin-top: 4px;
 }
 
 .app-card-download .btn-bg-fill {
