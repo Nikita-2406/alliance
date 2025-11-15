@@ -1,9 +1,10 @@
 .app-header {
-  position: sticky;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  background: rgba(240, 247, 252, 0.7);
+  width: 100%;
+  background: rgba(240, 247, 252, 0.8);
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
   border-bottom: 1px solid rgba(33, 150, 243, 0.12);
