@@ -4,10 +4,10 @@ services:
     ports:
       - "5000:5000"
     environment:
-      - MYSQL_HOST=db
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=password
-      - MYSQL_DB=reviews_db
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=reviews_db
     depends_on:
       - db
     volumes:
@@ -17,17 +17,17 @@ services:
       - app-network
 
   db:
-    image: mysql:8.0
+    image: postgres:13
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: reviews_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: reviews_db
     ports:
-      - "3307:3306"  # Используем порт 3307 вместо 3306
+      - "5433:5432"  # Изменено с 5432 на 5433
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
       - ./database.sql:/docker-entrypoint-initdb.d/database.sql
     restart: unless-stopped
-    command: --default-authentication-plugin=mysql_native_password
     networks:
       - app-network
 
@@ -36,4 +36,4 @@ networks:
     driver: bridge
 
 volumes:
-  mysql_data:
+  postgres_data:
