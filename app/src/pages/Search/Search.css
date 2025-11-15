@@ -198,20 +198,23 @@
 /* Apps Grid */
 .apps-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .app-card {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 16px;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  padding: 18px;
   background: rgba(255, 255, 255, 0.65) !important;
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(33, 150, 243, 0.15);
-  border-radius: 20px;
+  border-radius: 18px;
   box-shadow: 0 4px 16px rgba(33, 150, 243, 0.1),
               inset 0 1px 0 rgba(255, 255, 255, 0.8);
   transition: all 0.3s ease;
@@ -219,29 +222,28 @@
   text-decoration: none;
   color: inherit;
   box-sizing: border-box;
-  align-items: stretch;
 }
 
 .app-card-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  width: 100%;
-  flex-shrink: 0;
+  gap: 14px;
+  flex: 1;
+  min-width: 0;
 }
 
 .app-card:hover {
-  transform: translateY(-4px);
-  background: rgba(255, 255, 255, 0.8) !important;
-  box-shadow: 0 12px 32px rgba(33, 150, 243, 0.18),
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.75) !important;
+  box-shadow: 0 8px 20px rgba(33, 150, 243, 0.15),
               inset 0 1px 0 rgba(255, 255, 255, 0.9);
   border-color: rgba(33, 150, 243, 0.25);
 }
 
 .app-card-icon {
-  font-size: 56px;
-  width: 64px;
-  height: 64px;
+  font-size: 60px;
+  width: 68px;
+  height: 68px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -259,12 +261,12 @@
   flex-direction: column;
   align-items: flex-start;
   text-align: left;
-  gap: 4px;
+  gap: 5px;
   min-width: 0;
 }
 
 .app-card-name {
-  font-size: 1.1em;
+  font-size: 1.15em;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
@@ -280,6 +282,7 @@
   color: var(--text-secondary);
   font-weight: 600;
   margin: 0;
+  opacity: 0.85;
 }
 
 .app-card-stats {
@@ -289,7 +292,7 @@
   font-size: 0.9em;
   color: var(--text-secondary);
   font-weight: 600;
-  margin-top: 4px;
+  margin-top: 2px;
 }
 
 .app-card-rating {
@@ -300,11 +303,13 @@
 }
 
 .app-card-download {
-  width: 100% !important;
-  min-width: 100%;
-  max-width: 100%;
-  display: block;
-  padding: 12px 24px;
+  width: auto;
+  min-width: 110px;
+  max-width: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
   margin: 0;
   background: rgba(33, 150, 243, 0.15);
   backdrop-filter: blur(20px) saturate(180%);
@@ -313,7 +318,7 @@
   border-radius: 12px;
   color: var(--color-primary);
   font-weight: 700;
-  font-size: 1em;
+  font-size: 0.95em;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -323,7 +328,8 @@
   overflow: hidden;
   box-sizing: border-box;
   flex-shrink: 0;
-  align-self: stretch;
+  white-space: nowrap;
+  line-height: 1.2;
 }
 
 .app-card-download .btn-bg-fill {
@@ -456,50 +462,48 @@
   }
 
   .apps-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
+    grid-template-columns: 1fr;
+    gap: 14px;
   }
 
   .app-card {
-    padding: 12px;
-    gap: 10px;
+    padding: 14px;
+    gap: 12px;
   }
 
   .app-card-header {
-    gap: 10px;
+    gap: 12px;
   }
 
   .app-card-icon {
-    font-size: 44px;
-    width: 52px;
-    height: 52px;
+    font-size: 50px;
+    width: 58px;
+    height: 58px;
     border-radius: 14px;
   }
 
   .app-card-content {
-    flex: 1;
-    min-width: 0;
-    gap: 3px;
+    gap: 4px;
   }
 
   .app-card-name {
-    font-size: 0.95em;
-    line-height: 1.2;
+    font-size: 1em;
+    font-weight: 700;
   }
 
   .app-card-category {
-    font-size: 0.75em;
+    font-size: 0.85em;
   }
 
   .app-card-stats {
-    font-size: 0.75em;
-    gap: 8px;
-    margin-top: 2px;
+    font-size: 0.85em;
+    gap: 10px;
   }
 
   .app-card-download {
-    padding: 10px 16px;
-    font-size: 0.9em;
+    padding: 8px 14px;
+    font-size: 0.85em;
+    min-width: 90px;
   }
 
   .no-results {
@@ -520,41 +524,42 @@
 
   .apps-grid {
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 12px;
   }
 
   .app-card {
-    padding: 10px;
-    gap: 8px;
+    padding: 12px;
+    gap: 10px;
   }
 
   .app-card-header {
-    gap: 8px;
+    gap: 10px;
   }
 
   .app-card-icon {
-    font-size: 38px;
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
+    font-size: 46px;
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
   }
 
   .app-card-name {
-    font-size: 0.85em;
+    font-size: 0.95em;
+    font-weight: 700;
   }
 
   .app-card-category {
-    font-size: 0.7em;
+    font-size: 0.8em;
   }
 
   .app-card-stats {
-    font-size: 0.7em;
-    margin-top: 2px;
+    font-size: 0.8em;
   }
 
   .app-card-download {
-    padding: 8px 12px;
-    font-size: 0.85em;
+    padding: 7px 12px;
+    font-size: 0.8em;
     border-radius: 10px;
+    min-width: 80px;
   }
 }
