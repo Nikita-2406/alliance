@@ -3,11 +3,29 @@ import { Link } from 'react-router-dom';
 import { getCategories, getAllApps } from '../../services/api';
 import './Categories.css';
 
+// SVG иконка звезды
+const StarIcon = ({ filled = true, className = "" }) => (
+  <svg 
+    className={`star-icon ${className}`}
+    width="16" 
+    height="16" 
+    viewBox="0 0 24 24" 
+    fill={filled ? "currentColor" : "none"}
+    stroke="currentColor"
+    strokeWidth="2"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+  </svg>
+);
+
 const Categories = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [categories, setCategories] = useState([]);
   const [allApps, setAllApps] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [downloadingApps, setDownloadingApps] = useState({});
+  const [completedApps, setCompletedApps] = useState({});
 
   useEffect(() => {
     const loadData = async () => {
@@ -38,6 +56,20 @@ const Categories = () => {
 
     loadData();
   }, []);
+
+  const handleDownload = (e, appId) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (downloadingApps[appId] || completedApps[appId]) return;
+    
+    setDownloadingApps(prev => ({ ...prev, [appId]: true }));
+    
+    setTimeout(() => {
+      setDownloadingApps(prev => ({ ...prev, [appId]: false }));
+      setCompletedApps(prev => ({ ...prev, [appId]: true }));
+    }, 2000);
+  };
 
   if (loading) {
     return (
@@ -97,11 +129,20 @@ const Categories = () => {
                       <div className="category-app-info">
                         <h4>{app.name}</h4>
                         <div className="category-app-meta">
-                          <span>⭐ {app.rating}</span>
+                          <span><StarIcon /> {app.rating}</span>
                           <span>📥 {app.downloads}</span>
                         </div>
                       </div>
-                      <button className="mini-download-btn">Скачать</button>
+                      <button 
+                        className={`mini-download-btn ${downloadingApps[app.id] ? 'downloading' : ''} ${completedApps[app.id] ? 'complete' : ''}`}
+                        onClick={(e) => handleDownload(e, app.id)}
+                        disabled={downloadingApps[app.id] || completedApps[app.id]}
+                      >
+                        <span className="btn-bg-fill"></span>
+                        <span className="btn-text">
+                          {completedApps[app.id] ? 'Готово' : 'Скачать'}
+                        </span>
+                      </button>
                     </Link>
                   ))}
                   <Link to="/search" className="view-all-btn glass-card">

@@ -98,6 +98,44 @@
   margin-bottom: 12px;
 }
 
+.stat-icon .star-icon {
+  width: 32px;
+  height: 32px;
+}
+
+/* SVG иконки звёзд */
+.star-icon {
+  display: inline-block;
+  vertical-align: middle;
+  color: #FFA726;
+  width: 16px;
+  height: 16px;
+}
+
+.star-icon[fill="none"] {
+  color: rgba(255, 167, 38, 0.3);
+}
+
+.stars-display {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.stars-display .star-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.tab-btn .star-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.favorite-rating .star-icon {
+  width: 16px;
+  height: 16px;
+}
+
 .stat-value {
   font-size: 2em;
   font-weight: 700;
@@ -231,21 +269,66 @@
 
 .action-btn {
   padding: 10px 20px;
-  background: var(--primary-color);
-  border: none;
+  background: rgba(33, 150, 243, 0.15);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(33, 150, 243, 0.25);
   border-radius: 20px;
-  color: white;
+  color: var(--color-primary);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   white-space: nowrap;
   font-size: 0.9em;
-  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15);
+  position: relative;
+  overflow: hidden;
 }
 
-.action-btn:hover {
-  background: var(--color-primary-dark);
+.action-btn .btn-bg-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0, 230, 118, 0.35) 0%, rgba(0, 200, 83, 0.25) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+}
+
+.action-btn .btn-text {
+  position: relative;
+  z-index: 1;
+  transition: opacity 0.3s ease;
+}
+
+.action-btn.downloading .btn-bg-fill {
+  width: 100%;
+}
+
+.action-btn.complete {
+  background: rgba(0, 230, 118, 0.25);
+  border-color: rgba(0, 230, 118, 0.4);
+  color: #ffffff;
+  cursor: default;
+}
+
+.action-btn.complete .btn-bg-fill {
+  width: 100%;
+  background: linear-gradient(90deg, rgba(0, 230, 118, 0.35) 0%, rgba(0, 200, 83, 0.25) 100%);
+}
+
+.action-btn:hover:not(.downloading):not(.complete) {
+  background: rgba(33, 150, 243, 0.25);
   transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(33, 150, 243, 0.2);
+  border-color: rgba(33, 150, 243, 0.35);
+}
+
+.action-btn:disabled {
+  cursor: not-allowed;
 }
 
 /* Reviews List */

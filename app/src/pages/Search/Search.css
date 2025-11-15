@@ -298,14 +298,55 @@
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15),
               inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  position: relative;
+  overflow: hidden;
 }
 
-.app-card-download:hover {
+.app-card-download .btn-bg-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0, 230, 118, 0.35) 0%, rgba(0, 200, 83, 0.25) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+}
+
+.app-card-download .btn-text {
+  position: relative;
+  z-index: 1;
+  transition: opacity 0.3s ease;
+}
+
+.app-card-download.downloading .btn-bg-fill {
+  width: 100%;
+}
+
+.app-card-download.complete {
+  background: rgba(0, 230, 118, 0.25);
+  border-color: rgba(0, 230, 118, 0.4);
+  color: #ffffff;
+  cursor: default;
+}
+
+.app-card-download.complete .btn-bg-fill {
+  width: 100%;
+  background: linear-gradient(90deg, rgba(0, 230, 118, 0.35) 0%, rgba(0, 200, 83, 0.25) 100%);
+}
+
+.app-card-download:hover:not(.downloading):not(.complete) {
   background: rgba(33, 150, 243, 0.25);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(33, 150, 243, 0.2),
               inset 0 1px 0 rgba(255, 255, 255, 0.6);
   border-color: rgba(33, 150, 243, 0.35);
+}
+
+.app-card-download:disabled {
+  cursor: not-allowed;
 }
 
 /* No Results */

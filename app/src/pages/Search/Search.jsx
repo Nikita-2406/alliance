@@ -9,6 +9,8 @@ const Search = () => {
   const [allApps, setAllApps] = useState([]);
   const [filteredApps, setFilteredApps] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [downloadingApps, setDownloadingApps] = useState({});
+  const [completedApps, setCompletedApps] = useState({});
 
   const filters = [
     { id: 'all', label: 'Все' },
@@ -17,10 +19,18 @@ const Search = () => {
     { id: 'top', label: 'Топ' },
   ];
 
-  const handleDownload = (e, appName) => {
+  const handleDownload = (e, appId, appName) => {
     e.preventDefault();
     e.stopPropagation();
-    alert(`Начинается загрузка ${appName}...`);
+    
+    if (downloadingApps[appId] || completedApps[appId]) return;
+    
+    setDownloadingApps(prev => ({ ...prev, [appId]: true }));
+    
+    setTimeout(() => {
+      setDownloadingApps(prev => ({ ...prev, [appId]: false }));
+      setCompletedApps(prev => ({ ...prev, [appId]: true }));
+    }, 2000);
   };
 
   useEffect(() => {
@@ -128,10 +138,14 @@ const Search = () => {
                     </div>
                   </div>
                   <button 
-                    className="app-card-download" 
-                    onClick={(e) => handleDownload(e, app.name)}
+                    className={`app-card-download ${downloadingApps[app.id] ? 'downloading' : ''} ${completedApps[app.id] ? 'complete' : ''}`}
+                    onClick={(e) => handleDownload(e, app.id, app.name)}
+                    disabled={downloadingApps[app.id] || completedApps[app.id]}
                   >
-                    Установить
+                    <span className="btn-bg-fill"></span>
+                    <span className="btn-text">
+                      {completedApps[app.id] ? 'Готово' : 'Установить'}
+                    </span>
                   </button>
                 </Link>
               ))}

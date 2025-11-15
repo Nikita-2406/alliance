@@ -3,6 +3,22 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { getAppById, getReviewsForApp } from '../../services/api';
 import './AppDetails.css';
 
+// SVG иконка звезды
+const StarIcon = ({ filled = true, className = "" }) => (
+  <svg 
+    className={`star-icon ${className}`}
+    width="16" 
+    height="16" 
+    viewBox="0 0 24 24" 
+    fill={filled ? "currentColor" : "none"}
+    stroke="currentColor"
+    strokeWidth="2"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+  </svg>
+);
+
 const AppDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -11,6 +27,8 @@ const AppDetails = () => {
   const [userReviews, setUserReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [reviewFilter, setReviewFilter] = useState('all'); // all, 5, 4, 3, 2, 1
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadComplete, setDownloadComplete] = useState(false);
 
   useEffect(() => {
     const loadAppData = async () => {
@@ -77,7 +95,15 @@ const AppDetails = () => {
   };
 
   const handleDownload = () => {
-    alert(`Начинается скачивание ${appData.name}...`);
+    if (isDownloading || downloadComplete) return;
+    
+    setIsDownloading(true);
+    
+    // Через 2 секунды меняем статус на "готово"
+    setTimeout(() => {
+      setIsDownloading(false);
+      setDownloadComplete(true);
+    }, 2000);
   };
 
   return (
@@ -96,16 +122,22 @@ const AppDetails = () => {
                 
                 {/* Рейтинг отдельно под основным текстом */}
                 <div className="app-rating-inline">
-                  <span className="rating-stars">⭐</span>
+                  <span className="rating-stars"><StarIcon /></span>
                   <span className="rating-value">{appData.rating}</span>
-                  <span className="rating-label">({appData.reviews.toLocaleString()} отзывов)</span>
                 </div>
               </div>
             </div>
             
             {/* Кнопка скачать */}
-            <button className="download-main-btn" onClick={handleDownload}>
-              Скачать
+            <button 
+              className={`download-main-btn ${isDownloading ? 'downloading' : ''} ${downloadComplete ? 'complete' : ''}`}
+              onClick={handleDownload}
+              disabled={isDownloading || downloadComplete}
+            >
+              <span className="btn-bg-fill"></span>
+              <span className="btn-text">
+                {downloadComplete ? 'Готово' : 'Скачать'}
+              </span>
             </button>
             
             {/* Горизонтальный блок с информацией */}
@@ -161,7 +193,7 @@ const AppDetails = () => {
             className={`details-tab ${selectedTab === 'reviews' ? 'active' : ''}`}
             onClick={() => setSelectedTab('reviews')}
           >
-            <span className="stars-display">★</span> Отзывы ({appData.reviews.toLocaleString()})
+            <StarIcon /> Отзывы ({appData.reviews.toLocaleString()})
           </button>
         </div>
 
@@ -218,7 +250,7 @@ const AppDetails = () => {
                       const percentage = userReviews.length > 0 ? (count / userReviews.length) * 100 : 0;
                       return (
                         <div key={stars} className="rating-bar-row">
-                          <span className="rating-bar-label">{stars} <span className="stars-display">★</span></span>
+                          <span className="rating-bar-label">{stars} <StarIcon /></span>
                           <div className="rating-bar-container">
                             <div 
                               className="rating-bar-fill" 
@@ -250,7 +282,7 @@ const AppDetails = () => {
                       className={`filter-btn ${reviewFilter === stars ? 'active' : ''}`}
                       onClick={() => setReviewFilter(stars)}
                     >
-                      {stars} <span className="stars-display">★</span> ({count})
+                      {stars} <StarIcon /> ({count})
                     </button>
                   );
                 })}

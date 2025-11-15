@@ -3,6 +3,22 @@ import { Link } from 'react-router-dom';
 import { getFeaturedApps, getTopWeekApps, getCategories } from '../../services/api';
 import './Home.css';
 
+// SVG иконка звезды
+const StarIcon = ({ filled = true, className = "" }) => (
+  <svg 
+    className={`star-icon ${className}`}
+    width="16" 
+    height="16" 
+    viewBox="0 0 24 24" 
+    fill={filled ? "currentColor" : "none"}
+    stroke="currentColor"
+    strokeWidth="2"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+  </svg>
+);
+
 const Home = () => {
   const [featuredApps, setFeaturedApps] = useState([]);
   const [topWeek, setTopWeek] = useState([]);
@@ -117,7 +133,7 @@ const Home = () => {
                           <h3 className="app-name">{app.name}</h3>
                           <p className="app-category">{app.category}</p>
                           <div className="app-stats">
-                            <span className="stat">⭐ {app.rating}</span>
+                            <span className="stat"><StarIcon /> {app.rating}</span>
                             <span className="stat">📥 {app.downloads}</span>
                           </div>
                         </div>
@@ -200,7 +216,7 @@ const Home = () => {
                       <h4 className="top-app-name">{app.name}</h4>
                       <p className="top-app-category">{app.category}</p>
                       <div className="top-app-rating">
-                        <span>⭐</span>
+                        <StarIcon />
                         <span>{app.rating}</span>
                       </div>
                     </div>

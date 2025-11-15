@@ -136,13 +136,54 @@
   transition: all 0.3s ease;
   box-shadow: 0 8px 24px rgba(33, 150, 243, 0.15),
               inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  position: relative;
+  overflow: hidden;
 }
 
-.download-main-btn:hover {
+.download-main-btn .btn-bg-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0, 230, 118, 0.35) 0%, rgba(0, 200, 83, 0.25) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+}
+
+.download-main-btn .btn-text {
+  position: relative;
+  z-index: 1;
+  transition: opacity 0.3s ease;
+}
+
+.download-main-btn.downloading .btn-bg-fill {
+  width: 100%;
+}
+
+.download-main-btn.complete {
+  background: rgba(0, 230, 118, 0.25);
+  border-color: rgba(0, 230, 118, 0.4);
+  color: #ffffff;
+  cursor: default;
+}
+
+.download-main-btn.complete .btn-bg-fill {
+  width: 100%;
+  background: linear-gradient(90deg, rgba(0, 230, 118, 0.35) 0%, rgba(0, 200, 83, 0.25) 100%);
+}
+
+.download-main-btn:hover:not(.downloading):not(.complete) {
   background: rgba(33, 150, 243, 0.3);
   box-shadow: 0 8px 24px rgba(33, 150, 243, 0.25),
               inset 0 1px 0 rgba(255, 255, 255, 0.7);
   border-color: rgba(33, 150, 243, 0.4);
+}
+
+.download-main-btn:disabled {
+  cursor: not-allowed;
 }
 
 /* Рейтинг inline под текстом */
@@ -160,7 +201,7 @@
 .rating-value {
   font-size: 1em;
   font-weight: 600;
-  color: var(--text-primary);
+  color: var(--text-secondary);
 }
 
 .rating-label {
@@ -472,6 +513,46 @@
   color: #FFA726;
   font-size: 1.15em;
   letter-spacing: 2px;
+}
+
+/* SVG иконки звёзд */
+.star-icon {
+  display: inline-block;
+  vertical-align: middle;
+  color: #FFA726;
+  width: 16px;
+  height: 16px;
+}
+
+.rating-stars .star-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.stars-large .star-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.rating-bar-label .star-icon {
+  width: 14px;
+  height: 14px;
+  margin-left: 4px;
+}
+
+.filter-btn .star-icon {
+  width: 14px;
+  height: 14px;
+}
+
+.details-tab .star-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.review-rating-small .star-icon {
+  width: 14px;
+  height: 14px;
 }
 
 .reviews-count {

@@ -499,6 +499,20 @@
   margin-top: 4px;
 }
 
+/* SVG иконки звёзд */
+.star-icon {
+  display: inline-block;
+  vertical-align: middle;
+  color: #FFA726;
+  width: 16px;
+  height: 16px;
+}
+
+.top-app-rating .star-icon {
+  width: 16px;
+  height: 16px;
+}
+
 /* Screenshots Section */
 .top-app-screenshots {
   flex: 1;
