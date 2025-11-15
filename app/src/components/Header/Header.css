@@ -34,17 +34,35 @@
   gap: 8px;
   font-weight: 800;
   font-size: 1.6em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.header-logo:hover {
+  opacity: 0.8;
+  transform: translateY(-1px);
 }
 
 .logo-icon {
   width: 36px;
   height: 36px;
   object-fit: contain;
+  transition: all 0.3s ease;
+}
+
+.header-logo:hover .logo-icon {
+  transform: scale(1.05);
 }
 
 .logo-text {
   color: var(--text-primary);
   font-weight: 900;
+  transition: all 0.3s ease;
+}
+
+.header-logo:hover .logo-text {
+  color: var(--color-primary);
 }
 
 /* Навигация в header */

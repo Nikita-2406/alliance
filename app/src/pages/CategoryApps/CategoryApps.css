@@ -1,0 +1,408 @@
+.category-apps-page {
+  min-height: 100vh;
+  padding-bottom: 40px;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.category-apps-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header Section */
+.category-header-section {
+  margin-bottom: 30px;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 20px;
+}
+
+.back-button:hover {
+  transform: translateX(-4px);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.15);
+}
+
+.category-title-section {
+  padding: 40px 30px;
+  text-align: center;
+  background: linear-gradient(135deg, 
+    rgba(33, 150, 243, 0.12) 0%, 
+    rgba(100, 181, 246, 0.08) 50%,
+    rgba(227, 242, 253, 0.15) 100%
+  );
+}
+
+.category-page-title {
+  font-size: 2.5em;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.category-page-count {
+  font-size: 1.1em;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Sort Section */
+.sort-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 24px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.sort-label {
+  font-size: 1em;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.sort-buttons {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.sort-btn {
+  padding: 10px 20px;
+  background: rgba(33, 150, 243, 0.08);
+  border: 1px solid rgba(33, 150, 243, 0.15);
+  border-radius: 20px;
+  color: var(--text-secondary);
+  font-size: 0.95em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.sort-btn:hover {
+  background: rgba(33, 150, 243, 0.15);
+  border-color: rgba(33, 150, 243, 0.25);
+  transform: translateY(-2px);
+}
+
+.sort-btn.active {
+  background: rgba(33, 150, 243, 0.2);
+  border-color: rgba(33, 150, 243, 0.3);
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* Apps Grid */
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.app-card {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.app-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 30px rgba(33, 150, 243, 0.15);
+}
+
+.app-card-icon {
+  font-size: 72px;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(33, 150, 243, 0.08);
+  border-radius: 20px;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.app-card:hover .app-card-icon {
+  transform: scale(1.08);
+  background: rgba(33, 150, 243, 0.12);
+}
+
+.app-card-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.app-card-name {
+  font-size: 1.2em;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-card-developer {
+  font-size: 0.95em;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-card-stats {
+  display: flex;
+  gap: 16px;
+  font-size: 0.9em;
+  font-weight: 600;
+}
+
+.app-card-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-secondary);
+}
+
+.app-card-downloads {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-secondary);
+}
+
+/* Кнопка скачивания */
+.app-card-download {
+  padding: 10px 20px;
+  background: rgba(33, 150, 243, 0.15);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(33, 150, 243, 0.25);
+  border-radius: 14px;
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 0.95em;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.app-card-download .btn-bg-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0, 230, 118, 0.35) 0%, rgba(0, 200, 83, 0.25) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+}
+
+.app-card-download .btn-text {
+  position: relative;
+  z-index: 1;
+  transition: opacity 0.3s ease;
+}
+
+.app-card-download.downloading .btn-bg-fill {
+  width: 100%;
+}
+
+.app-card-download.complete {
+  background: rgba(0, 230, 118, 0.25);
+  border-color: rgba(0, 230, 118, 0.4);
+  color: #ffffff;
+  cursor: default;
+}
+
+.app-card-download.complete .btn-bg-fill {
+  width: 100%;
+  background: linear-gradient(90deg, rgba(0, 230, 118, 0.35) 0%, rgba(0, 200, 83, 0.25) 100%);
+}
+
+.app-card-download:hover:not(.downloading):not(.complete) {
+  background: rgba(33, 150, 243, 0.25);
+  box-shadow: 0 6px 16px rgba(33, 150, 243, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  border-color: rgba(33, 150, 243, 0.35);
+  transform: translateY(-2px);
+}
+
+.app-card-download:disabled {
+  cursor: not-allowed;
+}
+
+/* SVG иконки звёзд */
+.star-icon {
+  display: inline-block;
+  vertical-align: middle;
+  color: #FFA726;
+  width: 16px;
+  height: 16px;
+}
+
+/* Loading and Empty States */
+.loading-state,
+.no-apps-message {
+  text-align: center;
+  padding: 60px 30px;
+  font-size: 1.2em;
+  color: var(--text-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .category-apps-content {
+    padding: 16px;
+  }
+
+  .category-title-section {
+    padding: 30px 20px;
+  }
+
+  .category-page-title {
+    font-size: 2em;
+  }
+
+  .category-page-count {
+    font-size: 1em;
+  }
+
+  .sort-section {
+    padding: 14px 18px;
+    gap: 12px;
+  }
+
+  .sort-label {
+    width: 100%;
+    margin-bottom: 4px;
+  }
+
+  .sort-buttons {
+    gap: 8px;
+  }
+
+  .sort-btn {
+    padding: 8px 16px;
+    font-size: 0.9em;
+  }
+
+  .apps-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .app-card {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .app-card-icon {
+    font-size: 48px;
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+  }
+
+  .app-card-name {
+    font-size: 0.95em;
+  }
+
+  .app-card-developer {
+    font-size: 0.8em;
+  }
+
+  .app-card-stats {
+    font-size: 0.8em;
+    gap: 10px;
+  }
+
+  .app-card-download {
+    padding: 6px 10px;
+    font-size: 0.75em;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .back-button {
+    padding: 10px 16px;
+    font-size: 0.95em;
+  }
+
+  .category-page-title {
+    font-size: 1.6em;
+  }
+
+  .app-card {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .app-card-icon {
+    font-size: 44px;
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+  }
+
+  .app-card-name {
+    font-size: 0.9em;
+  }
+
+  .app-card-developer {
+    font-size: 0.75em;
+  }
+
+  .app-card-stats {
+    gap: 8px;
+    font-size: 0.75em;
+  }
+
+  .app-card-download {
+    padding: 5px 8px;
+    font-size: 0.7em;
+    border-radius: 10px;
+  }
+}
+

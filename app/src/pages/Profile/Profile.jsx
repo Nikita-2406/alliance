@@ -24,7 +24,6 @@ const Profile = () => {
   const [downloadedApps, setDownloadedApps] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [favorites, setFavorites] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [downloadingApps, setDownloadingApps] = useState({});
   const [completedApps, setCompletedApps] = useState({});
 
@@ -49,8 +48,6 @@ const Profile = () => {
         if (revs.success) setReviews(revs.data);
       } catch (error) {
         console.error('Error loading data:', error);
-      } finally {
-        setLoading(false);
       }
     };
 

@@ -1,29 +1,27 @@
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import './Header.css';
 import RuStoreLogo from './RuStore_Icon.svg';
 
-const Header = ({ title, showBack = false }) => {
+const Header = ({ showBack = false }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const [activeIndex, setActiveIndex] = useState(0);
   const [blobStyle, setBlobStyle] = useState({ width: 0, left: 0 });
   const navItemsRef = useRef([]);
   const navContainerRef = useRef(null);
 
-  const navItems = [
+  const navItems = useMemo(() => [
     { path: '/', label: 'Главная' },
     { path: '/search', label: 'Поиск' },
     { path: '/categories', label: 'Категории' },
     { path: '/profile', label: 'Профиль' }
-  ];
+  ], []);
 
-  useEffect(() => {
-    const currentIndex = navItems.findIndex(item => item.path === location.pathname);
-    if (currentIndex !== -1) {
-      setActiveIndex(currentIndex);
-    }
-  }, [location.pathname]);
+  // Вычисляем активный индекс на основе текущего пути
+  const activeIndex = useMemo(() => {
+    const index = navItems.findIndex(item => item.path === location.pathname);
+    return index !== -1 ? index : 0;
+  }, [location.pathname, navItems]);
 
   useEffect(() => {
     const updateBlobPosition = () => {
@@ -70,10 +68,10 @@ const Header = ({ title, showBack = false }) => {
               ← Назад
             </button>
           ) : (
-            <div className="header-logo">
+            <Link to="/" className="header-logo">
               <img src={RuStoreLogo} alt="RuStore" className="logo-icon" />
               <span className="logo-text">RuStore</span>
-            </div>
+            </Link>
           )}
         </div>
 

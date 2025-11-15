@@ -370,6 +370,7 @@
   grid-template-columns: repeat(5, 1fr);
   gap: 16px;
   width: 100%;
+  overflow: hidden;
 }
 
 .category-quick {
@@ -383,6 +384,7 @@
   text-align: center;
   transition: all 0.3s ease;
   background: rgba(255, 255, 255, 0.7) !important;
+  min-width: 0;
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(33, 150, 243, 0.15);
@@ -410,6 +412,10 @@
   font-weight: 700;
   color: var(--text-primary);
   text-shadow: none;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Top List - Horizontal Card Style */
@@ -671,20 +677,22 @@
   }
 
   .categories-quick {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
   }
   
   .category-quick {
-    padding: 20px 12px;
+    padding: 18px 10px;
+    gap: 8px;
   }
   
   .category-icon {
-    font-size: 40px;
+    font-size: 36px;
   }
   
   .category-name {
-    font-size: 0.85em;
+    font-size: 0.8em;
+    line-height: 1.2;
   }
 
   /* Мобильная версия топ недели */
@@ -739,6 +747,32 @@
     width: 28px;
     height: 28px;
     font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-content {
+    padding: 12px;
+  }
+
+  .section {
+    margin-bottom: 24px;
+  }
+
+  .categories-quick {
+    gap: 8px;
+  }
+
+  .category-quick {
+    padding: 16px 8px;
+  }
+
+  .category-icon {
+    font-size: 32px;
+  }
+
+  .category-name {
+    font-size: 0.75em;
   }
 }
 

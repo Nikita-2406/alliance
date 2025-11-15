@@ -6,7 +6,6 @@ import './Search.css';
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [allApps, setAllApps] = useState([]);
   const [filteredApps, setFilteredApps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [downloadingApps, setDownloadingApps] = useState({});
@@ -19,7 +18,7 @@ const Search = () => {
     { id: 'top', label: 'Топ' },
   ];
 
-  const handleDownload = (e, appId, appName) => {
+  const handleDownload = (e, appId) => {
     e.preventDefault();
     e.stopPropagation();
     
@@ -37,7 +36,6 @@ const Search = () => {
     const loadApps = async () => {
       const result = await searchApps('');
       if (result.success) {
-        setAllApps(result.data);
         setFilteredApps(result.data);
       }
       setLoading(false);
@@ -139,7 +137,7 @@ const Search = () => {
                   </div>
                   <button 
                     className={`app-card-download ${downloadingApps[app.id] ? 'downloading' : ''} ${completedApps[app.id] ? 'complete' : ''}`}
-                    onClick={(e) => handleDownload(e, app.id, app.name)}
+                    onClick={(e) => handleDownload(e, app.id)}
                     disabled={downloadingApps[app.id] || completedApps[app.id]}
                   >
                     <span className="btn-bg-fill"></span>
