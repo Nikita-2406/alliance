@@ -9,6 +9,7 @@ from typing import List, Optional
 from datetime import date
 import logging
 import os
+from contextlib import asynccontextmanager
 
 # Настройка логирования
 logging.basicConfig(level=logging.INFO)
@@ -25,7 +26,6 @@ DATABASE_URL = "mysql+mysqlconnector://root:SQLpassforCon5@127.0.0.1:3306/rustor
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
-
 
 # Модели базы данных
 class AppDB(Base):
@@ -46,7 +46,6 @@ class AppDB(Base):
 
     screenshots = relationship("ScreenshotDB", back_populates="app", cascade="all, delete-orphan")
 
-
 class ScreenshotDB(Base):
     __tablename__ = "screenshots"
 
@@ -56,7 +55,6 @@ class ScreenshotDB(Base):
 
     app = relationship("AppDB", back_populates="screenshots")
 
-
 # Pydantic модели
 class Screenshot(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -64,7 +62,6 @@ class Screenshot(BaseModel):
     id: int
     image_url: str
     app_id: int
-
 
 class App(BaseModel):
     model_config = ConfigDict(from_attributes=True)
@@ -83,7 +80,6 @@ class App(BaseModel):
     last_update: Optional[date] = None
     screenshots: List[str] = []
 
-
 # Создание таблиц
 def create_tables():
     try:
@@ -93,7 +89,6 @@ def create_tables():
         logger.error(f"❌ Table creation failed: {e}")
         raise
 
-
 # Зависимость для получения сессии БД
 def get_db():
     db = SessionLocal()
@@ -101,26 +96,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
-
-# Инициализация приложения
-app = FastAPI(title="Rustore API", version="1.0.0")
-
-# CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-# Статические файлы (только если папки существуют)
-if os.path.exists("static/screenshots"):
-    app.mount("/screenshots", StaticFiles(directory="static/screenshots"), name="screenshots")
-if os.path.exists("static/icons"):
-    app.mount("/icons", StaticFiles(directory="static/icons"), name="icons")
-
 
 # Функции для работы с БД
 def seed_data(db: Session):
@@ -238,7 +213,6 @@ def seed_data(db: Session):
         logger.error(f"❌ Data seeding failed: {e}")
         raise
 
-
 def fix_screenshot_paths(db: Session):
     """Исправление путей скриншотов для уникальности"""
     try:
@@ -268,17 +242,66 @@ def fix_screenshot_paths(db: Session):
         logger.error(f"❌ Screenshot paths fix failed: {e}")
         raise
 
+# Lifespan manager вместо on_event
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    try:
+        create_tables()
+        db = SessionLocal()
+        seed_data(db)
+        db.close()
+
+        logger.info("🚀 Server started on http://localhost:8000")
+        logger.info("📱 API available:")
+        logger.info("   GET /api/apps - list all apps")
+        logger.info("   GET /api/apps/{id} - get app details")
+        logger.info("   GET /api/categories - list categories")
+        logger.info("   GET /api/apps?category=Финансы - filter by category")
+        logger.info("   GET /api/search?q=банк - search apps")
+        logger.info("   GET /api/featured - featured apps")
+        logger.info("   GET /health - health check")
+        logger.info("🌐 React frontend can connect from: http://localhost:3000")
+
+    except Exception as e:
+        logger.error(f"❌ Startup failed: {e}")
+        raise
+
+    yield  # Здесь приложение работает
+
+    # Shutdown (если нужно)
+    logger.info("🛑 Server shutting down...")
+
+# Инициализация приложения с lifespan
+app = FastAPI(
+    title="Rustore API",
+    version="1.0.0",
+    lifespan=lifespan
+)
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Статические файлы (только если папки существуют)
+if os.path.exists("static/screenshots"):
+    app.mount("/screenshots", StaticFiles(directory="static/screenshots"), name="screenshots")
+if os.path.exists("static/icons"):
+    app.mount("/icons", StaticFiles(directory="static/icons"), name="icons")
 
 # API endpoints
 @app.get("/")
 async def root():
     return {"message": "Добро пожаловать в Rustore API", "status": "ok"}
 
-
 @app.get("/health")
 async def health_check():
     return {"status": "ok", "service": "appstore-api"}
-
 
 @app.get("/api/apps", response_model=List[App])
 async def get_apps(
@@ -318,7 +341,6 @@ async def get_apps(
         logger.error(f"Error getting apps: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-
 @app.get("/api/apps/{app_id}", response_model=App)
 async def get_app_by_id(app_id: int, db: Session = Depends(get_db)):
     """Получить приложение по ID"""
@@ -351,7 +373,6 @@ async def get_app_by_id(app_id: int, db: Session = Depends(get_db)):
         logger.error(f"Error getting app by ID: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-
 @app.get("/api/categories")
 async def get_categories(db: Session = Depends(get_db)):
     """Получить список всех категорий"""
@@ -362,7 +383,6 @@ async def get_categories(db: Session = Depends(get_db)):
     except Exception as e:
         logger.error(f"Error getting categories: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
-
 
 @app.get("/api/search", response_model=List[App])
 async def search_apps(
@@ -405,7 +425,6 @@ async def search_apps(
         logger.error(f"Error searching apps: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-
 @app.get("/api/featured", response_model=List[App])
 async def get_featured_apps(db: Session = Depends(get_db)):
     """Получить избранные приложения (с наивысшим рейтингом)"""
@@ -437,33 +456,6 @@ async def get_featured_apps(db: Session = Depends(get_db)):
         logger.error(f"Error getting featured apps: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-
-# Инициализация при запуске
-@app.on_event("startup")
-async def startup_event():
-    try:
-        create_tables()
-        db = SessionLocal()
-        seed_data(db)
-        db.close()
-
-        logger.info("🚀 Server started on http://localhost:8080")
-        logger.info("📱 API available:")
-        logger.info("   GET /api/apps - list all apps")
-        logger.info("   GET /api/apps/{id} - get app details")
-        logger.info("   GET /api/categories - list categories")
-        logger.info("   GET /api/apps?category=Финансы - filter by category")
-        logger.info("   GET /api/search?q=банк - search apps")
-        logger.info("   GET /api/featured - featured apps")
-        logger.info("   GET /health - health check")
-        logger.info("🌐 React frontend can connect from: http://localhost:3000")
-
-    except Exception as e:
-        logger.error(f"❌ Startup failed: {e}")
-        raise
-
-
 if __name__ == "__main__":
     import uvicorn
-
-    uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=True)
+    uvicorn.run(app, host="0.0.0.0", port=8000)
