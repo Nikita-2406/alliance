@@ -1,4 +1,11 @@
-Flask==2.3.3
-Flask-CORS==4.0.0
-PyMySQL==1.1.0
-requests==2.31.0
+fastapi
+uvicorn[standard]
+python-dotenv
+httpx
+PyJWT
+sqlalchemy>=1.4
+aiomysql
+alembic
+pydantic
+passlib[bcrypt]
+python-multipart

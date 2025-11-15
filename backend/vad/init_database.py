@@ -1,38 +1,61 @@
-import pymysql
-from config import Config
+# init_database.py (исправлённый)
+import os
+import mysql.connector
+from mysql.connector import Error
+from dotenv import load_dotenv
+
+load_dotenv()
+
+HOST = os.getenv("DB_HOST", "localhost")
+USER = os.getenv("DB_USER", "root")
+PASSWORD = os.getenv("DB_PASSWORD", "")
+DB_NAME = os.getenv("DB_NAME", "app_store")
 
 def init_database():
-    connection = pymysql.connect(
-        host=Config.MYSQL_HOST,
-        user=Config.MYSQL_USER,
-        password=Config.MYSQL_PASSWORD,
-        port=Config.MYSQL_PORT,
-        charset='utf8mb4',
-        cursorclass=pymysql.cursors.DictCursor
-    )
-
     try:
-        with connection.cursor() as cursor:
-            # Создаем базу данных если не существует
-            cursor.execute("CREATE DATABASE IF NOT EXISTS reviews_db")
-            cursor.execute("USE reviews_db")
-            
-            # Создаем таблицу отзывов
-            cursor.execute("""
-                CREATE TABLE IF NOT EXISTS reviews (
-                    id INT AUTO_INCREMENT PRIMARY KEY,
-                    app_id INT NOT NULL,
-                    author VARCHAR(100) NOT NULL,
-                    text TEXT NOT NULL,
-                    likes INT DEFAULT 0,
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                    INDEX app_id_index (app_id)
-                )
-            """)
-        connection.commit()
-        print("✅ База данных и таблицы успешно созданы")
-    finally:
-        connection.close()
+        conn = mysql.connector.connect(host=HOST, user=USER, password=PASSWORD)
+        cursor = conn.cursor()
+        cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{DB_NAME}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
+        cursor.execute(f"USE `{DB_NAME}`")
 
-if __name__ == '__main__':
+        create_table_query = """
+        CREATE TABLE IF NOT EXISTS reviews (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            app_id INT NOT NULL,
+            vk_id BIGINT NOT NULL,
+            nickname VARCHAR(100) NOT NULL,
+            description TEXT NOT NULL,
+            stars TINYINT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+        """
+        cursor.execute(create_table_query)
+
+        # Создаём индекс, если его ещё нет
+        cursor.execute("""
+            SELECT COUNT(1) index_exists
+            FROM information_schema.statistics
+            WHERE table_schema = %s AND table_name = 'reviews' AND index_name = 'idx_app_id'
+        """, (DB_NAME,))
+        if cursor.fetchone()[0] == 0:
+            cursor.execute("CREATE INDEX idx_app_id ON reviews(app_id)")
+
+        cursor.execute("""
+            SELECT COUNT(1) index_exists
+            FROM information_schema.statistics
+            WHERE table_schema = %s AND table_name = 'reviews' AND index_name = 'idx_vk_id'
+        """, (DB_NAME,))
+        if cursor.fetchone()[0] == 0:
+            cursor.execute("CREATE INDEX idx_vk_id ON reviews(vk_id)")
+
+        conn.commit()
+        print("Database and table created successfully!")
+    except Error as e:
+        print("Error:", e)
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+if __name__ == "__main__":
     init_database()
