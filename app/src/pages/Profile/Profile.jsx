@@ -139,7 +139,10 @@ const Profile = () => {
 
           {/* Right: Stats Cards */}
           <section className="profile-stats-section">
-            <div className="stat-card glass-card" onClick={() => setActiveTab('downloads')}>
+            <div 
+              className={`stat-card glass-card ${activeTab === 'downloads' ? 'active' : ''}`}
+              onClick={() => setActiveTab('downloads')}
+            >
               <div className="stat-icon-wrapper">
                 <span className="stat-icon"><DownloadIcon size={28} /></span>
               </div>
@@ -148,7 +151,10 @@ const Profile = () => {
                 <span className="stat-label">Скачано</span>
               </div>
             </div>
-            <div className="stat-card glass-card" onClick={() => setActiveTab('reviews')}>
+            <div 
+              className={`stat-card glass-card ${activeTab === 'reviews' ? 'active' : ''}`}
+              onClick={() => setActiveTab('reviews')}
+            >
               <div className="stat-icon-wrapper">
                 <span className="stat-icon"><StarIcon size={28} /></span>
               </div>
@@ -157,7 +163,10 @@ const Profile = () => {
                 <span className="stat-label">Отзывов</span>
               </div>
             </div>
-            <div className="stat-card glass-card" onClick={() => setActiveTab('favorites')}>
+            <div 
+              className={`stat-card glass-card ${activeTab === 'favorites' ? 'active' : ''}`}
+              onClick={() => setActiveTab('favorites')}
+            >
               <div className="stat-icon-wrapper">
                 <span className="stat-icon"><HeartIcon size={28} /></span>
               </div>
@@ -169,20 +178,8 @@ const Profile = () => {
           </section>
         </div>
 
-        {/* Mobile Dropdown & Desktop Tabs */}
+        {/* Desktop Tabs */}
         <div className="profile-tabs-section">
-          {/* Mobile: Dropdown */}
-          <select 
-            className="mobile-select glass-card"
-            value={activeTab}
-            onChange={(e) => setActiveTab(e.target.value)}
-          >
-            <option value="downloads">⬇ Скачанные</option>
-            <option value="reviews">⭐ Отзывы</option>
-            <option value="favorites">♥ Избранное</option>
-          </select>
-
-          {/* Desktop: Tab Buttons */}
           <div className="desktop-tabs">
             <button
               className={`tab-btn glass-card ${activeTab === 'downloads' ? 'active' : ''}`}

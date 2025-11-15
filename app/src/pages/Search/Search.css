@@ -198,18 +198,18 @@
 /* Apps Grid */
 .apps-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
 
 .app-card {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 16px;
-  padding: 18px;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  padding: 16px;
   background: rgba(255, 255, 255, 0.65) !important;
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -227,23 +227,22 @@
 .app-card-header {
   display: flex;
   align-items: center;
-  gap: 14px;
-  flex: 1;
-  min-width: 0;
+  gap: 12px;
+  width: 100%;
 }
 
 .app-card:hover {
-  transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.75) !important;
-  box-shadow: 0 8px 20px rgba(33, 150, 243, 0.15),
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 12px 32px rgba(33, 150, 243, 0.18),
               inset 0 1px 0 rgba(255, 255, 255, 0.9);
   border-color: rgba(33, 150, 243, 0.25);
 }
 
 .app-card-icon {
-  font-size: 60px;
-  width: 68px;
-  height: 68px;
+  font-size: 56px;
+  width: 64px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -266,7 +265,7 @@
 }
 
 .app-card-name {
-  font-size: 1.15em;
+  font-size: 1.1em;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
@@ -282,7 +281,6 @@
   color: var(--text-secondary);
   font-weight: 600;
   margin: 0;
-  opacity: 0.85;
 }
 
 .app-card-stats {
@@ -292,7 +290,7 @@
   font-size: 0.9em;
   color: var(--text-secondary);
   font-weight: 600;
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .app-card-rating {
@@ -302,23 +300,21 @@
   color: var(--color-primary);
 }
 
-.app-card-download {
-  width: auto;
-  min-width: 110px;
-  max-width: none;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 20px;
-  margin: 0;
+.app-card .app-card-download {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  display: block !important;
+  padding: 12px 24px !important;
+  margin: 0 !important;
   background: rgba(33, 150, 243, 0.15);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(33, 150, 243, 0.25);
-  border-radius: 12px;
+  border-radius: 12px !important;
   color: var(--color-primary);
   font-weight: 700;
-  font-size: 0.95em;
+  font-size: 1em;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -326,13 +322,12 @@
               inset 0 1px 0 rgba(255, 255, 255, 0.5);
   position: relative;
   overflow: hidden;
-  box-sizing: border-box;
-  flex-shrink: 0;
-  white-space: nowrap;
-  line-height: 1.2;
+  box-sizing: border-box !important;
+  align-self: stretch !important;
+  flex-shrink: 0 !important;
 }
 
-.app-card-download .btn-bg-fill {
+.app-card .app-card-download .btn-bg-fill {
   position: absolute;
   top: 0;
   left: 0;
@@ -345,29 +340,29 @@
   z-index: 0;
 }
 
-.app-card-download .btn-text {
+.app-card .app-card-download .btn-text {
   position: relative;
   z-index: 1;
   transition: opacity 0.3s ease;
 }
 
-.app-card-download.downloading .btn-bg-fill {
+.app-card .app-card-download.downloading .btn-bg-fill {
   width: 100%;
 }
 
-.app-card-download.complete {
+.app-card .app-card-download.complete {
   background: rgba(0, 230, 118, 0.25);
   border-color: rgba(0, 230, 118, 0.4);
   color: #ffffff;
   cursor: default;
 }
 
-.app-card-download.complete .btn-bg-fill {
+.app-card .app-card-download.complete .btn-bg-fill {
   width: 100%;
   background: linear-gradient(90deg, rgba(0, 230, 118, 0.35) 0%, rgba(0, 200, 83, 0.25) 100%);
 }
 
-.app-card-download:hover:not(.downloading):not(.complete) {
+.app-card .app-card-download:hover:not(.downloading):not(.complete) {
   background: rgba(33, 150, 243, 0.25);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(33, 150, 243, 0.2),
@@ -375,7 +370,7 @@
   border-color: rgba(33, 150, 243, 0.35);
 }
 
-.app-card-download:disabled {
+.app-card .app-card-download:disabled {
   cursor: not-allowed;
 }
 
@@ -467,11 +462,15 @@
   }
 
   .app-card {
+    flex-direction: row;
+    align-items: flex-end;
     padding: 14px;
     gap: 12px;
   }
 
   .app-card-header {
+    flex: 1;
+    min-width: 0;
     gap: 12px;
   }
 
@@ -500,10 +499,14 @@
     gap: 10px;
   }
 
-  .app-card-download {
-    padding: 8px 14px;
-    font-size: 0.85em;
-    min-width: 90px;
+  .app-card .app-card-download {
+    width: auto !important;
+    min-width: 100px !important;
+    max-width: none !important;
+    padding: 8px 14px !important;
+    font-size: 0.85em !important;
+    flex-shrink: 0 !important;
+    align-self: flex-start !important;
   }
 
   .no-results {
@@ -528,11 +531,15 @@
   }
 
   .app-card {
+    flex-direction: row;
+    align-items: flex-end;
     padding: 12px;
     gap: 10px;
   }
 
   .app-card-header {
+    flex: 1;
+    min-width: 0;
     gap: 10px;
   }
 
@@ -556,10 +563,14 @@
     font-size: 0.8em;
   }
 
-  .app-card-download {
-    padding: 7px 12px;
-    font-size: 0.8em;
-    border-radius: 10px;
-    min-width: 80px;
+  .app-card .app-card-download {
+    width: auto !important;
+    min-width: 90px !important;
+    max-width: none !important;
+    padding: 7px 12px !important;
+    font-size: 0.8em !important;
+    border-radius: 12px !important;
+    flex-shrink: 0 !important;
+    align-self: flex-start !important;
   }
 }

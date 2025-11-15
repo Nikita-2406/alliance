@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { getFeaturedApps, getTopWeekApps, getCategories } from '../../services/api';
 import './Home.css';
@@ -26,6 +26,7 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [screenshotIndices, setScreenshotIndices] = useState({});
+  const intervalRef = useRef(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -49,24 +50,41 @@ const Home = () => {
     loadData();
   }, []);
 
-  const handlePrevSlide = () => {
-    setCurrentSlide((prev) => (prev <= 0 ? featuredApps.length - 1 : prev - 1));
-  };
-
   const handleNextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev >= featuredApps.length - 1 ? 0 : prev + 1));
   }, [featuredApps.length]);
 
+  // Функция для сброса и перезапуска таймера
+  const resetTimer = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    if (featuredApps.length > 0) {
+      intervalRef.current = setInterval(() => {
+        handleNextSlide();
+      }, 5000);
+    }
+  }, [featuredApps.length, handleNextSlide]);
+
+  const handlePrevSlide = () => {
+    setCurrentSlide((prev) => (prev <= 0 ? featuredApps.length - 1 : prev - 1));
+    resetTimer(); // Сбрасываем таймер при ручном переключении
+  };
+
+  const handleNextSlideManual = () => {
+    handleNextSlide();
+    resetTimer(); // Сбрасываем таймер при ручном переключении
+  };
+
   // Автопрокрутка каждые 5 секунд
   useEffect(() => {
-    if (featuredApps.length === 0) return;
-    
-    const interval = setInterval(() => {
-      handleNextSlide();
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [featuredApps.length, handleNextSlide]);
+    resetTimer();
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [resetTimer]);
 
   if (loading) {
     return (
@@ -114,6 +132,7 @@ const Home = () => {
                       onClick={() => {
                         if (position !== 0) {
                           setCurrentSlide(index);
+                          resetTimer(); // Сбрасываем таймер при клике на слайд
                         }
                       }}
                     >
@@ -144,7 +163,7 @@ const Home = () => {
               </div>
             </div>
             
-            <button className="carousel-arrow carousel-arrow-right" onClick={handleNextSlide}>
+            <button className="carousel-arrow carousel-arrow-right" onClick={handleNextSlideManual}>
               →
             </button>
           </div>
@@ -154,7 +173,10 @@ const Home = () => {
               <button
                 key={index}
                 className={`carousel-dot ${index === currentSlide ? 'active' : ''}`}
-                onClick={() => setCurrentSlide(index)}
+                onClick={() => {
+                  setCurrentSlide(index);
+                  resetTimer(); // Сбрасываем таймер при клике на точку
+                }}
               />
             ))}
           </div>
