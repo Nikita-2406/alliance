@@ -17,8 +17,8 @@ from .config import (
     check_static_files
 )
 from .database import get_db, create_tables, SessionLocal
-from .models import AppDB
-from .schemas import App
+from .models import AppDB, ScreenshotDB
+from .schemas import App, AppCreate, AppUpdate, MessageResponse
 from .seed import seed_data
 
 
@@ -292,6 +292,130 @@ async def get_featured_apps(db: Session = Depends(get_db)):
 
     except Exception as e:
         logger.error(f"Error getting featured apps: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.post("/api/apps", response_model=App, status_code=201)
+async def create_app(app_data: AppCreate, db: Session = Depends(get_db)):
+    """Создать новое приложение"""
+    try:
+        # Извлекаем скриншоты из входных данных
+        screenshots_data = app_data.screenshots
+        app_dict = app_data.model_dump(exclude={"screenshots"})
+        
+        # Создаем приложение
+        db_app = AppDB(**app_dict)
+        db.add(db_app)
+        db.flush()  # Получаем ID приложения
+
+        # Добавляем скриншоты
+        for screenshot_url in screenshots_data:
+            db_screenshot = ScreenshotDB(image_url=screenshot_url, app_id=db_app.id)
+            db.add(db_screenshot)
+
+        db.commit()
+        db.refresh(db_app)
+
+        # Формируем ответ
+        app_dict = {
+            "id": db_app.id,
+            "name": db_app.name,
+            "developer": db_app.developer,
+            "category": db_app.category,
+            "age_rating": db_app.age_rating,
+            "description": db_app.description,
+            "icon_url": db_app.icon_url,
+            "rating": db_app.rating,
+            "version": db_app.version,
+            "size": db_app.size,
+            "price": db_app.price,
+            "last_update": db_app.last_update,
+            "screenshots": [s.image_url for s in db_app.screenshots]
+        }
+
+        logger.info(f"✅ Created new app: {db_app.name} (ID: {db_app.id})")
+        return App(**app_dict)
+
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Error creating app: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.put("/api/apps/{app_id}", response_model=App)
+async def update_app(app_id: int, app_data: AppUpdate, db: Session = Depends(get_db)):
+    """Обновить существующее приложение"""
+    try:
+        db_app = db.query(AppDB).filter(AppDB.id == app_id).first()
+        if not db_app:
+            raise HTTPException(status_code=404, detail="App not found")
+
+        # Обновляем только переданные поля
+        update_data = app_data.model_dump(exclude_unset=True, exclude={"screenshots"})
+        for field, value in update_data.items():
+            setattr(db_app, field, value)
+
+        # Обновляем скриншоты если переданы
+        if app_data.screenshots is not None:
+            # Удаляем старые скриншоты
+            db.query(ScreenshotDB).filter(ScreenshotDB.app_id == app_id).delete()
+            
+            # Добавляем новые
+            for screenshot_url in app_data.screenshots:
+                db_screenshot = ScreenshotDB(image_url=screenshot_url, app_id=app_id)
+                db.add(db_screenshot)
+
+        db.commit()
+        db.refresh(db_app)
+
+        # Формируем ответ
+        app_dict = {
+            "id": db_app.id,
+            "name": db_app.name,
+            "developer": db_app.developer,
+            "category": db_app.category,
+            "age_rating": db_app.age_rating,
+            "description": db_app.description,
+            "icon_url": db_app.icon_url,
+            "rating": db_app.rating,
+            "version": db_app.version,
+            "size": db_app.size,
+            "price": db_app.price,
+            "last_update": db_app.last_update,
+            "screenshots": [s.image_url for s in db_app.screenshots]
+        }
+
+        logger.info(f"✅ Updated app: {db_app.name} (ID: {db_app.id})")
+        return App(**app_dict)
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Error updating app: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.delete("/api/apps/{app_id}", response_model=MessageResponse)
+async def delete_app(app_id: int, db: Session = Depends(get_db)):
+    """Удалить приложение"""
+    try:
+        db_app = db.query(AppDB).filter(AppDB.id == app_id).first()
+        if not db_app:
+            raise HTTPException(status_code=404, detail="App not found")
+
+        app_name = db_app.name
+        db.delete(db_app)
+        db.commit()
+
+        logger.info(f"✅ Deleted app: {app_name} (ID: {app_id})")
+        return MessageResponse(message=f"App '{app_name}' successfully deleted")
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        db.rollback()
+        logger.error(f"Error deleting app: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 

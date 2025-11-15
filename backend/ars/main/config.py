@@ -20,7 +20,7 @@ os.makedirs(SCREENSHOTS_DIR, exist_ok=True)
 os.makedirs(ICONS_DIR, exist_ok=True)
 
 # MySQL connection string
-DATABASE_URL = "mysql+mysqlconnector://root:SQLpassforCon5@127.0.0.1:3306/rustore2"
+DATABASE_URL = "mysql+mysqlconnector://root:1111@127.0.0.1:3306/rustore2"
 
 # CORS origins
 CORS_ORIGINS = [

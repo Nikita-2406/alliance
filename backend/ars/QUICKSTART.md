@@ -18,8 +18,9 @@ EXIT;
 ### 3️⃣ Проверка config.py
 Откройте `main/config.py` и проверьте строку подключения:
 ```python
-DATABASE_URL = "mysql+mysqlconnector://root:ВАШИ_ПАРОЛЬ@127.0.0.1:3306/rustore2"
+DATABASE_URL = "mysql+mysqlconnector://root:1111@127.0.0.1:3306/rustore2"
 ```
+**Измените пароль `1111` на ваш пароль от MySQL!**
 
 ### 4️⃣ Запуск
 ```bash
