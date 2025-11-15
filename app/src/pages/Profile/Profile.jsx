@@ -150,7 +150,7 @@ const Profile = () => {
             </div>
             <div className="stat-card glass-card" onClick={() => setActiveTab('reviews')}>
               <div className="stat-icon-wrapper">
-                <span className="stat-icon"><StarIcon size={28} className="stat-star-icon" /></span>
+                <span className="stat-icon"><StarIcon size={28} /></span>
               </div>
               <div className="stat-content">
                 <span className="stat-value">{reviews.length}</span>
@@ -195,7 +195,7 @@ const Profile = () => {
               className={`tab-btn glass-card ${activeTab === 'reviews' ? 'active' : ''}`}
               onClick={() => setActiveTab('reviews')}
             >
-              <span className="tab-icon"><StarIcon size={20} className="tab-star-icon" /></span>
+              <span className="tab-icon"><StarIcon size={20} className={activeTab === 'reviews' ? '' : 'tab-star-icon'} /></span>
               <span>Отзывы</span>
             </button>
             <button
@@ -231,28 +231,26 @@ const Profile = () => {
           {activeTab === 'reviews' && (
             <div className="reviews-list">
               {reviews.map((review) => (
-                <div key={review.id} className="review-card glass-card">
-                  <div className="review-top">
-                    <Link to={`/app/${review.appId}`} className="review-app-link">
-                      <div className="review-app-icon">{review.appIcon}</div>
-                      <div className="review-app-details">
-                        <h3 className="review-app-name">{review.appName}</h3>
-                        <span className="review-date">{review.date}</span>
-                      </div>
-                    </Link>
-                    <button className="review-delete-btn" title="Удалить отзыв">
-                      <TrashIcon size={18} />
-                    </button>
-                  </div>
-                  
-                  <div className="review-content">
+                <Link to={`/app/${review.appId}`} key={review.id} className="review-item glass-card">
+                  <div className="review-icon">{review.appIcon}</div>
+                  <div className="review-info">
+                    <h3>{review.appName}</h3>
                     <div className="review-rating-wrapper">
                       {renderStars(review.rating)}
-                      <span className="review-rating-text">{review.rating}/5</span>
                     </div>
-                    <p className="review-text">{review.comment}</p>
+                    <p className="review-comment">{review.comment}</p>
                   </div>
-                </div>
+                  <button 
+                    className="action-btn delete-btn" 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                    title="Удалить отзыв"
+                  >
+                    <TrashIcon size={18} />
+                  </button>
+                </Link>
               ))}
             </div>
           )}

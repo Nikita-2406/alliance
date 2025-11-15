@@ -218,12 +218,16 @@
   cursor: pointer;
   text-decoration: none;
   color: inherit;
+  box-sizing: border-box;
+  align-items: stretch;
 }
 
 .app-card-header {
   display: flex;
   align-items: center;
   gap: 12px;
+  width: 100%;
+  flex-shrink: 0;
 }
 
 .app-card:hover {
@@ -296,9 +300,12 @@
 }
 
 .app-card-download {
-  width: 100%;
+  width: 100% !important;
+  min-width: 100%;
+  max-width: 100%;
   display: block;
   padding: 12px 24px;
+  margin: 0;
   background: rgba(33, 150, 243, 0.15);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
