@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import pymysql
+import psycopg2
+from psycopg2.extras import RealDictCursor
 from config import Config
 import logging
 
@@ -13,17 +14,15 @@ CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173"])
 
 def get_db_connection():
     try:
-        connection = pymysql.connect(
-            host=Config.MYSQL_HOST,
-            user=Config.MYSQL_USER,
-            password=Config.MYSQL_PASSWORD,
-            database=Config.MYSQL_DB,
-            port=Config.MYSQL_PORT,
-            charset='utf8mb4',
-            cursorclass=pymysql.cursors.DictCursor,
-            connect_timeout=30
+        connection = psycopg2.connect(
+            host=Config.POSTGRES_HOST,
+            user=Config.POSTGRES_USER,
+            password=Config.POSTGRES_PASSWORD,
+            database=Config.POSTGRES_DB,
+            port=Config.POSTGRES_PORT,
+            cursor_factory=RealDictCursor
         )
-        logger.info("✅ Успешное подключение к базе данных")
+        logger.info("✅ Успешное подключение к базе данных PostgreSQL")
         return connection
     except Exception as e:
         logger.error(f"❌ Ошибка подключения к базе данных: {str(e)}")
@@ -46,10 +45,11 @@ def update_app_rating(app_id):
                 cursor.execute("""
                     INSERT INTO app_ratings (app_id, average_rating, total_reviews) 
                     VALUES (%s, %s, %s)
-                    ON DUPLICATE KEY UPDATE 
-                    average_rating = %s, total_reviews = %s, last_updated = CURRENT_TIMESTAMP
-                """, (app_id, result['avg_rating'], result['total'], 
-                      result['avg_rating'], result['total']))
+                    ON CONFLICT (app_id) DO UPDATE 
+                    SET average_rating = EXCLUDED.average_rating, 
+                        total_reviews = EXCLUDED.total_reviews, 
+                        last_updated = CURRENT_TIMESTAMP
+                """, (app_id, result['avg_rating'], result['total']))
                 conn.commit()
                 
             return result
@@ -105,20 +105,19 @@ def add_review(app_id):
             sql = """
                 INSERT INTO reviews (app_id, author, text, likes, rating, vk_user_id) 
                 VALUES (%s, %s, %s, %s, %s, %s)
+                RETURNING *
             """
             cursor.execute(sql, (app_id, data['author'], data['text'], 0, 
                                rating, data.get('vk_user_id')))
+            new_review = cursor.fetchone()
             conn.commit()
-            review_id = cursor.lastrowid
             
             # Обновляем средний рейтинг приложения
             update_app_rating(app_id)
             
-            cursor.execute("SELECT * FROM reviews WHERE id = %s", (review_id,))
-            new_review = cursor.fetchone()
             new_review['date'] = new_review['created_at'].strftime('%d.%m.%Y')
             
-            logger.info(f"Отзыв успешно добавлен с ID: {review_id}")
+            logger.info(f"Отзыв успешно добавлен с ID: {new_review['id']}")
             return jsonify(new_review), 201
     except Exception as e:
         conn.rollback()
@@ -133,11 +132,10 @@ def like_review(review_id):
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            cursor.execute("UPDATE reviews SET likes = likes + 1 WHERE id = %s", (review_id,))
+            cursor.execute("UPDATE reviews SET likes = likes + 1 WHERE id = %s RETURNING likes", (review_id,))
+            result = cursor.fetchone()
             conn.commit()
             
-            cursor.execute("SELECT likes FROM reviews WHERE id = %s", (review_id,))
-            result = cursor.fetchone()
             if result:
                 return jsonify({'likes': result['likes']})
             else:
