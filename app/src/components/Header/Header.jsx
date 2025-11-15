@@ -71,7 +71,7 @@ const Header = ({ title, showBack = false }) => {
             </button>
           ) : (
             <div className="header-logo">
-              <img src={RuStoreLogo} alt="RuStore" className="logo-icon" onClick = {handleBack}/>
+              <img src={RuStoreLogo} alt="RuStore" className="logo-icon" />
               <span className="logo-text">RuStore</span>
             </div>
           )}
