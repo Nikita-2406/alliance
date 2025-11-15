@@ -1,0 +1,19 @@
+.Header-Text {
+    /* Позиционирование и выравнивание */
+    position: absolute;
+    /* top: 20px; */
+    left: 50%;
+    text-align: center;
+    
+    /* Шрифт и текст */
+    font-family: 'Roboto', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 3rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    
+    /* Внешний вид */
+    color: #242424;
+    margin: 0;
+    padding: 15px 30px;
+}

@@ -4,13 +4,20 @@ import psycopg2
 from psycopg2.extras import RealDictCursor
 from config import Config
 import logging
+import requests
+import jwt
+import datetime
+from functools import wraps
 
-# Настройка логирования
+
+
+
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
-CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173"])
+app.config['SECRET_KEY'] = Config.JWT_SECRET_KEY
+CORS(app, origins=["http://localhost:5173", "http://127.0.0.1:5173"], supports_credentials=True)
 
 def get_db_connection():
     try:
@@ -74,10 +81,17 @@ def get_reviews(app_id):
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
-            cursor.execute("SELECT * FROM reviews WHERE app_id = %s ORDER BY created_at DESC", (app_id,))
+            cursor.execute("""
+                SELECT r.*, u.username, u.avatar_url 
+                FROM reviews r 
+                LEFT JOIN users u ON r.user_id = u.id 
+                WHERE r.app_id = %s 
+                ORDER BY r.created_at DESC
+            """, (app_id,))
             reviews = cursor.fetchall()
             for review in reviews:
                 review['date'] = review['created_at'].strftime('%d.%m.%Y')
+                review['author'] = review['username']
             logger.info(f"Найдено {len(reviews)} отзывов")
             return jsonify(reviews)
     except Exception as e:

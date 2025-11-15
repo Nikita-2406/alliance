@@ -1,0 +1,33 @@
+.Header-Text {
+    /* Позиционирование и выравнивание */
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    
+    /* Шрифт и текст */
+    font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+    font-size: 3rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    
+    /* Внешний вид */
+    color: #ffffff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin: 0;
+    padding: 15px 30px;
+    
+    /* Фон и границы */
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    
+    /* Гарантия поверх других элементов */
+    z-index: 1000;
+    
+    /* Плавные переходы */
+    transition: all 0.3s ease;
+}
