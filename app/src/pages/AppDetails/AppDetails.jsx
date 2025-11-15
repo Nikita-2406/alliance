@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { getAppById, getReviewsForApp } from '../../services/api';
 import './AppDetails.css';
 
@@ -21,12 +21,13 @@ const StarIcon = ({ filled = true, className = "" }) => (
 
 const AppDetails = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState('about');
   const [appData, setAppData] = useState(null);
   const [userReviews, setUserReviews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [reviewFilter, setReviewFilter] = useState('all'); // all, 5, 4, 3, 2, 1
+  const [sortOrder, setSortOrder] = useState('newest'); // newest, oldest, highest, lowest
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadComplete, setDownloadComplete] = useState(false);
 
@@ -67,6 +68,23 @@ const AppDetails = () => {
     loadAppData();
   }, [id]);
 
+  // Закрытие dropdown при клике вне его
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const dropdown = document.querySelector('.reviews-filter-dropdown');
+      if (dropdown && !dropdown.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [isDropdownOpen]);
+
   if (loading || !appData) {
     return (
       <div className="app-details-page">
@@ -78,9 +96,6 @@ const AppDetails = () => {
       </div>
     );
   }
-
-  const oldAppData = {
-  };
 
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
@@ -104,6 +119,56 @@ const AppDetails = () => {
       setIsDownloading(false);
       setDownloadComplete(true);
     }, 2000);
+  };
+
+  // Функция для получения отфильтрованных и отсортированных отзывов
+  const getFilteredAndSortedReviews = () => {
+    // Фильтрация
+    let filtered = reviewFilter === 'all' 
+      ? [...userReviews]
+      : userReviews.filter(r => r.rating === reviewFilter);
+    
+    // Сортировка
+    switch (sortOrder) {
+      case 'newest':
+        // Предполагаем, что более новые отзывы имеют больший id
+        filtered.sort((a, b) => b.id - a.id);
+        break;
+      case 'oldest':
+        filtered.sort((a, b) => a.id - b.id);
+        break;
+      case 'highest':
+        filtered.sort((a, b) => b.rating - a.rating);
+        break;
+      case 'lowest':
+        filtered.sort((a, b) => a.rating - b.rating);
+        break;
+      default:
+        break;
+    }
+    
+    return filtered;
+  };
+
+  // Получаем текст для кнопки dropdown
+  const getDropdownLabel = () => {
+    const filterLabels = {
+      'all': 'Все отзывы',
+      5: '5 звёзд',
+      4: '4 звезды',
+      3: '3 звезды',
+      2: '2 звезды',
+      1: '1 звезда'
+    };
+    
+    const sortLabels = {
+      'newest': 'Сначала новые',
+      'oldest': 'Сначала старые',
+      'highest': 'Высокий рейтинг',
+      'lowest': 'Низкий рейтинг'
+    };
+    
+    return `${filterLabels[reviewFilter]} • ${sortLabels[sortOrder]}`;
   };
 
   return (
@@ -265,35 +330,106 @@ const AppDetails = () => {
                 </div>
               </div>
 
-              {/* Фильтры */}
-              <div className="reviews-filters glass-card">
+              {/* Выпадающий список фильтрации */}
+              <div className="reviews-filter-dropdown glass-card">
                 <button 
-                  className={`filter-btn ${reviewFilter === 'all' ? 'active' : ''}`}
-                  onClick={() => setReviewFilter('all')}
+                  className="dropdown-toggle"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
-                  Все отзывы ({userReviews.length})
+                  <span className="dropdown-icon">🔽</span>
+                  <span className="dropdown-label">{getDropdownLabel()}</span>
+                  <span className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}>▼</span>
                 </button>
-                {[5, 4, 3, 2, 1].map((stars) => {
-                  const count = userReviews.filter(r => r.rating === stars).length;
-                  if (count === 0) return null;
-                  return (
-                    <button 
-                      key={stars}
-                      className={`filter-btn ${reviewFilter === stars ? 'active' : ''}`}
-                      onClick={() => setReviewFilter(stars)}
-                    >
-                      {stars} <StarIcon /> ({count})
-                    </button>
-                  );
-                })}
+                
+                {isDropdownOpen && (
+                  <div className="dropdown-menu glass-card">
+                    {/* Секция фильтров */}
+                    <div className="dropdown-section">
+                      <div className="dropdown-section-title">Фильтр по рейтингу</div>
+                      <button 
+                        className={`dropdown-item ${reviewFilter === 'all' ? 'active' : ''}`}
+                        onClick={() => {
+                          setReviewFilter('all');
+                          setIsDropdownOpen(false);
+                        }}
+                      >
+                        <span className="dropdown-item-icon">⭐</span>
+                        <span className="dropdown-item-text">Все отзывы</span>
+                        <span className="dropdown-item-count">({userReviews.length})</span>
+                      </button>
+                      {[5, 4, 3, 2, 1].map((stars) => {
+                        const count = userReviews.filter(r => r.rating === stars).length;
+                        return (
+                          <button 
+                            key={stars}
+                            className={`dropdown-item ${reviewFilter === stars ? 'active' : ''}`}
+                            onClick={() => {
+                              setReviewFilter(stars);
+                              setIsDropdownOpen(false);
+                            }}
+                          >
+                            <span className="dropdown-item-icon">{'⭐'.repeat(stars)}</span>
+                            <span className="dropdown-item-text">{stars} звёзд</span>
+                            <span className="dropdown-item-count">({count})</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    
+                    {/* Разделитель */}
+                    <div className="dropdown-divider"></div>
+                    
+                    {/* Секция сортировки */}
+                    <div className="dropdown-section">
+                      <div className="dropdown-section-title">Сортировка</div>
+                      <button 
+                        className={`dropdown-item ${sortOrder === 'newest' ? 'active' : ''}`}
+                        onClick={() => {
+                          setSortOrder('newest');
+                          setIsDropdownOpen(false);
+                        }}
+                      >
+                        <span className="dropdown-item-icon">🕐</span>
+                        <span className="dropdown-item-text">Сначала новые</span>
+                      </button>
+                      <button 
+                        className={`dropdown-item ${sortOrder === 'oldest' ? 'active' : ''}`}
+                        onClick={() => {
+                          setSortOrder('oldest');
+                          setIsDropdownOpen(false);
+                        }}
+                      >
+                        <span className="dropdown-item-icon">⏰</span>
+                        <span className="dropdown-item-text">Сначала старые</span>
+                      </button>
+                      <button 
+                        className={`dropdown-item ${sortOrder === 'highest' ? 'active' : ''}`}
+                        onClick={() => {
+                          setSortOrder('highest');
+                          setIsDropdownOpen(false);
+                        }}
+                      >
+                        <span className="dropdown-item-icon">⬆️</span>
+                        <span className="dropdown-item-text">Высокий рейтинг</span>
+                      </button>
+                      <button 
+                        className={`dropdown-item ${sortOrder === 'lowest' ? 'active' : ''}`}
+                        onClick={() => {
+                          setSortOrder('lowest');
+                          setIsDropdownOpen(false);
+                        }}
+                      >
+                        <span className="dropdown-item-icon">⬇️</span>
+                        <span className="dropdown-item-text">Низкий рейтинг</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Список отзывов */}
               <div className="reviews-list">
-                {(reviewFilter === 'all' 
-                  ? userReviews 
-                  : userReviews.filter(r => r.rating === reviewFilter)
-                ).map((review) => (
+                {getFilteredAndSortedReviews().map((review) => (
                   <div key={review.id} className="review-card glass-card">
                     <div className="review-header-detail">
                   <div className="review-author">

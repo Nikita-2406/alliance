@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { getFeaturedApps, getTopWeekApps, getCategories } from '../../services/api';
 import './Home.css';
@@ -49,6 +49,14 @@ const Home = () => {
     loadData();
   }, []);
 
+  const handlePrevSlide = () => {
+    setCurrentSlide((prev) => (prev <= 0 ? featuredApps.length - 1 : prev - 1));
+  };
+
+  const handleNextSlide = useCallback(() => {
+    setCurrentSlide((prev) => (prev >= featuredApps.length - 1 ? 0 : prev + 1));
+  }, [featuredApps.length]);
+
   // Автопрокрутка каждые 5 секунд
   useEffect(() => {
     if (featuredApps.length === 0) return;
@@ -58,15 +66,7 @@ const Home = () => {
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [featuredApps.length, currentSlide]);
-
-  const handlePrevSlide = () => {
-    setCurrentSlide((prev) => (prev <= 0 ? featuredApps.length - 1 : prev - 1));
-  };
-
-  const handleNextSlide = () => {
-    setCurrentSlide((prev) => (prev >= featuredApps.length - 1 ? 0 : prev + 1));
-  };
+  }, [featuredApps.length, handleNextSlide]);
 
   if (loading) {
     return (
@@ -180,7 +180,7 @@ const Home = () => {
             <Link to="/search" className="see-all">Все →</Link>
           </div>
           <div className="top-list-horizontal">
-            {topWeek.map((app, idx) => {
+            {topWeek.map((app) => {
               const currentIndex = screenshotIndices[app.id] || 0;
               const totalScreenshots = app.screenshots.length;
               
@@ -201,12 +201,6 @@ const Home = () => {
                   [app.id]: currentIndex === totalScreenshots - 1 ? 0 : currentIndex + 1
                 }));
               };
-              
-              // Показываем текущий и следующий скриншот
-              const visibleScreenshots = [
-                app.screenshots[currentIndex],
-                app.screenshots[(currentIndex + 1) % totalScreenshots]
-              ];
               
               return (
                 <Link to={`/app/${app.id}`} key={app.id} className="top-app-card glass-card">
