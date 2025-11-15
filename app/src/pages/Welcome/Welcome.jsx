@@ -38,8 +38,7 @@ const Welcome = () => {
         {/* Кнопки */}
         <div className="welcome-actions">
           <button className="welcome-btn primary-btn glass-card" onClick={handleBrowseApps}>
-            <span className="btn-icon">👀</span>
-            <span className="btn-label">Просто посмотреть приложения</span>
+            <span className="btn-label">Посмотреть приложения</span>
           </button>
           
           <button className="welcome-btn secondary-btn glass-card" onClick={handleVKAuth}>
