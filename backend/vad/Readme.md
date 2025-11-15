@@ -15,7 +15,6 @@
 
 ## 1. Склонируйте проект
 ```bash
-git clone <url>
 cd alliance/backend/vad
 ```
 
