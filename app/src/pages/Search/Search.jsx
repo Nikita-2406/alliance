@@ -1,43 +1,63 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { searchApps } from '../../services/api';
 import './Search.css';
 
 const Search = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState('all');
-
-  const allApps = [
-    { id: 1, name: 'PhotoMaster Pro', category: 'Фото и видео', rating: 4.8, downloads: '10M+', icon: '📸', size: '85 MB' },
-    { id: 2, name: 'Fitness Tracker', category: 'Здоровье', rating: 4.9, downloads: '5M+', icon: '💪', size: '65 MB' },
-    { id: 3, name: 'Cloud Notes', category: 'Продуктивность', rating: 4.7, downloads: '8M+', icon: '📝', size: '40 MB' },
-    { id: 4, name: 'Music Streaming', category: 'Музыка', rating: 4.9, downloads: '20M+', icon: '🎵', size: '45 MB' },
-    { id: 5, name: 'Language Learning', category: 'Образование', rating: 4.8, downloads: '15M+', icon: '🌍', size: '120 MB' },
-    { id: 6, name: 'Budget Manager', category: 'Финансы', rating: 4.6, downloads: '3M+', icon: '💰', size: '30 MB' },
-    { id: 7, name: 'Recipe Book', category: 'Еда и напитки', rating: 4.7, downloads: '7M+', icon: '🍳', size: '55 MB' },
-    { id: 8, name: 'Travel Guide', category: 'Путешествия', rating: 4.8, downloads: '12M+', icon: '✈️', size: '90 MB' },
-    { id: 9, name: 'Video Editor Pro', category: 'Фото и видео', rating: 4.7, downloads: '6M+', icon: '🎬', size: '150 MB' },
-    { id: 10, name: 'Meditation & Sleep', category: 'Здоровье', rating: 4.9, downloads: '9M+', icon: '🧘', size: '75 MB' },
-  ];
+  const [allApps, setAllApps] = useState([]);
+  const [filteredApps, setFilteredApps] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const filters = [
-    { id: 'all', label: 'Все', icon: '🔍' },
-    { id: 'popular', label: 'Популярные', icon: '🔥' },
-    { id: 'new', label: 'Новые', icon: '✨' },
-    { id: 'top', label: 'Топ', icon: '⭐' },
+    { id: 'all', label: 'Все' },
+    { id: 'popular', label: 'Популярные' },
+    { id: 'new', label: 'Новые' },
+    { id: 'top', label: 'Топ' },
   ];
 
-  const filteredApps = allApps.filter(app =>
-    app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    app.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  useEffect(() => {
+    const loadApps = async () => {
+      const result = await searchApps('');
+      if (result.success) {
+        setAllApps(result.data);
+        setFilteredApps(result.data);
+      }
+      setLoading(false);
+    };
+    loadApps();
+  }, []);
+
+  useEffect(() => {
+    const performSearch = async () => {
+      setLoading(true);
+      const result = await searchApps(searchQuery);
+      if (result.success) {
+        setFilteredApps(result.data);
+      }
+      setLoading(false);
+    };
+    
+    const timer = setTimeout(() => {
+      performSearch();
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
 
   return (
     <div className="search-page">
       <div className="search-content">
-        {/* Search Bar */}
-        <div className="search-bar-container">
+        {/* Hero Search Section */}
+        <div className="search-hero">
+          <h1 className="search-hero-title">Найдите своё приложение</h1>
+          <p className="search-hero-subtitle">Тысячи приложений на любой вкус</p>
+          
           <div className="search-bar glass-card">
-            <span className="search-icon">🔍</span>
+            <svg className="search-icon" width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M9 17A8 8 0 1 0 9 1a8 8 0 0 0 0 16zM19 19l-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
             <input
               type="text"
               className="search-input"
@@ -47,64 +67,78 @@ const Search = () => {
             />
             {searchQuery && (
               <button className="clear-button" onClick={() => setSearchQuery('')}>
-                ✕
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M12 4L4 12M4 4l8 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
               </button>
             )}
           </div>
-        </div>
 
-        {/* Filters */}
-        <div className="filters">
-          {filters.map((filter) => (
-            <button
-              key={filter.id}
-              className={`filter-chip ${selectedFilter === filter.id ? 'active' : ''}`}
-              onClick={() => setSelectedFilter(filter.id)}
-            >
-              <span>{filter.icon}</span>
-              <span>{filter.label}</span>
-            </button>
-          ))}
+          {/* Filters */}
+          <div className="filters">
+            {filters.map((filter) => (
+              <button
+                key={filter.id}
+                className={`filter-chip ${selectedFilter === filter.id ? 'active' : ''}`}
+                onClick={() => setSelectedFilter(filter.id)}
+              >
+                {filter.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Results */}
         <div className="search-results">
           <div className="results-header">
-            <h2 className="results-title">
-              {searchQuery ? `Результаты для "${searchQuery}"` : 'Все приложения'}
-            </h2>
-            <span className="results-count">{filteredApps.length} приложений</span>
+            <div className="results-info">
+              <h2 className="results-title">
+                {searchQuery ? `"${searchQuery}"` : 'Все приложения'}
+              </h2>
+              <span className="results-count">{filteredApps.length} найдено</span>
+            </div>
           </div>
 
-          <div className="apps-list">
-            {filteredApps.length > 0 ? (
-              filteredApps.map((app) => (
-                <Link to={`/app/${app.id}`} key={app.id} className="search-app-card glass-card">
-                  <div className="search-app-icon">{app.icon}</div>
-                  <div className="search-app-info">
-                    <h3 className="search-app-name">{app.name}</h3>
-                    <p className="search-app-category">{app.category}</p>
-                    <div className="search-app-meta">
-                      <span>⭐ {app.rating}</span>
-                      <span>•</span>
-                      <span>{app.size}</span>
-                      <span>•</span>
-                      <span>📥 {app.downloads}</span>
+          {loading ? (
+            <div className="loading-state glass-card">
+              <p>Загрузка...</p>
+            </div>
+          ) : filteredApps.length > 0 ? (
+            <div className="apps-grid">
+              {filteredApps.map((app) => (
+                <Link to={`/app/${app.id}`} key={app.id} className="app-card glass-card">
+                  <div className="app-card-icon">{app.icon}</div>
+                  <div className="app-card-content">
+                    <h3 className="app-card-name">{app.name}</h3>
+                    <p className="app-card-category">{app.category}</p>
+                    <div className="app-card-stats">
+                      <span className="app-card-rating">
+                        <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+                          <path d="M7 0l1.796 5.528h5.812l-4.702 3.416 1.796 5.528L7 11.056l-4.702 3.416 1.796-5.528L-.608 5.528h5.812z"/>
+                        </svg>
+                        {app.rating}
+                      </span>
+                      <span className="app-card-size">{app.size}</span>
                     </div>
                   </div>
-                  <button className="download-btn">
-                    Скачать
+                  <button className="app-card-download" onClick={(e) => e.preventDefault()}>
+                    Установить
                   </button>
                 </Link>
-              ))
-            ) : (
-              <div className="no-results glass-card">
-                <span className="no-results-icon">🔍</span>
-                <h3>Ничего не найдено</h3>
-                <p>Попробуйте изменить запрос</p>
+              ))}
+            </div>
+          ) : (
+            <div className="no-results glass-card">
+              <div className="no-results-icon">
+                <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+                  <circle cx="32" cy="32" r="30" stroke="currentColor" strokeWidth="3" opacity="0.3"/>
+                  <path d="M32 20v16M32 44v.01" stroke="currentColor" strokeWidth="4" strokeLinecap="round"/>
+                </svg>
               </div>
-            )}
-          </div>
+              <h3>Ничего не найдено</h3>
+              <p>Попробуйте изменить запрос или выберите другую категорию</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

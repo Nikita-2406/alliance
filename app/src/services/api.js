@@ -1,0 +1,465 @@
+/**
+ * API Service с mock данными
+ * 
+ * Этот сервис имитирует работу с реальным API.
+ * Для подключения к реальному API замените mock функции на fetch запросы.
+ */
+
+// Mock данные
+const MOCK_APPS = [
+  { 
+    id: 1, 
+    name: 'PhotoMaster Pro', 
+    category: 'Фото и видео', 
+    rating: 4.8, 
+    reviews: 12500,
+    downloads: '10M+', 
+    icon: '📸', 
+    size: '85 MB',
+    version: '3.2.1',
+    lastUpdate: '15 ноября 2024',
+    ageRating: '4+',
+    developer: 'Creative Studio Inc.',
+    color: 'linear-gradient(135deg, #A5668B 0%, #69306D 100%)',
+    screenshots: ['📱', '🖼️', '✨', '🎨', '📷'],
+    description: 'PhotoMaster Pro - это профессиональное приложение для редактирования фотографий с множеством инструментов и фильтров. Создавайте потрясающие изображения с помощью интуитивно понятного интерфейса.',
+    features: [
+      '✨ Более 100 профессиональных фильтров',
+      '🎨 Расширенные инструменты редактирования',
+      '📐 Точная настройка цвета и экспозиции',
+      '🔄 Пакетная обработка фотографий',
+      '☁️ Облачная синхронизация',
+      '📤 Экспорт в высоком разрешении'
+    ],
+    requirements: {
+      os: 'Windows 10/11, macOS 12+, Linux',
+      ram: '4 GB',
+      storage: '100 MB',
+      internet: 'Требуется для некоторых функций'
+    }
+  },
+  { 
+    id: 2, 
+    name: 'Fitness Tracker', 
+    category: 'Здоровье', 
+    rating: 4.9, 
+    reviews: 8300,
+    downloads: '5M+', 
+    icon: '💪', 
+    size: '65 MB',
+    version: '2.5.0',
+    lastUpdate: '10 ноября 2024',
+    ageRating: '4+',
+    developer: 'Health Apps Co.',
+    color: 'linear-gradient(135deg, #D3BCC0 0%, #A5668B 100%)',
+    screenshots: ['📊', '💪', '🏃', '⏱️', '📈'],
+    description: 'Отслеживайте свои тренировки, питание и прогресс с Fitness Tracker. Персональные планы тренировок и детальная аналитика.',
+    features: [
+      '📊 Детальная статистика тренировок',
+      '🏃 Отслеживание активности',
+      '🍎 Контроль питания',
+      '⏱️ Таймеры и напоминания',
+      '📈 Графики прогресса',
+      '🎯 Персональные цели'
+    ],
+    requirements: {
+      os: 'Windows 10+, macOS 11+',
+      ram: '2 GB',
+      storage: '70 MB',
+      internet: 'Требуется'
+    }
+  },
+  { 
+    id: 3, 
+    name: 'Cloud Notes', 
+    category: 'Продуктивность', 
+    rating: 4.7, 
+    reviews: 15600,
+    downloads: '8M+', 
+    icon: '📝', 
+    size: '40 MB',
+    version: '4.1.2',
+    lastUpdate: '12 ноября 2024',
+    ageRating: '4+',
+    developer: 'Productivity Labs',
+    color: 'linear-gradient(135deg, #69306D 0%, #0E103D 100%)',
+    screenshots: ['📝', '☁️', '🔍', '📎', '🔐'],
+    description: 'Современное приложение для заметок с облачной синхронизацией. Работайте с заметками на всех ваших устройствах.',
+    features: [
+      '☁️ Облачная синхронизация',
+      '📝 Форматированный текст',
+      '📎 Вложения файлов',
+      '🔍 Быстрый поиск',
+      '🔐 Шифрование данных',
+      '📱 Кроссплатформенность'
+    ],
+    requirements: {
+      os: 'Все платформы',
+      ram: '1 GB',
+      storage: '50 MB',
+      internet: 'Требуется для синхронизации'
+    }
+  },
+  { 
+    id: 4, 
+    name: 'Music Streaming', 
+    category: 'Музыка', 
+    rating: 4.9, 
+    reviews: 45200,
+    downloads: '20M+', 
+    icon: '🎵', 
+    size: '45 MB',
+    version: '5.0.1',
+    lastUpdate: '14 ноября 2024',
+    ageRating: '12+',
+    developer: 'Music Corp.',
+    color: 'linear-gradient(135deg, #A5668B 0%, #D3BCC0 100%)',
+    screenshots: ['🎵', '🎧', '📻', '🎶', '🎤'],
+    description: 'Потоковая музыка высокого качества. Миллионы треков, подкасты и плейлисты для вас.',
+    features: [
+      '🎵 Миллионы треков',
+      '🎧 Высокое качество',
+      '📻 Радио и подкасты',
+      '🎶 Умные плейлисты',
+      '💾 Офлайн режим',
+      '🎤 Тексты песен'
+    ],
+    requirements: {
+      os: 'Windows 8+, macOS 10+',
+      ram: '2 GB',
+      storage: '50 MB',
+      internet: 'Требуется'
+    }
+  },
+  { 
+    id: 5, 
+    name: 'Language Learning', 
+    category: 'Образование', 
+    rating: 4.8, 
+    reviews: 23100,
+    downloads: '15M+', 
+    icon: '🌍', 
+    size: '120 MB',
+    version: '3.7.4',
+    lastUpdate: '11 ноября 2024',
+    ageRating: '4+',
+    developer: 'EduTech Solutions',
+    color: 'linear-gradient(135deg, #69306D 0%, #A5668B 100%)',
+    screenshots: ['🌍', '📚', '🎯', '🗣️', '✅'],
+    description: 'Изучайте языки эффективно с помощью интерактивных уроков и игр. Более 30 языков доступно.',
+    features: [
+      '🌍 30+ языков',
+      '📚 Интерактивные уроки',
+      '🎯 Персональный план',
+      '🗣️ Практика речи',
+      '✅ Отслеживание прогресса',
+      '🏆 Система достижений'
+    ],
+    requirements: {
+      os: 'Все платформы',
+      ram: '3 GB',
+      storage: '150 MB',
+      internet: 'Требуется'
+    }
+  },
+  { 
+    id: 6, 
+    name: 'Budget Manager', 
+    category: 'Финансы', 
+    rating: 4.6, 
+    reviews: 5600,
+    downloads: '3M+', 
+    icon: '💰', 
+    size: '30 MB',
+    version: '2.1.0',
+    lastUpdate: '13 ноября 2024',
+    ageRating: '4+',
+    developer: 'Finance Apps Ltd.',
+    color: 'linear-gradient(135deg, #0E103D 0%, #A5668B 100%)',
+    screenshots: ['💰', '📊', '💳', '📈', '🎯'],
+    description: 'Управляйте своими финансами легко. Отслеживайте доходы, расходы и достигайте финансовых целей.',
+    features: [
+      '💰 Учет доходов и расходов',
+      '📊 Финансовые отчеты',
+      '💳 Множество счетов',
+      '📈 Графики и аналитика',
+      '🎯 Бюджетные цели',
+      '🔔 Напоминания о платежах'
+    ],
+    requirements: {
+      os: 'Windows 10+, macOS 11+',
+      ram: '2 GB',
+      storage: '35 MB',
+      internet: 'Опционально'
+    }
+  },
+  { 
+    id: 7, 
+    name: 'Recipe Book', 
+    category: 'Еда и напитки', 
+    rating: 4.7, 
+    reviews: 9800,
+    downloads: '7M+', 
+    icon: '🍳', 
+    size: '55 MB',
+    version: '1.9.3',
+    lastUpdate: '9 ноября 2024',
+    ageRating: '4+',
+    developer: 'Culinary Apps',
+    color: 'linear-gradient(135deg, #D3BCC0 0%, #69306D 100%)',
+    screenshots: ['🍳', '🥗', '📖', '⏲️', '🍰'],
+    description: 'Тысячи рецептов на любой вкус. Пошаговые инструкции, таймеры и список покупок.',
+    features: [
+      '📖 Тысячи рецептов',
+      '🍳 Пошаговые инструкции',
+      '⏲️ Встроенные таймеры',
+      '🛒 Список покупок',
+      '🔍 Поиск по ингредиентам',
+      '❤️ Избранное'
+    ],
+    requirements: {
+      os: 'Все платформы',
+      ram: '2 GB',
+      storage: '60 MB',
+      internet: 'Требуется'
+    }
+  },
+  { 
+    id: 8, 
+    name: 'Travel Guide', 
+    category: 'Путешествия', 
+    rating: 4.8, 
+    reviews: 18700,
+    downloads: '12M+', 
+    icon: '✈️', 
+    size: '90 MB',
+    version: '4.3.1',
+    lastUpdate: '8 ноября 2024',
+    ageRating: '4+',
+    developer: 'Travel Tech Inc.',
+    color: 'linear-gradient(135deg, #A5668B 0%, #0E103D 100%)',
+    screenshots: ['✈️', '🗺️', '📍', '🏨', '🎫'],
+    description: 'Полный путеводитель для путешественников. Карты, достопримечательности, отели и билеты.',
+    features: [
+      '🗺️ Офлайн карты',
+      '📍 Достопримечательности',
+      '🏨 Поиск отелей',
+      '🎫 Бронирование билетов',
+      '📸 Фотогиды',
+      '💬 Переводчик'
+    ],
+    requirements: {
+      os: 'Все платформы',
+      ram: '3 GB',
+      storage: '100 MB',
+      internet: 'Требуется для онлайн функций'
+    }
+  },
+  { 
+    id: 9, 
+    name: 'Video Editor Pro', 
+    category: 'Фото и видео', 
+    rating: 4.7, 
+    reviews: 11200,
+    downloads: '6M+', 
+    icon: '🎬', 
+    size: '150 MB',
+    version: '2.8.0',
+    lastUpdate: '7 ноября 2024',
+    ageRating: '4+',
+    developer: 'Creative Studio Inc.',
+    color: 'linear-gradient(135deg, #69306D 0%, #D3BCC0 100%)',
+    screenshots: ['🎬', '✂️', '🎨', '🎵', '📹'],
+    description: 'Профессиональный видеоредактор для создания потрясающих видео. Эффекты, переходы, музыка.',
+    features: [
+      '✂️ Точный монтаж',
+      '🎨 Эффекты и фильтры',
+      '🎵 Музыка и звук',
+      '📹 4K поддержка',
+      '🔄 Быстрый рендеринг',
+      '📤 Экспорт в разных форматах'
+    ],
+    requirements: {
+      os: 'Windows 10+, macOS 12+',
+      ram: '8 GB',
+      storage: '200 MB',
+      internet: 'Опционально'
+    }
+  },
+  { 
+    id: 10, 
+    name: 'Meditation & Sleep', 
+    category: 'Здоровье', 
+    rating: 4.9, 
+    reviews: 14300,
+    downloads: '9M+', 
+    icon: '🧘', 
+    size: '75 MB',
+    version: '3.4.2',
+    lastUpdate: '6 ноября 2024',
+    ageRating: '4+',
+    developer: 'Wellness Apps',
+    color: 'linear-gradient(135deg, #0E103D 0%, #D3BCC0 100%)',
+    screenshots: ['🧘', '😴', '🎧', '🌙', '☮️'],
+    description: 'Медитация и улучшение сна. Гиды по медитации, расслабляющая музыка и трекинг сна.',
+    features: [
+      '🧘 Гиды по медитации',
+      '😴 Помощь со сном',
+      '🎧 Расслабляющая музыка',
+      '🌙 Трекинг сна',
+      '☮️ Техники дыхания',
+      '📊 Статистика'
+    ],
+    requirements: {
+      os: 'Все платформы',
+      ram: '2 GB',
+      storage: '80 MB',
+      internet: 'Опционально'
+    }
+  }
+];
+
+const MOCK_CATEGORIES = [
+  { id: 'finance', name: 'Финансы', icon: '💰', color: '#2196F3', count: 145 },
+  { id: 'tools', name: 'Инструменты', icon: '🔧', color: '#64B5F6', count: 289 },
+  { id: 'games', name: 'Игры', icon: '🎮', color: '#2196F3', count: 567 },
+  { id: 'government', name: 'Государственные', icon: '🏛️', color: '#64B5F6', count: 78 },
+  { id: 'transport', name: 'Транспорт', icon: '🚗', color: '#2196F3', count: 123 }
+];
+
+const MOCK_REVIEWS = [
+  { id: 1, appId: 1, author: 'Александр', rating: 5, date: '2 дня назад', comment: 'Отличное приложение! Очень довольны функционалом.' },
+  { id: 2, appId: 1, author: 'Мария', rating: 4, date: '1 неделя назад', comment: 'Хорошее приложение, но иногда тормозит на слабых устройствах.' },
+  { id: 3, appId: 1, author: 'Дмитрий', rating: 5, date: '2 недели назад', comment: 'Профессиональные инструменты по доступной цене. Рекомендую!' },
+  { id: 4, appId: 1, author: 'Елена', rating: 5, date: '3 недели назад', comment: 'Использую каждый день! Интуитивный интерфейс и много возможностей.' },
+];
+
+// Имитация задержки сети
+const delay = (ms = 500) => new Promise(resolve => setTimeout(resolve, ms));
+
+/**
+ * API методы
+ */
+
+// Получить все приложения
+export const getAllApps = async () => {
+  await delay(300);
+  return { success: true, data: MOCK_APPS };
+};
+
+// Получить приложение по ID
+export const getAppById = async (id) => {
+  await delay(300);
+  const app = MOCK_APPS.find(app => app.id === parseInt(id));
+  if (app) {
+    return { success: true, data: app };
+  }
+  return { success: false, error: 'Приложение не найдено' };
+};
+
+// Получить популярные приложения
+export const getFeaturedApps = async (limit = 3) => {
+  await delay(300);
+  const featured = MOCK_APPS.slice(0, limit);
+  return { success: true, data: featured };
+};
+
+// Получить топ недели
+export const getTopWeekApps = async (limit = 5) => {
+  await delay(300);
+  const topApps = MOCK_APPS.slice(3, 3 + limit);
+  return { success: true, data: topApps };
+};
+
+// Поиск приложений
+export const searchApps = async (query) => {
+  await delay(400);
+  if (!query) {
+    return { success: true, data: MOCK_APPS };
+  }
+  const results = MOCK_APPS.filter(app => 
+    app.name.toLowerCase().includes(query.toLowerCase()) ||
+    app.category.toLowerCase().includes(query.toLowerCase())
+  );
+  return { success: true, data: results };
+};
+
+// Получить все категории
+export const getCategories = async () => {
+  await delay(300);
+  return { success: true, data: MOCK_CATEGORIES };
+};
+
+// Получить приложения по категории
+export const getAppsByCategory = async (categoryId) => {
+  await delay(400);
+  const apps = MOCK_APPS.filter(app => {
+    const category = MOCK_CATEGORIES.find(cat => cat.id === categoryId);
+    return category && app.category === category.name;
+  });
+  return { success: true, data: apps };
+};
+
+// Получить отзывы для приложения
+export const getReviewsForApp = async (appId) => {
+  await delay(300);
+  const reviews = MOCK_REVIEWS.filter(review => review.appId === parseInt(appId));
+  return { success: true, data: reviews };
+};
+
+// Получить скачанные приложения пользователя (mock)
+export const getUserDownloads = async () => {
+  await delay(300);
+  return {
+    success: true,
+    data: [
+      { ...MOCK_APPS[0], downloadDate: '2 дня назад' },
+      { ...MOCK_APPS[1], downloadDate: '5 дней назад' },
+      { ...MOCK_APPS[2], downloadDate: '1 неделя назад' },
+      { ...MOCK_APPS[3], downloadDate: '2 недели назад' }
+    ]
+  };
+};
+
+// Получить избранные приложения пользователя (mock)
+export const getUserFavorites = async () => {
+  await delay(300);
+  return {
+    success: true,
+    data: [MOCK_APPS[0], MOCK_APPS[4], MOCK_APPS[8]]
+  };
+};
+
+// Получить отзывы пользователя (mock)
+export const getUserReviews = async () => {
+  await delay(300);
+  return {
+    success: true,
+    data: [
+      { id: 1, appName: 'PhotoMaster Pro', appIcon: '📸', rating: 5, comment: 'Отличное приложение! Очень удобный интерфейс и множество функций для редактирования фотографий.', date: '3 дня назад' },
+      { id: 2, appName: 'Fitness Tracker', appIcon: '💪', rating: 4, comment: 'Хорошее приложение для отслеживания тренировок. Можно было бы добавить больше упражнений.', date: '1 неделя назад' },
+      { id: 3, appName: 'Cloud Notes', appIcon: '📝', rating: 5, comment: 'Лучшее приложение для заметок! Синхронизация работает отлично.', date: '2 недели назад' }
+    ]
+  };
+};
+
+/**
+ * Инструкция для подключения к реальному API:
+ * 
+ * 1. Замените функции выше на fetch запросы:
+ * 
+ * export const getAllApps = async () => {
+ *   try {
+ *     const response = await fetch('https://your-api.com/api/apps');
+ *     const data = await response.json();
+ *     return { success: true, data };
+ *   } catch (error) {
+ *     return { success: false, error: error.message };
+ *   }
+ * };
+ * 
+ * 2. Обновите URL endpoints согласно вашему API
+ * 3. Добавьте обработку ошибок и авторизации при необходимости
+ * 4. Обновите структуру данных, если она отличается
+ */
+

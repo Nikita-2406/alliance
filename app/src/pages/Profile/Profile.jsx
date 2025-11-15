@@ -1,9 +1,14 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { getUserDownloads, getUserFavorites, getUserReviews } from '../../services/api';
 import './Profile.css';
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState('downloads');
+  const [downloadedApps, setDownloadedApps] = useState([]);
+  const [reviews, setReviews] = useState([]);
+  const [favorites, setFavorites] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const userInfo = {
     name: 'Пользователь',
@@ -12,45 +17,27 @@ const Profile = () => {
     memberSince: 'Октябрь 2024'
   };
 
-  const downloadedApps = [
-    { id: 1, name: 'PhotoMaster Pro', icon: '📸', size: '85 MB', downloadDate: '2 дня назад', version: '3.2.1' },
-    { id: 2, name: 'Fitness Tracker', icon: '💪', size: '65 MB', downloadDate: '5 дней назад', version: '2.5.0' },
-    { id: 3, name: 'Cloud Notes', icon: '📝', size: '40 MB', downloadDate: '1 неделя назад', version: '4.1.2' },
-    { id: 4, name: 'Music Streaming', icon: '🎵', size: '45 MB', downloadDate: '2 недели назад', version: '5.0.1' },
-  ];
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [downloads, favs, revs] = await Promise.all([
+          getUserDownloads(),
+          getUserFavorites(),
+          getUserReviews()
+        ]);
 
-  const reviews = [
-    {
-      id: 1,
-      appName: 'PhotoMaster Pro',
-      appIcon: '📸',
-      rating: 5,
-      comment: 'Отличное приложение! Очень удобный интерфейс и множество функций для редактирования фотографий.',
-      date: '3 дня назад'
-    },
-    {
-      id: 2,
-      appName: 'Fitness Tracker',
-      appIcon: '💪',
-      rating: 4,
-      comment: 'Хорошее приложение для отслеживания тренировок. Можно было бы добавить больше упражнений.',
-      date: '1 неделя назад'
-    },
-    {
-      id: 3,
-      appName: 'Cloud Notes',
-      appIcon: '📝',
-      rating: 5,
-      comment: 'Лучшее приложение для заметок! Синхронизация работает отлично.',
-      date: '2 недели назад'
-    },
-  ];
+        if (downloads.success) setDownloadedApps(downloads.data);
+        if (favs.success) setFavorites(favs.data);
+        if (revs.success) setReviews(revs.data);
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const favorites = [
-    { id: 1, name: 'PhotoMaster Pro', icon: '📸', category: 'Фото и видео', rating: 4.8 },
-    { id: 5, name: 'Language Learning', icon: '🌍', category: 'Образование', rating: 4.8 },
-    { id: 9, name: 'Video Editor Pro', icon: '🎬', category: 'Фото и видео', rating: 4.7 },
-  ];
+    loadData();
+  }, []);
 
   const renderStars = (rating) => {
     return '⭐'.repeat(rating) + '☆'.repeat(5 - rating);
