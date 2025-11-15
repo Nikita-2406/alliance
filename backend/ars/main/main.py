@@ -83,13 +83,13 @@ if os.path.exists(SCREENSHOTS_DIR):
 # MySQL connection string
 DATABASE_URL = "mysql+mysqlconnector://root:SQLpassforCon5@127.0.0.1:3306/rustore2"
 
-# Создание движка и сессии
+
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
 
-# Модели базы данных
+#тупо таблица приложений
 class AppDB(Base):
     __tablename__ = "apps"
 
@@ -163,7 +163,7 @@ def create_tables():
         raise
 
 
-# Зависимость для получения сессии БД
+# делаем сессию БД для каждого запроса
 def get_db():
     db = SessionLocal()
     try:
