@@ -1,6 +1,6 @@
 from database import Database
 from models import ReviewCreate, ReviewUpdate
-from typing import List, Optional
+from typing import List
 
 class ReviewsRepository:
     def __init__(self):
