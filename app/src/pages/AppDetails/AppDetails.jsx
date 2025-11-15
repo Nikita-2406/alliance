@@ -10,6 +10,7 @@ const AppDetails = () => {
   const [appData, setAppData] = useState(null);
   const [userReviews, setUserReviews] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [reviewFilter, setReviewFilter] = useState('all'); // all, 5, 4, 3, 2, 1
 
   useEffect(() => {
     const loadAppData = async () => {
@@ -66,7 +67,13 @@ const AppDetails = () => {
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
-    return '⭐'.repeat(fullStars) + (hasHalfStar ? '✨' : '') + '☆'.repeat(5 - fullStars - (hasHalfStar ? 1 : 0));
+    return (
+      <span className="stars-display">
+        {'★'.repeat(fullStars)}
+        {hasHalfStar ? '⯨' : ''}
+        {'☆'.repeat(5 - fullStars - (hasHalfStar ? 1 : 0))}
+      </span>
+    );
   };
 
   const handleDownload = () => {
@@ -98,7 +105,7 @@ const AppDetails = () => {
             
             {/* Кнопка скачать */}
             <button className="download-main-btn" onClick={handleDownload}>
-              Скачать сейчас
+              Скачать
             </button>
             
             {/* Горизонтальный блок с информацией */}
@@ -154,7 +161,7 @@ const AppDetails = () => {
             className={`details-tab ${selectedTab === 'reviews' ? 'active' : ''}`}
             onClick={() => setSelectedTab('reviews')}
           >
-            ⭐ Отзывы ({appData.reviews})
+            <span className="stars-display">★</span> Отзывы ({appData.reviews.toLocaleString()})
           </button>
         </div>
 
@@ -193,39 +200,96 @@ const AppDetails = () => {
 
           {selectedTab === 'reviews' && (
             <div className="reviews-section">
+              {/* Статистика рейтинга */}
               <div className="reviews-summary glass-card">
-                <div className="rating-overview">
-                  <span className="rating-large">{appData.rating}</span>
-                  <div className="rating-details">
-                    <div className="stars-large">{renderStars(appData.rating)}</div>
-                    <span className="reviews-count">{appData.reviews.toLocaleString()} отзывов</span>
+                <div className="rating-overview-detailed">
+                  <div className="rating-main-block">
+                    <span className="rating-large">{appData.rating}</span>
+                    <div className="rating-details">
+                      <div className="stars-large">{renderStars(appData.rating)}</div>
+                      <span className="reviews-count">{appData.reviews.toLocaleString()} отзывов</span>
+                    </div>
+                  </div>
+                  
+                  {/* Распределение по звездам */}
+                  <div className="rating-distribution">
+                    {[5, 4, 3, 2, 1].map((stars) => {
+                      const count = userReviews.filter(r => r.rating === stars).length;
+                      const percentage = userReviews.length > 0 ? (count / userReviews.length) * 100 : 0;
+                      return (
+                        <div key={stars} className="rating-bar-row">
+                          <span className="rating-bar-label">{stars} <span className="stars-display">★</span></span>
+                          <div className="rating-bar-container">
+                            <div 
+                              className="rating-bar-fill" 
+                              style={{ width: `${percentage}%` }}
+                            ></div>
+                          </div>
+                          <span className="rating-bar-count">{count}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
 
+              {/* Фильтры */}
+              <div className="reviews-filters glass-card">
+                <button 
+                  className={`filter-btn ${reviewFilter === 'all' ? 'active' : ''}`}
+                  onClick={() => setReviewFilter('all')}
+                >
+                  Все отзывы ({userReviews.length})
+                </button>
+                {[5, 4, 3, 2, 1].map((stars) => {
+                  const count = userReviews.filter(r => r.rating === stars).length;
+                  if (count === 0) return null;
+                  return (
+                    <button 
+                      key={stars}
+                      className={`filter-btn ${reviewFilter === stars ? 'active' : ''}`}
+                      onClick={() => setReviewFilter(stars)}
+                    >
+                      {stars} <span className="stars-display">★</span> ({count})
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Список отзывов */}
               <div className="reviews-list">
-                {appData.userReviews.map((review) => (
+                {(reviewFilter === 'all' 
+                  ? userReviews 
+                  : userReviews.filter(r => r.rating === reviewFilter)
+                ).map((review) => (
                   <div key={review.id} className="review-card glass-card">
                     <div className="review-header-detail">
-                      <div className="review-author">
-                        <span className="author-avatar">👤</span>
-                        <div>
-                          <span className="author-name">{review.author}</span>
-                          <span className="review-date-small">{review.date}</span>
-                        </div>
-                      </div>
+                  <div className="review-author">
+                    <div className="author-avatar">
+                      {review.author.charAt(0).toUpperCase()}
+                    </div>
+                    <div className="author-info">
+                      <span className="author-name">{review.author}</span>
+                      <span className="review-date-small">{review.date}</span>
+                    </div>
+                  </div>
                       <div className="review-rating-small">{renderStars(review.rating)}</div>
                     </div>
                     <p className="review-text">{review.comment}</p>
                     <div className="review-helpful">
-                      <button className="helpful-btn">👍 Полезно</button>
+                      <button className="helpful-btn">
+                        <span className="helpful-icon">▲</span>
+                        Полезно
+                      </button>
                     </div>
                   </div>
                 ))}
               </div>
 
+              {/* Кнопка написать отзыв */}
               <button className="write-review-btn glass-card">
-                ✏️ Написать отзыв
+                <span className="write-icon">+</span>
+                Написать отзыв
               </button>
             </div>
           )}

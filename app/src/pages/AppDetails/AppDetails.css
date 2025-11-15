@@ -74,25 +74,25 @@
 }
 
 .app-title {
-  font-size: 2.2em;
+  font-size: 1.3em;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   color: var(--text-primary);
 }
 
 .app-developer {
-  font-size: 1.1em;
+  font-size: 1em;
   color: var(--text-secondary);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
+  font-weight: 600;
 }
 
 .app-category-badge {
   display: inline-block;
-  padding: 6px 16px;
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 20px;
-  font-size: 0.9em;
+  font-size: 1em;
+  color: var(--text-secondary);
   font-weight: 600;
+  margin: 0;
 }
 
 .app-quick-stats {
@@ -154,12 +154,12 @@
 }
 
 .rating-stars {
-  font-size: 1.2em;
+  font-size: 1em;
 }
 
 .rating-value {
-  font-size: 1.1em;
-  font-weight: 700;
+  font-size: 1em;
+  font-weight: 600;
   color: var(--text-primary);
 }
 
@@ -236,11 +236,33 @@
 }
 
 .screenshots-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  display: flex;
   gap: 16px;
   overflow-x: auto;
-  padding-bottom: 8px;
+  overflow-y: hidden;
+  padding-bottom: 12px;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(33, 150, 243, 0.3) rgba(33, 150, 243, 0.1);
+}
+
+.screenshots-grid::-webkit-scrollbar {
+  height: 6px;
+}
+
+.screenshots-grid::-webkit-scrollbar-track {
+  background: rgba(33, 150, 243, 0.1);
+  border-radius: 3px;
+}
+
+.screenshots-grid::-webkit-scrollbar-thumb {
+  background: rgba(33, 150, 243, 0.3);
+  border-radius: 3px;
+}
+
+.screenshots-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(33, 150, 243, 0.5);
 }
 
 .screenshot-card {
@@ -250,11 +272,15 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  min-width: 180px;
+  min-width: 200px;
+  width: 200px;
+  flex-shrink: 0;
+  scroll-snap-align: start;
 }
 
 .screenshot-card:hover {
-  transform: none;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.15);
 }
 
 .screenshot-icon {
@@ -283,6 +309,9 @@
   transition: all 0.3s ease;
   white-space: nowrap;
   font-size: 0.95em;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .details-tab:hover {
@@ -403,19 +432,27 @@
 
 .reviews-summary {
   padding: 30px;
-  text-align: center;
+  background: rgba(255, 255, 255, 0.7) !important;
 }
 
-.rating-overview {
+/* Детальная статистика рейтинга */
+.rating-overview-detailed {
+  display: flex;
+  gap: 40px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.rating-main-block {
   display: flex;
   align-items: center;
-  justify-content: center;
   gap: 24px;
+  flex-shrink: 0;
 }
 
 .rating-large {
   font-size: 4em;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text-primary);
 }
 
@@ -430,9 +467,109 @@
   font-size: 1.5em;
 }
 
+/* Стили для звёзд */
+.stars-display {
+  color: #FFA726;
+  font-size: 1.15em;
+  letter-spacing: 2px;
+}
+
 .reviews-count {
   font-size: 0.95em;
   color: var(--text-secondary);
+  font-weight: 600;
+}
+
+/* Распределение по звездам */
+.rating-distribution {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 300px;
+}
+
+.rating-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rating-bar-label {
+  font-size: 0.9em;
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 50px;
+}
+
+.rating-bar-container {
+  flex: 1;
+  height: 8px;
+  background: rgba(33, 150, 243, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.rating-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #2196F3 0%, #64B5F6 100%);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.rating-bar-count {
+  font-size: 0.85em;
+  color: var(--text-secondary);
+  font-weight: 600;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Фильтры отзывов */
+.reviews-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.7) !important;
+}
+
+.filter-btn {
+  padding: 10px 20px;
+  background: rgba(33, 150, 243, 0.08);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(33, 150, 243, 0.15);
+  border-radius: 20px;
+  color: var(--text-secondary);
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.filter-btn:hover {
+  background: rgba(33, 150, 243, 0.15);
+  border-color: rgba(33, 150, 243, 0.25);
+  transform: translateY(-2px);
+}
+
+.filter-btn.active {
+  background: rgba(33, 150, 243, 0.2);
+  border-color: rgba(33, 150, 243, 0.3);
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+.rating-overview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
 }
 
 .reviews-list {
@@ -443,36 +580,60 @@
 
 .review-card {
   padding: 20px;
+  background: rgba(255, 255, 255, 0.7) !important;
+  transition: all 0.3s ease;
+}
+
+.review-card:hover {
+  transform: none !important;
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.12) !important;
 }
 
 .review-header-detail {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
+  align-items: flex-start;
+  margin-bottom: 14px;
 }
 
 .review-author {
   display: flex;
   align-items: center;
   gap: 12px;
+  flex: 1;
 }
 
 .author-avatar {
-  font-size: 32px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.15) 0%, rgba(100, 181, 246, 0.15) 100%);
+  border: 2px solid rgba(33, 150, 243, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4em;
+  font-weight: 700;
+  color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.author-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .author-name {
-  display: block;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 2px;
+  font-size: 1em;
 }
 
 .review-date-small {
-  display: block;
   font-size: 0.85em;
   color: var(--text-secondary);
+  font-weight: 600;
 }
 
 .review-rating-small {
@@ -493,32 +654,60 @@
 
 .helpful-btn {
   padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  color: var(--text-primary);
-  font-size: 0.85em;
+  background: rgba(33, 150, 243, 0.08);
+  border: 1px solid rgba(33, 150, 243, 0.15);
+  border-radius: 20px;
+  color: var(--text-secondary);
+  font-size: 0.9em;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .helpful-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(33, 150, 243, 0.15);
+  color: var(--color-primary);
+  border-color: rgba(33, 150, 243, 0.25);
+}
+
+.helpful-icon {
+  font-size: 0.9em;
+  font-weight: 700;
 }
 
 .write-review-btn {
   padding: 16px;
   text-align: center;
-  color: var(--text-primary);
-  font-weight: 600;
+  color: var(--color-primary);
+  font-weight: 700;
   font-size: 1.05em;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .write-review-btn:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(33, 150, 243, 0.12);
+  border-color: rgba(33, 150, 243, 0.25);
   transform: translateY(-2px);
+}
+
+.write-icon {
+  font-size: 1.4em;
+  font-weight: 400;
+  line-height: 1;
 }
 
 /* Changelog Section */
@@ -599,7 +788,6 @@
 
   .app-category-badge {
     font-size: 0.85em;
-    padding: 4px 12px;
   }
 
   /* Показываем рейтинг inline на мобильных */
@@ -658,6 +846,75 @@
 
   .rating-details {
     align-items: center;
+  }
+
+  /* Мобильные стили для отзывов */
+  .reviews-summary {
+    padding: 20px;
+  }
+
+  .rating-overview-detailed {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .rating-main-block {
+    flex-direction: column;
+    text-align: center;
+    gap: 16px;
+  }
+
+  .rating-large {
+    font-size: 3em;
+  }
+
+  .rating-details {
+    align-items: center;
+  }
+
+  .rating-distribution {
+    min-width: 100%;
+  }
+
+  .rating-bar-label {
+    min-width: 45px;
+    font-size: 0.85em;
+  }
+
+  .rating-bar-count {
+    min-width: 35px;
+  }
+
+  .reviews-filters {
+    padding: 12px 16px;
+    gap: 8px;
+  }
+
+  .filter-btn {
+    padding: 8px 16px;
+    font-size: 0.85em;
+  }
+
+  .review-card {
+    padding: 16px;
+  }
+
+  .author-avatar {
+    width: 42px;
+    height: 42px;
+    font-size: 1.2em;
+  }
+
+  .author-name {
+    font-size: 0.95em;
+  }
+
+  .review-rating-small {
+    font-size: 1em;
+  }
+
+  .review-text {
+    font-size: 0.9em;
   }
 }
 

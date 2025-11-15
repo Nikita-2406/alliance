@@ -17,6 +17,12 @@ const Search = () => {
     { id: 'top', label: 'Топ' },
   ];
 
+  const handleDownload = (e, appName) => {
+    e.preventDefault();
+    e.stopPropagation();
+    alert(`Начинается загрузка ${appName}...`);
+  };
+
   useEffect(() => {
     const loadApps = async () => {
       const result = await searchApps('');
@@ -121,7 +127,10 @@ const Search = () => {
                       <span className="app-card-size">{app.size}</span>
                     </div>
                   </div>
-                  <button className="app-card-download" onClick={(e) => e.preventDefault()}>
+                  <button 
+                    className="app-card-download" 
+                    onClick={(e) => handleDownload(e, app.name)}
+                  >
                     Установить
                   </button>
                 </Link>
