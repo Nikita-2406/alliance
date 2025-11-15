@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import './App.css';
 import Header from './components/Header/Header';
+import Welcome from './pages/Welcome/Welcome';
 import Home from './pages/Home/Home';
 import Search from './pages/Search/Search';
 import Categories from './pages/Categories/Categories';
@@ -19,7 +20,7 @@ function AppContent() {
   
   // Определяем заголовок на основе текущего маршрута
   const getPageTitle = () => {
-    if (location.pathname === '/') return 'Главная';
+    if (location.pathname === '/home') return 'Главная';
     if (location.pathname === '/search') return 'Поиск';
     if (location.pathname === '/categories') return 'Категории';
     if (location.pathname.startsWith('/category/')) return 'Категория';
@@ -29,13 +30,17 @@ function AppContent() {
   };
 
   const showBackButton = location.pathname.startsWith('/app/') || location.pathname.startsWith('/category/');
+  
+  // Скрываем Header на Welcome странице
+  const showHeader = location.pathname !== '/';
 
   return (
     <div className="app-container">
-      <Header title={getPageTitle()} showBack={showBackButton} />
-      <main className="app-main">
+      {showHeader && <Header title={getPageTitle()} showBack={showBackButton} />}
+      <main className={showHeader ? "app-main" : "app-main-full"}>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Welcome />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/search" element={<Search />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/category/:categoryName" element={<CategoryApps />} />

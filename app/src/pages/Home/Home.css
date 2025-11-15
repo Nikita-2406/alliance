@@ -56,14 +56,19 @@
 }
 
 .see-all {
-  color: var(--text-secondary);
+  font-size: 1.05em;
   font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
   transition: all 0.3s ease;
-  font-size: 1em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .see-all:hover {
-  color: var(--text-primary);
+  color: var(--color-primary-dark);
+  transform: translateX(4px);
 }
 
 /* Featured Apps Carousel - Infinite with Side Preview */

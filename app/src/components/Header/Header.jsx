@@ -11,7 +11,7 @@ const Header = ({ showBack = false }) => {
   const navContainerRef = useRef(null);
 
   const navItems = useMemo(() => [
-    { path: '/', label: 'Главная' },
+    { path: '/home', label: 'Главная' },
     { path: '/search', label: 'Поиск' },
     { path: '/categories', label: 'Категории' },
     { path: '/profile', label: 'Профиль' }
@@ -68,7 +68,7 @@ const Header = ({ showBack = false }) => {
               ← Назад
             </button>
           ) : (
-            <Link to="/" className="header-logo">
+            <Link to="/home" className="header-logo">
               <img src={RuStoreLogo} alt="RuStore" className="logo-icon" />
               <span className="logo-text">RuStore</span>
             </Link>

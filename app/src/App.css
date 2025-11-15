@@ -10,3 +10,10 @@
   width: 100%;
   overflow-x: hidden;
 }
+
+.app-main-full {
+  flex: 1;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}

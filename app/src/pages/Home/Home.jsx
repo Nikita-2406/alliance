@@ -177,7 +177,7 @@ const Home = () => {
         <section className="section">
           <div className="section-header">
             <h2 className="section-title">Топ недели</h2>
-            <Link to="/search" className="see-all">Все →</Link>
+            <Link to="/search" className="see-all">Все приложения →</Link>
           </div>
           <div className="top-list-horizontal">
             {topWeek.map((app) => {
