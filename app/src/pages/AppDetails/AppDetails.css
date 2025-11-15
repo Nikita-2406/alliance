@@ -96,10 +96,7 @@
 }
 
 .app-quick-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-bottom: 30px;
+  display: none; /* Скрыт, используем .app-info-bar */
 }
 
 .quick-stat {
@@ -146,6 +143,84 @@
   box-shadow: 0 8px 24px rgba(33, 150, 243, 0.25),
               inset 0 1px 0 rgba(255, 255, 255, 0.7);
   border-color: rgba(33, 150, 243, 0.4);
+}
+
+/* Рейтинг inline под текстом */
+.app-rating-inline {
+  display: none; /* Скрыто на десктопе, показывается на мобильных */
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.rating-stars {
+  font-size: 1.2em;
+}
+
+.rating-value {
+  font-size: 1.1em;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.rating-label {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+}
+
+/* Горизонтальный блок с информацией */
+.app-info-bar {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  gap: 20px;
+  background: rgba(33, 150, 243, 0.08);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-radius: 16px;
+  padding: 20px 16px;
+  margin-top: 20px;
+  border: 1px solid rgba(33, 150, 243, 0.15);
+}
+
+.info-bar-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  text-align: center;
+}
+
+.info-bar-icon {
+  font-size: 2.2em;
+  flex-shrink: 0;
+}
+
+.info-bar-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: center;
+}
+
+.info-bar-value {
+  font-size: 1.2em;
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.info-bar-label {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.info-bar-divider {
+  display: none;
 }
 
 /* Screenshots */
@@ -496,22 +571,76 @@
   }
 
   .app-main-info {
-    flex-direction: column;
-    text-align: center;
+    flex-direction: row;
+    text-align: left;
+    align-items: flex-start;
+    gap: 16px;
   }
 
   .app-icon-large {
-    font-size: 80px;
-    width: 100px;
-    height: 100px;
+    font-size: 72px;
+    width: 90px;
+    height: 90px;
+  }
+
+  .app-title-section {
+    text-align: left;
   }
 
   .app-title {
+    font-size: 1.5em;
+    margin-bottom: 4px;
+  }
+
+  .app-developer {
+    font-size: 0.95em;
+    margin-bottom: 8px;
+  }
+
+  .app-category-badge {
+    font-size: 0.85em;
+    padding: 4px 12px;
+  }
+
+  /* Показываем рейтинг inline на мобильных */
+  .app-rating-inline {
+    display: flex;
+  }
+
+  /* Скрываем старые quick-stats на мобильных */
+  .app-quick-stats {
+    display: none;
+  }
+
+  /* Показываем новый info-bar на мобильных */
+  .app-info-bar {
+    display: flex;
+    padding: 16px 12px;
+    margin-top: 16px;
+    gap: 12px;
+  }
+
+  .info-bar-item {
+    flex: 1;
+    gap: 4px;
+  }
+
+  .info-bar-icon {
     font-size: 1.8em;
   }
 
-  .app-quick-stats {
-    grid-template-columns: 1fr;
+  .info-bar-value {
+    font-size: 1em;
+  }
+
+  .info-bar-label {
+    font-size: 0.8em;
+  }
+
+  .download-main-btn {
+    margin-top: 16px;
+    padding: 14px 24px;
+    font-size: 1.1em;
   }
 
   .screenshots-grid {

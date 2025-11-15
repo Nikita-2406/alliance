@@ -9,12 +9,13 @@ const Home = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [screenshotIndices, setScreenshotIndices] = useState({});
 
   useEffect(() => {
     const loadData = async () => {
       try {
         const [featured, top, cats] = await Promise.all([
-          getFeaturedApps(3),
+          getFeaturedApps(5),
           getTopWeekApps(5),
           getCategories()
         ]);
@@ -44,17 +45,11 @@ const Home = () => {
   }, [featuredApps.length, currentSlide]);
 
   const handlePrevSlide = () => {
-    setCurrentSlide((prev) => {
-      if (prev <= 0) return featuredApps.length - 1;
-      return prev - 1;
-    });
+    setCurrentSlide((prev) => (prev <= 0 ? featuredApps.length - 1 : prev - 1));
   };
 
   const handleNextSlide = () => {
-    setCurrentSlide((prev) => {
-      if (prev >= featuredApps.length - 1) return 0;
-      return prev + 1;
-    });
+    setCurrentSlide((prev) => (prev >= featuredApps.length - 1 ? 0 : prev + 1));
   };
 
   if (loading) {
@@ -81,21 +76,40 @@ const Home = () => {
             </button>
             
             <div className="carousel-container">
-              <div 
-                className="carousel-track"
-                style={{
-                  transform: `translateX(-${currentSlide * 100}%)`
-                }}
-              >
+              <div className="carousel-track">
                 {featuredApps.map((app, index) => {
-                  const isActive = index === currentSlide;
+                  // Вычисляем позицию каждого слайда относительно текущего
+                  let position = index - currentSlide;
+                  
+                  // Нормализуем позицию для бесконечного цикла
+                  if (position < -Math.floor(featuredApps.length / 2)) {
+                    position += featuredApps.length;
+                  } else if (position > Math.floor(featuredApps.length / 2)) {
+                    position -= featuredApps.length;
+                  }
+                  
+                  const isActive = position === 0;
+                  const isVisible = Math.abs(position) <= 1;
                   
                   return (
                     <div 
-                      key={`${app.id}-${index}`}
-                      className={`carousel-slide ${isActive ? 'active' : ''}`}
+                      key={app.id}
+                      className={`carousel-slide ${isActive ? 'active' : ''} position-${position} ${!isVisible ? 'hidden' : ''}`}
+                      onClick={() => {
+                        if (position !== 0) {
+                          setCurrentSlide(index);
+                        }
+                      }}
                     >
-                      <Link to={`/app/${app.id}`} className="featured-card glass-card">
+                      <Link 
+                        to={`/app/${app.id}`} 
+                        className="featured-card glass-card"
+                        onClick={(e) => {
+                          if (position !== 0) {
+                            e.preventDefault();
+                          }
+                        }}
+                      >
                         <div className="featured-header" style={{ background: app.color }}>
                           <span className="featured-icon">{app.icon}</span>
                         </div>
@@ -149,21 +163,84 @@ const Home = () => {
             <h2 className="section-title">Топ недели</h2>
             <Link to="/search" className="see-all">Все →</Link>
           </div>
-          <div className="top-list">
-            {topWeek.map((app, idx) => (
-              <Link to={`/app/${app.id}`} key={app.id} className="app-item glass-card">
-                <div className="app-rank">{idx + 1}</div>
-                <div className="app-icon-small">{app.icon}</div>
-                <div className="app-info">
-                  <h4 className="app-name">{app.name}</h4>
-                  <p className="app-meta">{app.category}</p>
-                  <div className="app-rating">
-                    <span>⭐</span>
-                    <span>{app.rating}</span>
+          <div className="top-list-horizontal">
+            {topWeek.map((app, idx) => {
+              const currentIndex = screenshotIndices[app.id] || 0;
+              const totalScreenshots = app.screenshots.length;
+              
+              const handlePrevScreenshot = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setScreenshotIndices((prev) => ({
+                  ...prev,
+                  [app.id]: currentIndex === 0 ? totalScreenshots - 1 : currentIndex - 1
+                }));
+              };
+              
+              const handleNextScreenshot = (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setScreenshotIndices((prev) => ({
+                  ...prev,
+                  [app.id]: currentIndex === totalScreenshots - 1 ? 0 : currentIndex + 1
+                }));
+              };
+              
+              // Показываем текущий и следующий скриншот
+              const visibleScreenshots = [
+                app.screenshots[currentIndex],
+                app.screenshots[(currentIndex + 1) % totalScreenshots]
+              ];
+              
+              return (
+                <Link to={`/app/${app.id}`} key={app.id} className="top-app-card glass-card">
+                  <div className="top-app-content">
+                    <div className="top-app-icon">{app.icon}</div>
+                    <div className="top-app-info">
+                      <h4 className="top-app-name">{app.name}</h4>
+                      <p className="top-app-category">{app.category}</p>
+                      <div className="top-app-rating">
+                        <span>⭐</span>
+                        <span>{app.rating}</span>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </Link>
-            ))}
+                  <div className="top-app-screenshots">
+                    <button 
+                      className="screenshot-arrow screenshot-arrow-left" 
+                      onClick={handlePrevScreenshot}
+                      aria-label="Предыдущий скриншот"
+                    >
+                      ‹
+                    </button>
+                    <div className="screenshot-container">
+                      <div className="screenshot-wrapper">
+                        <div 
+                          className="screenshot-track-slide"
+                          style={{ 
+                            transform: `translateX(-${(currentIndex % totalScreenshots) * 50}%)`
+                          }}
+                        >
+                          {/* Создаем массив из всех скриншотов + первый для бесконечного цикла */}
+                          {[...app.screenshots, app.screenshots[0]].map((screenshot, sIdx) => (
+                            <div key={sIdx} className="screenshot-item-slide">
+                              <span className="screenshot-emoji">{screenshot}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                    <button 
+                      className="screenshot-arrow screenshot-arrow-right" 
+                      onClick={handleNextScreenshot}
+                      aria-label="Следующий скриншот"
+                    >
+                      ›
+                    </button>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </section>
       </div>

@@ -86,25 +86,47 @@ const AppDetails = () => {
                 <h1 className="app-title">{appData.name}</h1>
                 <p className="app-developer">{appData.developer}</p>
                 <p className="app-category-badge">{appData.category}</p>
+                
+                {/* Рейтинг отдельно под основным текстом */}
+                <div className="app-rating-inline">
+                  <span className="rating-stars">⭐</span>
+                  <span className="rating-value">{appData.rating}</span>
+                  <span className="rating-label">({appData.reviews.toLocaleString()} отзывов)</span>
+                </div>
               </div>
             </div>
-            <div className="app-quick-stats">
-              <div className="quick-stat">
-                <span className="stat-value-large">{appData.rating}</span>
-                <span className="stat-label-small">⭐ Рейтинг</span>
-              </div>
-              <div className="quick-stat">
-                <span className="stat-value-large">{appData.downloads}</span>
-                <span className="stat-label-small">📥 Скачиваний</span>
-              </div>
-              <div className="quick-stat">
-                <span className="stat-value-large">{appData.size}</span>
-                <span className="stat-label-small">💾 Размер</span>
-              </div>
-            </div>
+            
+            {/* Кнопка скачать */}
             <button className="download-main-btn" onClick={handleDownload}>
               Скачать сейчас
             </button>
+            
+            {/* Горизонтальный блок с информацией */}
+            <div className="app-info-bar">
+              <div className="info-bar-item">
+                <span className="info-bar-icon">📥</span>
+                <div className="info-bar-text">
+                  <span className="info-bar-value">{appData.downloads}</span>
+                  <span className="info-bar-label">Скачиваний</span>
+                </div>
+              </div>
+              <div className="info-bar-divider"></div>
+              <div className="info-bar-item">
+                <span className="info-bar-icon">💾</span>
+                <div className="info-bar-text">
+                  <span className="info-bar-value">{appData.size}</span>
+                  <span className="info-bar-label">Размер</span>
+                </div>
+              </div>
+              <div className="info-bar-divider"></div>
+              <div className="info-bar-item">
+                <span className="info-bar-icon">🔞</span>
+                <div className="info-bar-text">
+                  <span className="info-bar-value">{appData.ageRating}</span>
+                  <span className="info-bar-label">Возраст</span>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

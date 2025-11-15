@@ -66,7 +66,7 @@
   color: var(--text-primary);
 }
 
-/* Featured Apps Carousel */
+/* Featured Apps Carousel - Infinite with Side Preview */
 .featured-carousel {
   position: relative;
   display: flex;
@@ -77,40 +77,141 @@
 
 .carousel-container {
   flex: 1;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
-  padding: 20px 0;
+  padding: 40px 0;
+  perspective: 1500px;
 }
 
 .carousel-track {
-  display: flex;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.carousel-slide {
-  min-width: 100%;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 10px;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  height: 500px;
+}
+
+.carousel-slide {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  cursor: pointer;
+  transform-origin: center center;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+/* Позиционирование слайдов - только 3 слайда */
+.carousel-slide.position--1 {
+  transform: translate(-50%, -50%) translateX(-115%) scale(0.8);
+  opacity: 0.5;
+  z-index: 2;
+}
+
+.carousel-slide.position-0 {
+  transform: translate(-50%, -50%) translateX(0%) scale(1);
+  opacity: 1;
+  z-index: 5;
+  cursor: default;
+}
+
+.carousel-slide.position-1 {
+  transform: translate(-50%, -50%) translateX(115%) scale(0.8);
+  opacity: 0.5;
+  z-index: 2;
+}
+
+/* Скрытые слайды (за пределами видимости) */
+.carousel-slide.hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+  visibility: hidden !important;
+  transform: translate(-50%, -50%) translateX(0%) scale(0.5) !important;
+}
+
+/* Убираем все hover эффекты для скрытых слайдов */
+.carousel-slide.hidden:hover {
+  opacity: 0 !important;
+  transform: translate(-50%, -50%) translateX(0%) scale(0.5) !important;
+}
+
+.carousel-slide.hidden .featured-card {
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
+.carousel-slide.hidden:hover .featured-card {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Слайды, уходящие влево */
+.carousel-slide.position--2,
+.carousel-slide.position--3,
+.carousel-slide.position--4,
+.carousel-slide.position--5 {
+  transform: translate(-50%, -50%) translateX(-150%) scale(0.7);
+  opacity: 0;
+  z-index: -1;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* Слайды, уходящие вправо */
+.carousel-slide.position-2,
+.carousel-slide.position-3,
+.carousel-slide.position-4,
+.carousel-slide.position-5 {
+  transform: translate(-50%, -50%) translateX(150%) scale(0.7);
+  opacity: 0;
+  z-index: -1;
+  pointer-events: none;
+  visibility: hidden;
 }
 
 .carousel-slide .featured-card {
   width: 100%;
-  max-width: 400px;
+  max-width: 360px;
   margin: 0 auto;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: auto;
 }
 
-.carousel-slide.active .featured-card {
-  transform: scale(1);
-  opacity: 1;
+.carousel-slide.active .featured-card,
+.carousel-slide.position-0 .featured-card {
+  box-shadow: 0 20px 60px rgba(33, 150, 243, 0.3);
 }
 
-.carousel-slide:not(.active) .featured-card {
-  transform: scale(0.85);
-  opacity: 0.4;
+.carousel-slide:not(.position-0) .featured-card {
+  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.12);
+}
+
+/* Hover только для боковых видимых слайдов (position -1 и 1) */
+.carousel-slide.position--1:hover,
+.carousel-slide.position-1:hover {
+  opacity: 0.85 !important;
+}
+
+.carousel-slide.position--1:hover .featured-card,
+.carousel-slide.position-1:hover .featured-card {
+  transform: scale(1.05);
+  box-shadow: 0 12px 36px rgba(33, 150, 243, 0.18);
+}
+
+/* Отключаем hover для центрального слайда */
+.carousel-slide.position-0:hover {
+  opacity: 1 !important;
+}
+
+.carousel-slide.position-0:hover .featured-card {
+  transform: none;
 }
 
 .carousel-arrow {
@@ -263,100 +364,235 @@
   color: var(--text-secondary);
 }
 
-/* Categories Quick */
+/* Categories Quick - Full Width */
 .categories-quick {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  width: 100%;
 }
 
 .category-quick {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: 16px 12px;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px 16px;
   cursor: pointer;
   text-align: center;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(33, 150, 243, 0.15);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.08);
+}
+
+.category-quick:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.15);
+  border-color: rgba(33, 150, 243, 0.25);
 }
 
 .category-icon {
-  font-size: 32px;
+  font-size: 48px;
+  filter: drop-shadow(0 2px 8px rgba(33, 150, 243, 0.2));
+  transition: all 0.3s ease;
+}
+
+.category-quick:hover .category-icon {
+  transform: scale(1.1);
 }
 
 .category-name {
-  font-size: 0.85em;
+  font-size: 0.95em;
   font-weight: 700;
   color: var(--text-primary);
   text-shadow: none;
 }
 
-/* Top List */
-.top-list {
+/* Top List - Horizontal Card Style */
+.top-list-horizontal {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.top-app-card {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  padding: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease, border-color 0.3s ease;
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(33, 150, 243, 0.15);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.08);
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.top-app-card:hover {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(33, 150, 243, 0.25);
+  transform: none !important;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.08) !important;
+}
+
+.top-app-content {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  flex-shrink: 0;
+  min-width: 140px;
+  align-items: flex-start;
 }
 
-.app-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.app-item:hover {
-  transform: translateX(6px);
-}
-
-.app-rank {
-  font-size: 1.2em;
-  font-weight: 700;
-  color: var(--text-secondary);
-  min-width: 32px;
-  text-align: center;
-}
-
-.app-icon-small {
-  font-size: 40px;
-  width: 48px;
-  height: 48px;
+.top-app-icon {
+  font-size: 56px;
+  width: 72px;
+  height: 72px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(33, 150, 243, 0.08);
-  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.12) 0%, rgba(227, 242, 253, 0.2) 100%);
+  border-radius: 16px;
+  border: 1px solid rgba(33, 150, 243, 0.15);
+  flex-shrink: 0;
 }
 
-.app-info {
-  flex: 1;
+.top-app-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  width: 100%;
 }
 
-.app-info .app-name {
-  font-size: 0.95em;
-  margin-bottom: 3px;
+.top-app-name {
+  font-size: 1em;
   font-weight: 700;
   color: var(--text-primary);
+  line-height: 1.3;
+  margin: 0;
 }
 
-.app-meta {
-  font-size: 0.8em;
+.top-app-category {
+  font-size: 0.85em;
   color: var(--text-secondary);
   font-weight: 600;
+  margin: 0;
 }
 
-.app-rating {
-  display: flex;
+.top-app-rating {
+  display: inline-flex;
   align-items: center;
   gap: 4px;
   font-size: 0.9em;
-  font-weight: 600;
-  background: rgba(33, 150, 243, 0.08);
-  padding: 6px 12px;
+  font-weight: 700;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* Screenshots Section */
+.top-app-screenshots {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  position: relative;
+}
+
+.screenshot-arrow {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(33, 150, 243, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(33, 150, 243, 0.2);
+  color: var(--color-primary);
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+  position: relative;
+  z-index: 10;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.screenshot-arrow:hover {
+  background: rgba(33, 150, 243, 0.2);
+  transform: scale(1.1);
+}
+
+.screenshot-arrow:active {
+  transform: scale(0.95);
+  background: rgba(33, 150, 243, 0.25);
+}
+
+.screenshot-container {
+  flex: 1;
+  overflow: hidden;
+  border-radius: 12px;
+  position: relative;
+  height: 120px;
+  background: rgba(33, 150, 243, 0.05);
+  padding: 4px;
+}
+
+.screenshot-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
   border-radius: 10px;
-  color: var(--text-primary);
+}
+
+.screenshot-track-slide {
+  display: flex;
+  height: 100%;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.screenshot-item-slide {
+  min-width: 50%;
+  height: 100%;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.screenshot-item-slide > * {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.08) 0%, rgba(227, 242, 253, 0.3) 100%);
+  border: 1px solid rgba(33, 150, 243, 0.12);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.08);
+}
+
+.screenshot-emoji {
+  font-size: 56px;
+  filter: drop-shadow(0 2px 8px rgba(33, 150, 243, 0.2));
 }
 
 .loading-state {
@@ -373,7 +609,7 @@
   }
 
   .featured-carousel {
-    gap: 10px;
+    gap: 8px;
   }
 
   .carousel-arrow {
@@ -382,12 +618,35 @@
     font-size: 20px;
   }
 
+  .carousel-container {
+    padding: 30px 0;
+  }
+
+  .carousel-track {
+    height: 440px;
+  }
+
+  .carousel-slide {
+    max-width: 280px;
+  }
+
   .carousel-slide .featured-card {
-    max-width: 320px;
+    max-width: 280px;
+  }
+
+  /* Адаптируем позиции для мобильных */
+  .carousel-slide.position--1 {
+    transform: translate(-50%, -50%) translateX(-110%) scale(0.75);
+    opacity: 0.4;
+  }
+
+  .carousel-slide.position-1 {
+    transform: translate(-50%, -50%) translateX(110%) scale(0.75);
+    opacity: 0.4;
   }
 
   .featured-icon {
-    font-size: 120px;
+    font-size: 100px;
   }
 
   .featured-body {
@@ -395,31 +654,74 @@
   }
 
   .categories-quick {
-    grid-template-columns: repeat(5, 1fr);
-    gap: 8px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
   }
   
   .category-quick {
-    padding: 12px 8px;
+    padding: 20px 12px;
   }
   
   .category-icon {
-    font-size: 28px;
+    font-size: 40px;
   }
   
   .category-name {
-    font-size: 0.75em;
+    font-size: 0.85em;
   }
 
-  .app-rank {
-    min-width: 30px;
-    font-size: 1.2em;
+  /* Мобильная версия топ недели */
+  .top-list-horizontal {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
-  .app-icon-small {
-    font-size: 40px;
-    width: 48px;
-    height: 48px;
+  .top-app-card {
+    flex-direction: row;
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .top-app-content {
+    min-width: 120px;
+    gap: 8px;
+  }
+
+  .top-app-icon {
+    width: 64px;
+    height: 64px;
+    font-size: 48px;
+  }
+
+  .top-app-name {
+    font-size: 0.95em;
+  }
+
+  .top-app-category {
+    font-size: 0.8em;
+  }
+
+  .top-app-rating {
+    font-size: 0.85em;
+  }
+
+  .screenshot-container {
+    height: 100px;
+    padding: 3px;
+  }
+
+  .screenshot-item-slide {
+    padding: 0 3px;
+  }
+
+  .screenshot-emoji {
+    font-size: 48px;
+  }
+
+  .screenshot-arrow {
+    width: 28px;
+    height: 28px;
+    font-size: 18px;
   }
 }
 
