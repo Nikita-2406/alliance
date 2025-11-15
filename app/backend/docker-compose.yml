@@ -8,6 +8,9 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=reviews_db
+      - VK_APP_ID=your_vk_app_id
+      - VK_SECRET_KEY=your_vk_secret_key
+      - JWT_SECRET_KEY=your-super-secret-jwt-key
     depends_on:
       - db
     volumes:
@@ -23,7 +26,7 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: reviews_db
     ports:
-      - "5433:5432"  # Изменено с 5432 на 5433
+      - "5433:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./database.sql:/docker-entrypoint-initdb.d/database.sql
