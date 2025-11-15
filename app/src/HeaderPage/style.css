@@ -1,6 +1,6 @@
 .Header-Text {
     /* Позиционирование и выравнивание */
-    position: absolute;
+    position: fixed;
     /* top: 20px; */
     left: 50%;
     text-align: center;

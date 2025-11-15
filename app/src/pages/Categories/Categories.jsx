@@ -92,7 +92,7 @@ const Categories = () => {
                 className="category-card-new glass-card"
               >
                 <div className="category-card-gradient" style={{ 
-                  background: `linear-gradient(135deg, ${category.color}15 0%, ${category.color}05 100%)` 
+                  background: `linear-gradient(135deg, ${category.color}30 0%, ${category.color}12 50%, ${category.color}08 100%)` 
                 }}></div>
                 <div className="category-card-content">
                   <span className="category-icon-new">{category.icon}</span>
