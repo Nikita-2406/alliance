@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './AppDetails.css';
 
@@ -6,144 +6,179 @@ const AppDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState('about');
-
-  // Состояния для отзывов - ПЕРЕНЕСЕНО В НАЧАЛО КОМПОНЕНТА
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      author: "Александр",
-      date: "2 дня назад",
-      text: "Лучшее приложение для редактирования! Очень довольны функционалом.",
-      likes: 0
-    },
-    {
-      id: 2,
-      author: "Мария",
-      date: "1 неделя назад", 
-      text: "Хорошее приложение, но иногда тормозит на слабых устройствах.",
-      likes: 0
-    },
-    {
-      id: 3,
-      author: "Дмитрий",
-      date: "2 недели назад",
-      text: "Профессиональные инструменты по доступной цене. Рекомендуем!",
-      likes: 0
-    },
-    {
-      id: 4,
-      author: "Елена",
-      date: "3 недели назад",
-      text: "Использую каждый день! Интуитивный интерфейс и много возможностей.",
-      likes: 0
-    }
-  ]);
   
+  const [reviews, setReviews] = useState([]);
   const [isReviewFormOpen, setReviewFormOpen] = useState(false);
   const [newReview, setNewReview] = useState({ author: '', text: '' });
+  const [loading, setLoading] = useState(false);
+  const [appData, setAppData] = useState(null);
 
-  const handleAddReview = () => {
-    if (newReview.author && newReview.text) {
-      const review = {
-        id: reviews.length + 1,
-        author: newReview.author,
-        date: "Только что",
-        text: newReview.text,
-        likes: 0
-      };
-      setReviews([review, ...reviews]);
-      setNewReview({ author: '', text: '' });
-      setReviewFormOpen(false);
+  // Загрузка данных приложения и отзывов
+  useEffect(() => {
+    fetchAppData();
+    fetchReviews();
+  }, [id]);
+
+  // Функция для загрузки данных приложения (заглушка - замените на реальный API)
+  const fetchAppData = async () => {
+    // Временные данные - замените на реальный запрос к вашему API
+    const mockAppData = {
+      id: parseInt(id),
+      name: `Приложение ${id}`,
+      developer: `Разработчик ${id}`,
+      category: 'Игра',
+      rating: 4.5,
+      downloads: '1M+',
+      size: '156 MB',
+      version: '1.2.3',
+      description: 'Это увлекательное приложение с потрясающей графикой и интересным геймплеем.',
+      features: [
+        'Высококачественная графика',
+        'Множество уровней',
+        'Регулярные обновления',
+        'Поддержка многопользовательской игры'
+      ],
+      requirements: {
+        os: 'Android 8.0+',
+        storage: '200 MB',
+        ram: '2 GB'
+      },
+      changelog: [
+        { version: '1.2.3', date: '15.12.2023', changes: ['Исправлены ошибки', 'Добавлены новые уровни'] },
+        { version: '1.2.2', date: '01.12.2023', changes: ['Оптимизация производительности'] }
+      ]
+    };
+    setAppData(mockAppData);
+  };
+
+  // Загрузка отзывов с сервера
+  const fetchReviews = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`http://localhost:5000/api/apps/${id}/reviews`);
+      const data = await response.json();
+      
+      if (response.ok) {
+        setReviews(data);
+      } else {
+        console.error('Ошибка загрузки отзывов:', data.error);
+      }
+    } catch (error) {
+      console.error('Ошибка сети:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Mock data - в реальном приложении это будет загружаться по ID
-  const appData = {
-    id: id,
-    name: 'PhotoMaster Pro',
-    icon: '📸',
-    category: 'Фото и видео',
-    developer: 'Creative Studio Inc.',
-    rating: 4.8,
-    reviews: 12500,
-    downloads: '10M+',
-    size: '85 MB',
-    version: '3.2.1',
-    lastUpdate: '15 ноября 2024',
-    ageRating: '4+',
-    color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    screenshots: ['📱', '🖼️', '✨', '🎨', '📷'],
-    description: 'PhotoMaster Pro - это профессиональное приложение для редактирования фотографий с множеством инструментов и фильтров. Создавайте потрясающие изображения с помощью интуитивно понятного интерфейса.',
-    features: [
-      '✨ Более 100 профессиональных фильтров',
-      '🎨 Расширенные инструменты редактирования',
-      '📐 Точная настройка цвета и экспозиции',
-      '🔄 Пакетная обработка фотографий',
-      '☁️ Облачная синхронизация',
-      '📤 Экспорт в высоком разрешении'
-    ],
-    requirements: {
-      os: 'Windows 10/11, macOS 12+, Linux',
-      ram: '4 GB',
-      storage: '100 MB',
-      internet: 'Требуется для некоторых функций'
-    },
-    changelog: [
-      { version: '3.2.1', date: '15 ноября 2024', changes: ['Исправлены ошибки', 'Улучшена производительность', 'Добавлены новые фильтры'] },
-      { version: '3.2.0', date: '1 ноября 2024', changes: ['Новый интерфейс', 'Поддержка темной темы', 'Оптимизация работы'] },
-    ]
+  const handleAddReview = async () => {
+    if (newReview.author && newReview.text) {
+      try {
+        const response = await fetch(`http://localhost:5000/api/apps/${id}/reviews`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            author: newReview.author,
+            text: newReview.text
+          })
+        });
+
+        const data = await response.json();
+        
+        if (response.ok) {
+          setReviews([data, ...reviews]);
+          setNewReview({ author: '', text: '' });
+          setReviewFormOpen(false);
+        } else {
+          console.error('Ошибка добавления отзыва:', data.error);
+          alert('Ошибка при добавлении отзыва');
+        }
+      } catch (error) {
+        console.error('Ошибка сети:', error);
+        alert('Ошибка сети при добавлении отзыва');
+      }
+    }
   };
 
+  const handleLike = async (reviewId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/reviews/${reviewId}/like`, {
+        method: 'POST'
+      });
+
+      const data = await response.json();
+      
+      if (response.ok) {
+        setReviews(reviews.map(review => 
+          review.id === reviewId ? { ...review, likes: data.likes } : review
+        ));
+      } else {
+        console.error('Ошибка лайка:', data.error);
+      }
+    } catch (error) {
+      console.error('Ошибка сети при лайке:', error);
+    }
+  };
+
+  // Функция для отображения звезд рейтинга
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    return '⭐'.repeat(fullStars) + (hasHalfStar ? '✨' : '') + '☆'.repeat(5 - fullStars - (hasHalfStar ? 1 : 0));
+    const halfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+    
+    return (
+      <>
+        {'★'.repeat(fullStars)}
+        {halfStar && '★'}
+        {'☆'.repeat(emptyStars)}
+      </>
+    );
   };
 
-  const handleDownload = () => {
-    alert(`Начинается скачивание ${appData.name}...`);
-  };
-
-  const handleLike = (reviewId) => {
-    setReviews(reviews.map(review => 
-      review.id === reviewId ? { ...review, likes: review.likes + 1 } : review
-    ));
-  };
+  if (!appData) {
+    return <div className="app-details-page">Загрузка...</div>;
+  }
 
   return (
     <div className="app-details-page">
       <div className="app-details-content">
         {/* Hero Section */}
         <section className="app-hero">
-          <div className="app-hero-bg" style={{ background: appData.color }}></div>
+          <div className="app-hero-bg" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}></div>
           <div className="app-hero-content glass-card">
             <button className="back-btn" onClick={() => navigate(-1)}>
               ← Назад
             </button>
+            
             <div className="app-main-info">
-              <div className="app-icon-large">{appData.icon}</div>
+              <div className="app-icon-large">
+                {appData.name.charAt(0)}
+              </div>
               <div className="app-title-section">
                 <h1 className="app-title">{appData.name}</h1>
-                <p className="app-developer">{appData.developer}</p>
-                <p className="app-category-badge">{appData.category}</p>
+                <div className="app-developer">{appData.developer}</div>
+                <span className="app-category-badge">{appData.category}</span>
               </div>
             </div>
+
             <div className="app-quick-stats">
-              <div className="quick-stat">
+              <div className="quick-stat glass-card">
                 <span className="stat-value-large">{appData.rating}</span>
-                <span className="stat-label-small">⭐ Рейтинг</span>
+                <span className="stat-label-small">Рейтинг</span>
               </div>
-              <div className="quick-stat">
+              <div className="quick-stat glass-card">
                 <span className="stat-value-large">{appData.downloads}</span>
-                <span className="stat-label-small">📥 Скачиваний</span>
+                <span className="stat-label-small">Загрузки</span>
               </div>
-              <div className="quick-stat">
+              <div className="quick-stat glass-card">
                 <span className="stat-value-large">{appData.size}</span>
-                <span className="stat-label-small">💾 Размер</span>
+                <span className="stat-label-small">Размер</span>
               </div>
             </div>
-            <button className="download-main-btn" onClick={handleDownload}>
-              📥 Скачать сейчас
+
+            <button className="download-main-btn">
+              📥 Скачать бесплатно
             </button>
           </div>
         </section>
@@ -152,9 +187,9 @@ const AppDetails = () => {
         <section className="screenshots-section">
           <h2 className="section-title">Скриншоты</h2>
           <div className="screenshots-grid">
-            {appData.screenshots.map((screenshot, idx) => (
-              <div key={idx} className="screenshot-card glass-card">
-                <span className="screenshot-icon">{screenshot}</span>
+            {[1, 2, 3, 4].map((num) => (
+              <div key={num} className="screenshot-card glass-card">
+                <div className="screenshot-icon">🖼️</div>
               </div>
             ))}
           </div>
@@ -162,19 +197,19 @@ const AppDetails = () => {
 
         {/* Tabs */}
         <div className="details-tabs">
-          <button
+          <button 
             className={`details-tab ${selectedTab === 'about' ? 'active' : ''}`}
             onClick={() => setSelectedTab('about')}
           >
-            📖 О приложении
+            📝 О приложении
           </button>
-          <button
+          <button 
             className={`details-tab ${selectedTab === 'reviews' ? 'active' : ''}`}
             onClick={() => setSelectedTab('reviews')}
           >
-            ⭐ Отзывы ({reviews.length})
+            💬 Отзывы ({reviews.length})
           </button>
-          <button
+          <button 
             className={`details-tab ${selectedTab === 'changelog' ? 'active' : ''}`}
             onClick={() => setSelectedTab('changelog')}
           >
@@ -192,10 +227,10 @@ const AppDetails = () => {
               </div>
 
               <div className="about-card glass-card">
-                <h3>Возможности</h3>
+                <h3>Основные функции</h3>
                 <ul className="features-list">
-                  {appData.features.map((feature, idx) => (
-                    <li key={idx}>{feature}</li>
+                  {appData.features.map((feature, index) => (
+                    <li key={index}>✓ {feature}</li>
                   ))}
                 </ul>
               </div>
@@ -204,31 +239,24 @@ const AppDetails = () => {
                 <h3>Системные требования</h3>
                 <div className="requirements-grid">
                   <div className="requirement-item">
-                    <span className="req-icon">💻</span>
+                    <div className="req-icon">📱</div>
                     <div>
-                      <span className="req-label">Операционная система:</span>
+                      <span className="req-label">ОС</span>
                       <span className="req-value">{appData.requirements.os}</span>
                     </div>
                   </div>
                   <div className="requirement-item">
-                    <span className="req-icon">🧠</span>
+                    <div className="req-icon">💾</div>
                     <div>
-                      <span className="req-label">Оперативная память:</span>
-                      <span className="req-value">{appData.requirements.ram}</span>
-                    </div>
-                  </div>
-                  <div className="requirement-item">
-                    <span className="req-icon">💾</span>
-                    <div>
-                      <span className="req-label">Свободное место:</span>
+                      <span className="req-label">Память</span>
                       <span className="req-value">{appData.requirements.storage}</span>
                     </div>
                   </div>
                   <div className="requirement-item">
-                    <span className="req-icon">🌐</span>
+                    <div className="req-icon">⚡</div>
                     <div>
-                      <span className="req-label">Интернет:</span>
-                      <span className="req-value">{appData.requirements.internet}</span>
+                      <span className="req-label">ОЗУ</span>
+                      <span className="req-value">{appData.requirements.ram}</span>
                     </div>
                   </div>
                 </div>
@@ -238,20 +266,16 @@ const AppDetails = () => {
                 <h3>Информация</h3>
                 <div className="info-list">
                   <div className="info-item">
-                    <span className="info-label">Версия:</span>
+                    <span className="info-label">Версия</span>
                     <span className="info-value">{appData.version}</span>
                   </div>
                   <div className="info-item">
-                    <span className="info-label">Обновлено:</span>
-                    <span className="info-value">{appData.lastUpdate}</span>
-                  </div>
-                  <div className="info-item">
-                    <span className="info-label">Возрастной рейтинг:</span>
-                    <span className="info-value">{appData.ageRating}</span>
-                  </div>
-                  <div className="info-item">
-                    <span className="info-label">Разработчик:</span>
+                    <span className="info-label">Разработчик</span>
                     <span className="info-value">{appData.developer}</span>
+                  </div>
+                  <div className="info-item">
+                    <span className="info-label">Категория</span>
+                    <span className="info-value">{appData.category}</span>
                   </div>
                 </div>
               </div>
@@ -282,8 +306,8 @@ const AppDetails = () => {
 
               {/* Модальное окно для нового отзыва */}
               {isReviewFormOpen && (
-                <div className="modal-overlay" onClick={() => setReviewFormOpen(false)}>
-                  <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <div className="modal-overlay">
+                  <div className="modal-content">
                     <h3>Добавить отзыв</h3>
                     <input
                       type="text"
@@ -297,7 +321,6 @@ const AppDetails = () => {
                       value={newReview.text}
                       onChange={(e) => setNewReview({...newReview, text: e.target.value})}
                       className="review-textarea"
-                      rows="4"
                     />
                     <div className="modal-actions">
                       <button 
@@ -309,6 +332,7 @@ const AppDetails = () => {
                       <button 
                         className="submit-btn"
                         onClick={handleAddReview}
+                        disabled={!newReview.author || !newReview.text}
                       >
                         Опубликовать
                       </button>
@@ -319,43 +343,51 @@ const AppDetails = () => {
 
               {/* Список отзывов */}
               <div className="reviews-list">
-                {reviews.map(review => (
-                  <div key={review.id} className="review-card glass-card">
-                    <div className="review-header">
-                      <div className="review-author">
-                        <span className="author-avatar">👤</span>
-                        <div>
-                          <span className="author-name">{review.author}</span>
-                          <span className="review-date">{review.date}</span>
+                {loading ? (
+                  <div className="loading-message">Загрузка отзывов...</div>
+                ) : reviews.length === 0 ? (
+                  <div className="no-reviews-message glass-card">
+                    Пока нет отзывов. Будьте первым!
+                  </div>
+                ) : (
+                  reviews.map(review => (
+                    <div key={review.id} className="review-card glass-card">
+                      <div className="review-header">
+                        <div className="review-author">
+                          <span className="author-avatar">👤</span>
+                          <div>
+                            <span className="author-name">{review.author}</span>
+                            <span className="review-date">{review.date}</span>
+                          </div>
                         </div>
                       </div>
+                      <p className="review-text">{review.text}</p>
+                      <div className="review-actions">
+                        <button 
+                          className="like-btn"
+                          onClick={() => handleLike(review.id)}
+                        >
+                          👍 Полезно ({review.likes || 0})
+                        </button>
+                      </div>
                     </div>
-                    <p className="review-text">{review.text}</p>
-                    <div className="review-actions">
-                      <button 
-                        className="like-btn"
-                        onClick={() => handleLike(review.id)}
-                      >
-                        👍 Полезно ({review.likes})
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                )}
               </div>
             </div>
           )}
 
           {selectedTab === 'changelog' && (
             <div className="changelog-section">
-              {appData.changelog.map((version, idx) => (
-                <div key={idx} className="changelog-card glass-card">
+              {appData.changelog.map((version, index) => (
+                <div key={index} className="changelog-card glass-card">
                   <div className="version-header">
                     <h3>Версия {version.version}</h3>
                     <span className="version-date">{version.date}</span>
                   </div>
                   <ul className="changes-list">
-                    {version.changes.map((change, changeIdx) => (
-                      <li key={changeIdx}>• {change}</li>
+                    {version.changes.map((change, changeIndex) => (
+                      <li key={changeIndex}>• {change}</li>
                     ))}
                   </ul>
                 </div>
