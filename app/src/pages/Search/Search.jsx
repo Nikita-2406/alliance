@@ -120,18 +120,20 @@ const Search = () => {
             <div className="apps-grid">
               {filteredApps.map((app) => (
                 <Link to={`/app/${app.id}`} key={app.id} className="app-card glass-card">
-                  <div className="app-card-icon">{app.icon}</div>
-                  <div className="app-card-content">
-                    <h3 className="app-card-name">{app.name}</h3>
-                    <p className="app-card-category">{app.category}</p>
-                    <div className="app-card-stats">
-                      <span className="app-card-rating">
-                        <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
-                          <path d="M7 0l1.796 5.528h5.812l-4.702 3.416 1.796 5.528L7 11.056l-4.702 3.416 1.796-5.528L-.608 5.528h5.812z"/>
-                        </svg>
-                        {app.rating}
-                      </span>
-                      <span className="app-card-size">{app.size}</span>
+                  <div className="app-card-header">
+                    <div className="app-card-icon">{app.icon}</div>
+                    <div className="app-card-content">
+                      <h3 className="app-card-name">{app.name}</h3>
+                      <p className="app-card-category">{app.category}</p>
+                      <div className="app-card-stats">
+                        <span className="app-card-rating">
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+                            <path d="M7 0l1.796 5.528h5.812l-4.702 3.416 1.796 5.528L7 11.056l-4.702 3.416 1.796-5.528L-.608 5.528h5.812z"/>
+                          </svg>
+                          {app.rating}
+                        </span>
+                        <span className="app-card-size">{app.size}</span>
+                      </div>
                     </div>
                   </div>
                   <button 

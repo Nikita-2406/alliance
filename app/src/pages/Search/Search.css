@@ -205,8 +205,8 @@
 .app-card {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  padding: 24px;
+  gap: 12px;
+  padding: 16px;
   background: rgba(255, 255, 255, 0.65) !important;
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
@@ -220,6 +220,12 @@
   color: inherit;
 }
 
+.app-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .app-card:hover {
   transform: translateY(-4px);
   background: rgba(255, 255, 255, 0.8) !important;
@@ -229,18 +235,17 @@
 }
 
 .app-card-icon {
-  font-size: 84px;
-  width: 92px;
-  height: 92px;
+  font-size: 56px;
+  width: 64px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, rgba(33, 150, 243, 0.12) 0%, rgba(227, 242, 253, 0.2) 100%);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border-radius: 20px;
+  border-radius: 16px;
   border: 1px solid rgba(33, 150, 243, 0.15);
-  margin-bottom: 16px;
   flex-shrink: 0;
 }
 
@@ -248,22 +253,22 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  text-align: center;
+  align-items: flex-start;
+  text-align: left;
   gap: 4px;
-  margin-bottom: 16px;
-  width: 100%;
+  min-width: 0;
 }
 
 .app-card-name {
-  font-size: 1.2em;
+  font-size: 1.1em;
   font-weight: 700;
   color: var(--text-primary);
   margin: 0;
   line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   width: 100%;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
 }
 
 .app-card-category {
@@ -292,21 +297,26 @@
 
 .app-card-download {
   width: 100%;
+  display: block;
   padding: 12px 24px;
   background: rgba(33, 150, 243, 0.15);
   backdrop-filter: blur(20px) saturate(180%);
   -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid rgba(33, 150, 243, 0.25);
-  border-radius: 14px;
+  border-radius: 12px;
   color: var(--color-primary);
   font-weight: 700;
   font-size: 1em;
+  text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(33, 150, 243, 0.15),
               inset 0 1px 0 rgba(255, 255, 255, 0.5);
   position: relative;
   overflow: hidden;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  align-self: stretch;
 }
 
 .app-card-download .btn-bg-fill {
@@ -445,25 +455,22 @@
 
   .app-card {
     padding: 12px;
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
+    gap: 10px;
+  }
+
+  .app-card-header {
+    gap: 10px;
   }
 
   .app-card-icon {
     font-size: 44px;
     width: 52px;
     height: 52px;
-    margin-bottom: 0;
-    flex-shrink: 0;
     border-radius: 14px;
   }
 
   .app-card-content {
     flex: 1;
-    align-items: flex-start;
-    text-align: left;
-    margin-bottom: 0;
     min-width: 0;
     gap: 3px;
   }
@@ -471,9 +478,6 @@
   .app-card-name {
     font-size: 0.95em;
     line-height: 1.2;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .app-card-category {
@@ -487,12 +491,8 @@
   }
 
   .app-card-download {
-    padding: 6px 10px;
-    font-size: 0.75em;
-    flex-shrink: 0;
-    white-space: nowrap;
-    min-width: auto;
-    width: auto;
+    padding: 10px 16px;
+    font-size: 0.9em;
   }
 
   .no-results {
@@ -518,18 +518,22 @@
 
   .app-card {
     padding: 10px;
-    gap: 10px;
+    gap: 8px;
+  }
+
+  .app-card-header {
+    gap: 8px;
   }
 
   .app-card-icon {
-    font-size: 40px;
-    width: 48px;
-    height: 48px;
+    font-size: 38px;
+    width: 46px;
+    height: 46px;
     border-radius: 12px;
   }
 
   .app-card-name {
-    font-size: 0.9em;
+    font-size: 0.85em;
   }
 
   .app-card-category {
@@ -542,8 +546,8 @@
   }
 
   .app-card-download {
-    padding: 5px 8px;
-    font-size: 0.7em;
+    padding: 8px 12px;
+    font-size: 0.85em;
     border-radius: 10px;
   }
 }
