@@ -22,7 +22,8 @@ const Categories = () => {
             const categoryApps = apps.data.filter(app => app.category === cat.name);
             return {
               ...cat,
-              apps: categoryApps
+              apps: categoryApps,
+              color: `linear-gradient(135deg, ${cat.color} 0%, #0E103D 100%)`
             };
           });
           setCategories(categoriesWithApps);
@@ -38,10 +39,6 @@ const Categories = () => {
     loadData();
   }, []);
 
-  const handleCategoryClick = (categoryId) => {
-    setSelectedCategory(selectedCategory === categoryId ? null : categoryId);
-  };
-
   if (loading) {
     return (
       <div className="categories-page">
@@ -54,59 +51,62 @@ const Categories = () => {
     );
   }
 
+  const oldCategories = [
+  ];
+
+  const handleCategoryClick = (categoryId) => {
+    setSelectedCategory(selectedCategory === categoryId ? null : categoryId);
+  };
+
   return (
     <div className="categories-page">
       <div className="categories-content">
-        <div className="categories-hero">
-          <h1 className="categories-hero-title">Категории приложений</h1>
-          <p className="categories-hero-subtitle">Найдите приложение для любой задачи</p>
-        </div>
+        <section className="categories-intro glass-card">
+          <h1>Категории приложений</h1>
+          <p>Исследуйте тысячи приложений в разных категориях</p>
+        </section>
 
-        <div className="categories-list">
+        <div className="categories-grid">
           {categories.map((category) => (
-            <div key={category.id} className="category-wrapper">
-              <div className="category-main glass-card">
-                <div className="category-icon-wrapper">
-                  <span className="category-icon-big" style={{ color: category.color }}>{category.icon}</span>
+            <div key={category.id} className="category-section">
+              <div
+                className="category-card glass-card"
+                onClick={() => handleCategoryClick(category.id)}
+              >
+                <div className="category-header" style={{ background: category.color }}>
+                  <span className="category-icon-large">{category.icon}</span>
                 </div>
-                <div className="category-details">
-                  <h2 className="category-name-large">{category.name}</h2>
-                  <p className="category-apps-count">{category.count} приложений</p>
+                <div className="category-body">
+                  <h2 className="category-title">{category.name}</h2>
+                  <p className="category-count">{category.count} приложений</p>
+                  <button className="explore-btn">
+                    {selectedCategory === category.id ? '△ Свернуть' : '▽ Показать'}
+                  </button>
                 </div>
-                <button 
-                  className={`category-toggle-btn ${selectedCategory === category.id ? 'active' : ''}`}
-                  onClick={() => handleCategoryClick(category.id)}
-                >
-                  {selectedCategory === category.id ? 'Скрыть' : 'Показать'}
-                </button>
               </div>
 
               {selectedCategory === category.id && (
-                <div className="category-apps-list">
-                  <div className="apps-grid-category">
-                    {category.apps.map((app) => (
-                      <Link
-                        to={`/app/${app.id}`}
-                        key={app.id}
-                        className="app-card-category glass-card"
-                      >
-                        <div className="app-card-icon">{app.icon}</div>
-                        <div className="app-card-content">
-                          <h4 className="app-card-name">{app.name}</h4>
-                          <div className="app-card-stats">
-                            <span className="app-stat">⭐ {app.rating}</span>
-                            <span className="app-stat-separator">•</span>
-                            <span className="app-stat">{app.size}</span>
-                          </div>
+                <div className="category-apps">
+                  {category.apps.map((app) => (
+                    <Link
+                      to={`/app/${app.id}`}
+                      key={app.id}
+                      className="category-app-item glass-card"
+                    >
+                      <div className="category-app-icon">{app.icon}</div>
+                      <div className="category-app-info">
+                        <h4>{app.name}</h4>
+                        <div className="category-app-meta">
+                          <span>⭐ {app.rating}</span>
+                          <span>📥 {app.downloads}</span>
                         </div>
-                        <div className="app-card-download">
-                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-                          </svg>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
+                      </div>
+                      <button className="mini-download-btn">Скачать</button>
+                    </Link>
+                  ))}
+                  <Link to="/search" className="view-all-btn glass-card">
+                    Показать все приложения →
+                  </Link>
                 </div>
               )}
             </div>
