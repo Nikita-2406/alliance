@@ -109,7 +109,6 @@ const Search = () => {
               <h2 className="results-title">
                 {searchQuery ? `"${searchQuery}"` : 'Все приложения'}
               </h2>
-              <span className="results-count">{filteredApps.length} найдено</span>
             </div>
           </div>
 

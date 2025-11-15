@@ -151,17 +151,17 @@ const CategoryApps = () => {
                     </span>
                     <span className="app-card-downloads">📥 {app.downloads}</span>
                   </div>
+                  <button 
+                    className={`app-card-download ${downloadingApps[app.id] ? 'downloading' : ''} ${completedApps[app.id] ? 'complete' : ''}`}
+                    onClick={(e) => handleDownload(e, app.id)}
+                    disabled={downloadingApps[app.id] || completedApps[app.id]}
+                  >
+                    <span className="btn-bg-fill"></span>
+                    <span className="btn-text">
+                      {completedApps[app.id] ? 'Готово' : 'Установить'}
+                    </span>
+                  </button>
                 </div>
-                <button 
-                  className={`app-card-download ${downloadingApps[app.id] ? 'downloading' : ''} ${completedApps[app.id] ? 'complete' : ''}`}
-                  onClick={(e) => handleDownload(e, app.id)}
-                  disabled={downloadingApps[app.id] || completedApps[app.id]}
-                >
-                  <span className="btn-bg-fill"></span>
-                  <span className="btn-text">
-                    {completedApps[app.id] ? 'Готово' : 'Установить'}
-                  </span>
-                </button>
               </Link>
             ))}
           </div>
