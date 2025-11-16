@@ -315,8 +315,11 @@
   transition: all 0.3s ease;
   min-width: 200px;
   width: 200px;
+  height: auto;
   flex-shrink: 0;
   scroll-snap-align: start;
+  overflow: hidden;
+  padding: 0;
 }
 
 .screenshot-card:hover {
@@ -324,8 +327,11 @@
   box-shadow: 0 8px 24px rgba(33, 150, 243, 0.15);
 }
 
-.screenshot-icon {
-  font-size: 64px;
+.screenshot-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* Tabs */
@@ -1088,8 +1094,9 @@
     font-size: 1.1em;
   }
 
-  .screenshots-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  .screenshot-card {
+    min-width: 160px;
+    width: 160px;
   }
 
   .details-tabs {

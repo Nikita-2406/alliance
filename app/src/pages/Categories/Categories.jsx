@@ -117,7 +117,7 @@ const Categories = () => {
                 to={`/app/${app.id}`}
                 className="top-app-card glass-card"
               >
-                <div className="top-app-icon">{app.icon}</div>
+                <img src={app.icon} alt={app.name} className="top-app-icon" />
                 <div className="top-app-info">
                   <h4 className="top-app-name">{app.name}</h4>
                   <p className="top-app-category">{app.category}</p>

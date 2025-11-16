@@ -34,11 +34,18 @@ const Search = () => {
 
   useEffect(() => {
     const loadApps = async () => {
-      const result = await searchApps('');
-      if (result.success) {
-        setFilteredApps(result.data);
+      try {
+        const result = await searchApps('');
+        if (result.success && result.data) {
+          setFilteredApps(result.data);
+        } else {
+          console.log('No data from search, result:', result);
+        }
+      } catch (error) {
+        console.error('Error loading apps:', error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     loadApps();
   }, []);
@@ -46,11 +53,20 @@ const Search = () => {
   useEffect(() => {
     const performSearch = async () => {
       setLoading(true);
-      const result = await searchApps(searchQuery);
-      if (result.success) {
-        setFilteredApps(result.data);
+      try {
+        const result = await searchApps(searchQuery);
+        if (result.success && result.data) {
+          setFilteredApps(result.data);
+        } else {
+          console.log('Search returned no data for query:', searchQuery, 'result:', result);
+          setFilteredApps([]);
+        }
+      } catch (error) {
+        console.error('Search error:', error);
+        setFilteredApps([]);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     };
     
     const timer = setTimeout(() => {
@@ -121,7 +137,7 @@ const Search = () => {
               {filteredApps.map((app) => (
                 <Link to={`/app/${app.id}`} key={app.id} className="app-card glass-card">
                   <div className="app-card-header">
-                    <div className="app-card-icon">{app.icon}</div>
+                    <img src={app.icon} alt={app.name} className="app-card-icon" />
                     <div className="app-card-content">
                       <h3 className="app-card-name">{app.name}</h3>
                       <p className="app-card-category">{app.category}</p>

@@ -223,19 +223,20 @@ async def get_categories(db: Session = Depends(get_db)):
 
 @app.get("/api/search", response_model=List[App])
 async def search_apps(
-        q: str = Query(..., description="Поисковый запрос"),
+        q: str = Query("", description="Поисковый запрос"),
         db: Session = Depends(get_db)
 ):
     """Поиск приложений по названию и описанию"""
     try:
-        if not q:
-            return []
-
-        search_query = f"%{q.lower()}%"
-        db_apps = db.query(AppDB).filter(
-            AppDB.name.ilike(search_query) |
-            AppDB.description.ilike(search_query)
-        ).all()
+        # Если запрос пустой, возвращаем все приложения
+        if not q or q.strip() == "":
+            db_apps = db.query(AppDB).all()
+        else:
+            search_query = f"%{q.lower()}%"
+            db_apps = db.query(AppDB).filter(
+                AppDB.name.ilike(search_query) |
+                AppDB.description.ilike(search_query)
+            ).all()
 
         apps = []
         for db_app in db_apps:
@@ -267,7 +268,7 @@ async def search_apps(
 async def get_featured_apps(db: Session = Depends(get_db)):
     """Получить избранные приложения (с наивысшим рейтингом)"""
     try:
-        db_apps = db.query(AppDB).order_by(AppDB.rating.desc()).limit(3).all()
+        db_apps = db.query(AppDB).order_by(AppDB.rating.desc()).limit(5).all()
 
         apps = []
         for db_app in db_apps:

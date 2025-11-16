@@ -141,7 +141,7 @@ const CategoryApps = () => {
                 to={`/app/${app.id}`}
                 className="app-card glass-card"
               >
-                <div className="app-card-icon">{app.icon}</div>
+                <img src={app.icon} alt={app.name} className="app-card-icon" />
                 <div className="app-card-info">
                   <h3 className="app-card-name">{app.name}</h3>
                   <p className="app-card-developer">{app.developer}</p>

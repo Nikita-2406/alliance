@@ -25,11 +25,11 @@ DATABASE_URL = "mysql+mysqlconnector://root:1111@127.0.0.1:3306/rustore2"
 # CORS origins
 CORS_ORIGINS = [
     "http://localhost:3000",
+    "http://localhost:5173",
     "http://localhost:5273",
     "http://127.0.0.1:3000",
-    "http://127.0.0.1:5273",
-    "http://localhost:*",
-    "http://127.0.0.1:*"
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5273"
 ]
 
 

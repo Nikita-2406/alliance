@@ -240,12 +240,9 @@
 }
 
 .app-card-icon {
-  font-size: 56px;
   width: 64px;
   height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  object-fit: cover;
   background: linear-gradient(135deg, rgba(33, 150, 243, 0.12) 0%, rgba(227, 242, 253, 0.2) 100%);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
@@ -475,7 +472,6 @@
   }
 
   .app-card-icon {
-    font-size: 50px;
     width: 58px;
     height: 58px;
     border-radius: 14px;
@@ -544,7 +540,6 @@
   }
 
   .app-card-icon {
-    font-size: 46px;
     width: 52px;
     height: 52px;
     border-radius: 14px;

@@ -19,14 +19,88 @@ const StarIcon = ({ filled = true, className = "" }) => (
   </svg>
 );
 
+// Компонент карточки топового приложения
+const TopAppCard = ({ app }) => {
+  const scrollContainerRef = useRef(null);
+  
+  const handleScrollLeft = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({
+        left: -120,
+        behavior: 'smooth'
+      });
+    }
+  };
+  
+  const handleScrollRight = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({
+        left: 120,
+        behavior: 'smooth'
+      });
+    }
+  };
+  
+  return (
+    <Link to={`/app/${app.id}`} className="top-app-card glass-card">
+      <div className="top-app-content">
+        <img src={app.icon} alt={app.name} className="top-app-icon" />
+        <div className="top-app-info">
+          <h4 className="top-app-name">{app.name}</h4>
+          <p className="top-app-category">{app.category}</p>
+          <div className="top-app-rating">
+            <StarIcon />
+            <span>{app.rating}</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Desktop и Mobile - горизонтальный scroll со стрелками */}
+      <div className="top-app-screenshots-wrapper">
+        <button 
+          className="screenshot-arrow screenshot-arrow-left"
+          onClick={handleScrollLeft}
+          aria-label="Пролистать влево"
+        >
+          ‹
+        </button>
+        <div 
+          ref={scrollContainerRef}
+          className="top-app-screenshots-scroll"
+        >
+          {app.screenshots.map((screenshot, sIdx) => (
+            <div key={sIdx} className="top-screenshot-item">
+              <img 
+                src={screenshot} 
+                alt={`${app.name} скриншот ${sIdx + 1}`} 
+                className="top-screenshot-image" 
+              />
+            </div>
+          ))}
+        </div>
+        <button 
+          className="screenshot-arrow screenshot-arrow-right"
+          onClick={handleScrollRight}
+          aria-label="Пролистать вправо"
+        >
+          ›
+        </button>
+      </div>
+    </Link>
+  );
+};
+
 const Home = () => {
   const [featuredApps, setFeaturedApps] = useState([]);
   const [topWeek, setTopWeek] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [screenshotIndices, setScreenshotIndices] = useState({});
-  const intervalRef = useRef(null);
+  const autoplayIntervalRef = useRef(null);
 
   useEffect(() => {
     const loadData = async () => {
@@ -54,37 +128,50 @@ const Home = () => {
     setCurrentSlide((prev) => (prev >= featuredApps.length - 1 ? 0 : prev + 1));
   }, [featuredApps.length]);
 
-  // Функция для сброса и перезапуска таймера
-  const resetTimer = useCallback(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
+  // Функция для сброса и перезапуска таймера автопрокрутки
+  const resetAutoplayTimer = useCallback(() => {
+    if (autoplayIntervalRef.current) {
+      clearInterval(autoplayIntervalRef.current);
     }
+    
     if (featuredApps.length > 0) {
-      intervalRef.current = setInterval(() => {
+      autoplayIntervalRef.current = setInterval(() => {
         handleNextSlide();
       }, 5000);
     }
   }, [featuredApps.length, handleNextSlide]);
 
+  // Обработчики с сбросом таймера
   const handlePrevSlide = () => {
     setCurrentSlide((prev) => (prev <= 0 ? featuredApps.length - 1 : prev - 1));
-    resetTimer(); // Сбрасываем таймер при ручном переключении
+    resetAutoplayTimer();
   };
 
   const handleNextSlideManual = () => {
     handleNextSlide();
-    resetTimer(); // Сбрасываем таймер при ручном переключении
+    resetAutoplayTimer();
+  };
+
+  const handleDotClick = (index) => {
+    setCurrentSlide(index);
+    resetAutoplayTimer();
+  };
+
+  const handleSlideClick = (index) => {
+    setCurrentSlide(index);
+    resetAutoplayTimer();
   };
 
   // Автопрокрутка каждые 5 секунд
   useEffect(() => {
-    resetTimer();
+    resetAutoplayTimer();
+    
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
+      if (autoplayIntervalRef.current) {
+        clearInterval(autoplayIntervalRef.current);
       }
     };
-  }, [resetTimer]);
+  }, [resetAutoplayTimer]);
 
   if (loading) {
     return (
@@ -131,8 +218,7 @@ const Home = () => {
                       className={`carousel-slide ${isActive ? 'active' : ''} position-${position} ${!isVisible ? 'hidden' : ''}`}
                       onClick={() => {
                         if (position !== 0) {
-                          setCurrentSlide(index);
-                          resetTimer(); // Сбрасываем таймер при клике на слайд
+                          handleSlideClick(index);
                         }
                       }}
                     >
@@ -146,7 +232,7 @@ const Home = () => {
                         }}
                       >
                         <div className="featured-header" style={{ background: app.color }}>
-                          <span className="featured-icon">{app.icon}</span>
+                          <img src={app.icon} alt={app.name} className="featured-icon" />
                         </div>
                         <div className="featured-body">
                           <h3 className="app-name">{app.name}</h3>
@@ -173,10 +259,7 @@ const Home = () => {
               <button
                 key={index}
                 className={`carousel-dot ${index === currentSlide ? 'active' : ''}`}
-                onClick={() => {
-                  setCurrentSlide(index);
-                  resetTimer(); // Сбрасываем таймер при клике на точку
-                }}
+                onClick={() => handleDotClick(index)}
               />
             ))}
           </div>
@@ -202,77 +285,9 @@ const Home = () => {
             <Link to="/search" className="see-all">Посмотреть все →</Link>
           </div>
           <div className="top-list-horizontal">
-            {topWeek.map((app) => {
-              const currentIndex = screenshotIndices[app.id] || 0;
-              const totalScreenshots = app.screenshots.length;
-              
-              const handlePrevScreenshot = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setScreenshotIndices((prev) => ({
-                  ...prev,
-                  [app.id]: currentIndex === 0 ? totalScreenshots - 1 : currentIndex - 1
-                }));
-              };
-              
-              const handleNextScreenshot = (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                setScreenshotIndices((prev) => ({
-                  ...prev,
-                  [app.id]: currentIndex === totalScreenshots - 1 ? 0 : currentIndex + 1
-                }));
-              };
-              
-              return (
-                <Link to={`/app/${app.id}`} key={app.id} className="top-app-card glass-card">
-                  <div className="top-app-content">
-                    <div className="top-app-icon">{app.icon}</div>
-                    <div className="top-app-info">
-                      <h4 className="top-app-name">{app.name}</h4>
-                      <p className="top-app-category">{app.category}</p>
-                      <div className="top-app-rating">
-                        <StarIcon />
-                        <span>{app.rating}</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="top-app-screenshots">
-                    <button 
-                      className="screenshot-arrow screenshot-arrow-left" 
-                      onClick={handlePrevScreenshot}
-                      aria-label="Предыдущий скриншот"
-                    >
-                      ‹
-                    </button>
-                    <div className="screenshot-container">
-                      <div className="screenshot-wrapper">
-                        <div 
-                          className="screenshot-track-slide"
-                          style={{ 
-                            transform: `translateX(-${(currentIndex % totalScreenshots) * 50}%)`
-                          }}
-                        >
-                          {/* Создаем массив из всех скриншотов + первый для бесконечного цикла */}
-                          {[...app.screenshots, app.screenshots[0]].map((screenshot, sIdx) => (
-                            <div key={sIdx} className="screenshot-item-slide">
-                              <span className="screenshot-emoji">{screenshot}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    <button 
-                      className="screenshot-arrow screenshot-arrow-right" 
-                      onClick={handleNextScreenshot}
-                      aria-label="Следующий скриншот"
-                    >
-                      ›
-                    </button>
-                  </div>
-                </Link>
-              );
-            })}
+            {topWeek.map((app) => (
+              <TopAppCard key={app.id} app={app} />
+            ))}
           </div>
         </section>
       </div>

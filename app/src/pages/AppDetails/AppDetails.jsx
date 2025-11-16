@@ -179,7 +179,7 @@ const AppDetails = () => {
           <div className="app-hero-bg" style={{ background: appData.color }}></div>
           <div className="app-hero-content glass-card">
             <div className="app-main-info">
-              <div className="app-icon-large">{appData.icon}</div>
+              <img src={appData.icon} alt={appData.name} className="app-icon-large" />
               <div className="app-title-section">
                 <h1 className="app-title">{appData.name}</h1>
                 <p className="app-developer">{appData.developer}</p>
@@ -240,7 +240,7 @@ const AppDetails = () => {
           <div className="screenshots-grid">
             {appData.screenshots.map((screenshot, idx) => (
               <div key={idx} className="screenshot-card glass-card">
-                <span className="screenshot-icon">{screenshot}</span>
+                <img src={screenshot} alt={`${appData.name} скриншот ${idx + 1}`} className="screenshot-image" />
               </div>
             ))}
           </div>

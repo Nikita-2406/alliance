@@ -211,7 +211,7 @@ const Profile = () => {
             <div className="downloads-list">
               {downloadedApps.map((app) => (
                 <Link to={`/app/${app.id}`} key={app.id} className="download-item glass-card">
-                  <div className="download-icon">{app.icon}</div>
+                  <img src={app.icon} alt={app.name} className="download-icon" />
                   <div className="download-info">
                     <h3>{app.name}</h3>
                     <p className="download-meta">
@@ -229,7 +229,7 @@ const Profile = () => {
             <div className="reviews-list">
               {reviews.map((review) => (
                 <Link to={`/app/${review.appId}`} key={review.id} className="review-item glass-card">
-                  <div className="review-icon">{review.appIcon}</div>
+                  <img src={review.appIcon} alt={review.appName} className="review-icon" />
                   <div className="review-info">
                     <h3>{review.appName}</h3>
                     <div className="review-rating-wrapper">
@@ -256,7 +256,7 @@ const Profile = () => {
             <div className="favorites-list">
               {favorites.map((app) => (
                 <Link to={`/app/${app.id}`} key={app.id} className="favorite-item glass-card">
-                  <div className="favorite-icon">{app.icon}</div>
+                  <img src={app.icon} alt={app.name} className="favorite-icon" />
                   <div className="favorite-info">
                     <h3>{app.name}</h3>
                     <p className="favorite-category">{app.category}</p>
