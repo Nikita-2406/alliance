@@ -117,7 +117,8 @@ const AppDetails = () => {
     // Через 2 секунды меняем статус на "готово"
     setTimeout(() => {
       setIsDownloading(false);
-      setDownloadComplete(true);
+      alert("Ошибка, вы не авторизованы")
+      // setDownloadComplete(true);
     }, 2000);
   };
 

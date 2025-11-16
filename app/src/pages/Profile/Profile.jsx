@@ -67,18 +67,18 @@ const Profile = () => {
   const [completedApps, setCompletedApps] = useState({});
 
   const userInfo = {
-    name: 'Пользователь',
-    email: 'user@example.com',
-    memberSince: 'Октябрь 2024'
+    name: 'Не авторизован',
+    email: '',
+    memberSince: ''
   };
 
   useEffect(() => {
     const loadData = async () => {
       try {
         const [downloads, favs, revs] = await Promise.all([
-          getUserDownloads(),
-          getUserFavorites(),
-          getUserReviews()
+          [],
+          [],
+          []
         ]);
 
         if (downloads.success) setDownloadedApps(downloads.data);
@@ -116,6 +116,9 @@ const Profile = () => {
     }, 2000);
   };
 
+  const ClickLogInButton = () => {
+    alert("В будущем здесь будет авторизация через VK")
+  }
   return (
     <div className="profile-page">
       <div className="profile-content">
@@ -129,11 +132,9 @@ const Profile = () => {
             <div className="user-details">
               <h1 className="user-name">{userInfo.name}</h1>
               <p className="user-email">{userInfo.email}</p>
-              <p className="user-member">Участник с {userInfo.memberSince}</p>
             </div>
-            <button className="edit-btn glass-card">
-              <EditIcon size={20} />
-              <span>Редактировать</span>
+            <button className="edit-btn glass-card" onClick={ClickLogInButton}>
+              <span>Войти через VK</span>
             </button>
           </section>
 

@@ -235,3 +235,5 @@ for /f "tokens=5" %a in ('netstat -aon ^| find ":5173" ^| find "LISTENING"') do 
 
 **Приятной работы!** 🎉
 
+
+
