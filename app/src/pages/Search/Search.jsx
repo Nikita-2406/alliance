@@ -28,7 +28,9 @@ const Search = () => {
     
     setTimeout(() => {
       setDownloadingApps(prev => ({ ...prev, [appId]: false }));
-      setCompletedApps(prev => ({ ...prev, [appId]: true }));
+    alert("Ошибка, вы не авторизованы")
+
+      // setCompletedApps(prev => ({ ...prev, [appId]: true }));
     }, 2000);
   };
 

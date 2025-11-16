@@ -11,8 +11,9 @@ const Welcome = () => {
   };
 
   const handleVKAuth = () => {
+    window.location.href = 'https://id.vk.com/about/id'
     // Заглушка для авторизации через VK
-    alert('Регистрация через VK');
+    // alert('Регистрация через VK');
   };
 
   return (
