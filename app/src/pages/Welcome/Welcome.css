@@ -1,0 +1,357 @@
+.welcome-page {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  overflow: hidden;
+}
+
+/* Анимированный фон */
+.welcome-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, 
+    rgba(33, 150, 243, 0.05) 0%,
+    rgba(227, 242, 253, 0.1) 25%,
+    rgba(100, 181, 246, 0.05) 50%,
+    rgba(33, 150, 243, 0.08) 75%,
+    rgba(227, 242, 253, 0.05) 100%
+  );
+  background-size: 400% 400%;
+  animation: gradientShift 15s ease infinite;
+  z-index: 0;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Контент */
+.welcome-content {
+  position: relative;
+  z-index: 1;
+  max-width: 600px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+}
+
+/* Логотип */
+.welcome-logo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: fadeInDown 0.8s ease;
+}
+
+.logo-image {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 16px rgba(33, 150, 243, 0.2));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.logo-title {
+  font-size: 3em;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--color-primary) 0%, #64B5F6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -1px;
+}
+
+/* Приветственный текст */
+.welcome-text-block {
+  padding: 32px;
+  text-align: center;
+  animation: fadeInUp 0.8s ease 0.2s both;
+}
+
+.welcome-title {
+  font-size: 2em;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 16px;
+  line-height: 1.2;
+}
+
+.welcome-description {
+  font-size: 1.1em;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* Кнопки */
+.welcome-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+  animation: fadeInUp 0.8s ease 0.4s both;
+}
+
+.welcome-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 18px 32px;
+  border: none;
+  border-radius: 16px;
+  font-size: 1.1em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.welcome-btn:hover::before {
+  left: 100%;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.15) 0%, rgba(100, 181, 246, 0.15) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 2px solid rgba(33, 150, 243, 0.3);
+  color: var(--color-primary);
+  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.2),
+              inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.primary-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(33, 150, 243, 0.3),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  border-color: rgba(33, 150, 243, 0.5);
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.25) 0%, rgba(100, 181, 246, 0.25) 100%);
+}
+
+.secondary-btn {
+  background: linear-gradient(135deg, rgba(0, 119, 255, 0.12) 0%, rgba(0, 95, 204, 0.12) 100%);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 2px solid rgba(0, 119, 255, 0.25);
+  color: #0077FF;
+  box-shadow: 0 8px 24px rgba(0, 119, 255, 0.15),
+              inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.secondary-btn:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 119, 255, 0.25),
+              inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  border-color: rgba(0, 119, 255, 0.4);
+  background: linear-gradient(135deg, rgba(0, 119, 255, 0.2) 0%, rgba(0, 95, 204, 0.2) 100%);
+}
+
+.btn-icon {
+  font-size: 1.3em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.btn-label {
+  position: relative;
+  z-index: 1;
+}
+
+/* Пользовательское соглашение */
+.welcome-terms {
+  animation: fadeIn 0.8s ease 0.6s both;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.terms-text {
+  font-size: 0.85em;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.terms-link {
+  color: var(--color-primary);
+  text-decoration: none;
+  font-weight: 600;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.terms-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--color-primary);
+  transition: width 0.3s ease;
+}
+
+.terms-link:hover {
+  color: #1976D2;
+}
+
+.terms-link:hover::after {
+  width: 100%;
+}
+
+/* Анимации */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .welcome-page {
+    padding: 32px 16px;
+  }
+
+  .welcome-content {
+    gap: 24px;
+  }
+
+  .logo-image {
+    width: 100px;
+    height: 100px;
+  }
+
+  .logo-title {
+    font-size: 2.5em;
+  }
+
+  .welcome-text-block {
+    padding: 24px;
+  }
+
+  .welcome-title {
+    font-size: 1.6em;
+  }
+
+  .welcome-description {
+    font-size: 1em;
+  }
+
+  .welcome-btn {
+    padding: 16px 24px;
+    font-size: 1em;
+  }
+
+  .terms-text {
+    font-size: 0.8em;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-page {
+    padding: 24px 12px;
+  }
+
+  .logo-image {
+    width: 80px;
+    height: 80px;
+  }
+
+  .logo-title {
+    font-size: 2em;
+  }
+
+  .welcome-text-block {
+    padding: 20px;
+  }
+
+  .welcome-title {
+    font-size: 1.4em;
+  }
+
+  .welcome-description {
+    font-size: 0.95em;
+  }
+
+  .welcome-btn {
+    padding: 14px 20px;
+    font-size: 0.95em;
+    gap: 8px;
+  }
+
+  .btn-icon {
+    font-size: 1.2em;
+  }
+}
+

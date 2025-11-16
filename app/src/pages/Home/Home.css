@@ -1,76 +1,278 @@
 .home-page {
   min-height: 100vh;
-  padding-bottom: 100px;
+  padding-bottom: 20px;
 }
 
 .home-content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 16px;
 }
 
 /* Hero Section */
 .hero-section {
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 .hero-card {
-  padding: 60px 40px;
+  padding: 32px 24px;
   text-align: center;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.08) 0%, rgba(227, 242, 253, 0.5) 100%);
+  border: 1px solid rgba(33, 150, 243, 0.15);
 }
 
 .hero-title {
-  font-size: 2.5em;
-  margin-bottom: 12px;
-  background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.8) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  font-size: 1.6em;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+  font-weight: 800;
+  text-shadow: none;
 }
 
 .hero-subtitle {
-  font-size: 1.2em;
+  font-size: 0.95em;
   color: var(--text-secondary);
-  font-weight: 400;
+  font-weight: 600;
 }
 
 /* Section Styles */
 .section {
-  margin-bottom: 40px;
+  margin-bottom: 28px;
 }
 
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .section-title {
-  font-size: 1.8em;
-  font-weight: 700;
-  margin-bottom: 20px;
+  font-size: 1.3em;
+  font-weight: 800;
+  margin-bottom: 14px;
   color: var(--text-primary);
+  text-shadow: none;
 }
 
 .see-all {
-  color: var(--text-secondary);
+  font-size: 1.05em;
   font-weight: 600;
+  color: var(--color-primary);
+  text-decoration: none;
   transition: all 0.3s ease;
-  font-size: 1em;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .see-all:hover {
-  color: var(--text-primary);
+  color: var(--color-primary-dark);
+  transform: translateX(4px);
 }
 
-/* Featured Apps Grid */
-.featured-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+/* Featured Apps Carousel - Infinite with Side Preview */
+.featured-carousel {
+  position: relative;
+  display: flex;
+  align-items: center;
   gap: 20px;
+  margin-bottom: 20px;
+}
+
+.carousel-container {
+  flex: 1;
+  overflow: visible;
+  position: relative;
+  padding: 40px 0;
+  perspective: 1500px;
+}
+
+.carousel-track {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 500px;
+}
+
+.carousel-slide {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0;
+  cursor: pointer;
+  transform-origin: center center;
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, opacity;
+}
+
+/* Позиционирование слайдов - только 3 слайда */
+.carousel-slide.position--1 {
+  transform: translate(-50%, -50%) translateX(-115%) scale(0.8);
+  opacity: 0.5;
+  z-index: 2;
+}
+
+.carousel-slide.position-0 {
+  transform: translate(-50%, -50%) translateX(0%) scale(1);
+  opacity: 1;
+  z-index: 5;
+  cursor: default;
+}
+
+.carousel-slide.position-1 {
+  transform: translate(-50%, -50%) translateX(115%) scale(0.8);
+  opacity: 0.5;
+  z-index: 2;
+}
+
+/* Скрытые слайды (за пределами видимости) */
+.carousel-slide.hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  z-index: -1 !important;
+  visibility: hidden !important;
+  transform: translate(-50%, -50%) translateX(0%) scale(0.5) !important;
+}
+
+/* Убираем все hover эффекты для скрытых слайдов */
+.carousel-slide.hidden:hover {
+  opacity: 0 !important;
+  transform: translate(-50%, -50%) translateX(0%) scale(0.5) !important;
+}
+
+.carousel-slide.hidden .featured-card {
+  pointer-events: none !important;
+  opacity: 0 !important;
+}
+
+.carousel-slide.hidden:hover .featured-card {
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Слайды, уходящие влево */
+.carousel-slide.position--2,
+.carousel-slide.position--3,
+.carousel-slide.position--4,
+.carousel-slide.position--5 {
+  transform: translate(-50%, -50%) translateX(-150%) scale(0.7);
+  opacity: 0;
+  z-index: -1;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+/* Слайды, уходящие вправо */
+.carousel-slide.position-2,
+.carousel-slide.position-3,
+.carousel-slide.position-4,
+.carousel-slide.position-5 {
+  transform: translate(-50%, -50%) translateX(150%) scale(0.7);
+  opacity: 0;
+  z-index: -1;
+  pointer-events: none;
+  visibility: hidden;
+}
+
+.carousel-slide .featured-card {
+  width: 100%;
+  max-width: 360px;
+  margin: 0 auto;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: auto;
+}
+
+.carousel-slide.active .featured-card,
+.carousel-slide.position-0 .featured-card {
+  box-shadow: 0 20px 60px rgba(33, 150, 243, 0.3);
+}
+
+.carousel-slide:not(.position-0) .featured-card {
+  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.12);
+}
+
+/* Hover только для боковых видимых слайдов (position -1 и 1) */
+.carousel-slide.position--1:hover,
+.carousel-slide.position-1:hover {
+  opacity: 0.85 !important;
+}
+
+.carousel-slide.position--1:hover .featured-card,
+.carousel-slide.position-1:hover .featured-card {
+  transform: scale(1.05);
+  box-shadow: 0 12px 36px rgba(33, 150, 243, 0.18);
+}
+
+/* Отключаем hover для центрального слайда */
+.carousel-slide.position-0:hover {
+  opacity: 1 !important;
+}
+
+.carousel-slide.position-0:hover .featured-card {
+  transform: none;
+}
+
+.carousel-arrow {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(33, 150, 243, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(33, 150, 243, 0.2);
+  color: var(--color-primary);
+  font-size: 24px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.carousel-arrow:hover {
+  background: rgba(33, 150, 243, 0.2);
+  transform: scale(1.1);
+}
+
+.carousel-arrow:active {
+  transform: scale(0.95);
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(33, 150, 243, 0.2);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.carousel-dot.active {
+  background: var(--color-primary);
+  width: 30px;
+  border-radius: 5px;
+}
+
+.carousel-dot:hover {
+  background: rgba(33, 150, 243, 0.4);
 }
 
 .featured-card {
@@ -78,140 +280,371 @@
   cursor: pointer;
   padding: 0;
   transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
 }
 
 .featured-card:hover {
-  transform: translateY(-8px) scale(1.02);
+  transform: translateY(-6px);
 }
 
 .featured-header {
-  height: 140px;
+  aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.05) 0%, rgba(227, 242, 253, 0.3) 100%);
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
-.featured-icon {
-  font-size: 64px;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
-}
+  .featured-icon {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: drop-shadow(0 4px 12px rgba(33, 150, 243, 0.2));
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .featured-card:hover .featured-icon {
+    transform: scale(1.12);
+  }
 
 .featured-body {
   padding: 20px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.featured-card .app-name {
+  font-size: 1.2em;
+  margin-bottom: 4px;
+  color: var(--text-primary);
+  font-weight: 700;
+  text-shadow: none;
+  line-height: 1.3;
+}
+
+.featured-card .app-category {
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.featured-card .app-stats {
+  display: flex;
+  gap: 16px;
+  font-size: 0.9em;
+  margin-top: auto;
+}
+
+.featured-card .stat {
+  color: var(--text-secondary);
+  font-weight: 600;
 }
 
 .app-name {
-  font-size: 1.2em;
-  margin-bottom: 6px;
+  font-size: 1em;
+  margin-bottom: 4px;
   color: var(--text-primary);
+  font-weight: 700;
+  text-shadow: none;
 }
 
 .app-category {
-  font-size: 0.9em;
+  font-size: 0.85em;
   color: var(--text-secondary);
-  margin-bottom: 12px;
+  margin-bottom: 10px;
+  font-weight: 600;
 }
 
 .app-stats {
   display: flex;
-  gap: 16px;
-  font-size: 0.9em;
+  gap: 12px;
+  font-size: 0.85em;
 }
 
 .stat {
   color: var(--text-secondary);
 }
 
-/* Categories Quick */
+/* Categories Quick - Full Width */
 .categories-quick {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  grid-template-columns: repeat(5, 1fr);
   gap: 16px;
+  width: 100%;
+  overflow: hidden;
 }
 
 .category-quick {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 12px;
   padding: 24px 16px;
   cursor: pointer;
   text-align: center;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.7) !important;
+  min-width: 0;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(33, 150, 243, 0.15);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.08);
+}
+
+.category-quick:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.15);
+  border-color: rgba(33, 150, 243, 0.25);
 }
 
 .category-icon {
-  font-size: 40px;
+  font-size: 48px;
+  filter: drop-shadow(0 2px 8px rgba(33, 150, 243, 0.2));
+  transition: all 0.3s ease;
+}
+
+.category-quick:hover .category-icon {
+  transform: scale(1.1);
 }
 
 .category-name {
   font-size: 0.95em;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-primary);
+  text-shadow: none;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-/* Top List */
-.top-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* Top List - Horizontal Card Style */
+.top-list-horizontal {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
 }
 
-.app-item {
+.top-app-card {
   display: flex;
-  align-items: center;
+  flex-direction: row;
   gap: 16px;
   padding: 16px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background 0.3s ease, border-color 0.3s ease;
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(33, 150, 243, 0.15);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.08);
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.app-item:hover {
-  transform: translateX(8px);
+.top-app-card:hover {
+  background: rgba(255, 255, 255, 0.85) !important;
+  border-color: rgba(33, 150, 243, 0.25);
+  transform: none !important;
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.08) !important;
 }
 
-.app-rank {
-  font-size: 1.5em;
+.top-app-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-shrink: 0;
+  min-width: 140px;
+  align-items: flex-start;
+}
+
+.top-app-icon {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 16px;
+  border: 1px solid rgba(33, 150, 243, 0.15);
+  flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.12) 0%, rgba(227, 242, 253, 0.2) 100%);
+}
+
+.top-app-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  width: 100%;
+}
+
+.top-app-name {
+  font-size: 1em;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.top-app-category {
+  font-size: 0.85em;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin: 0;
+}
+
+.top-app-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.9em;
   font-weight: 700;
   color: var(--text-secondary);
-  min-width: 40px;
-  text-align: center;
+  margin-top: 4px;
 }
 
-.app-icon-small {
-  font-size: 48px;
-  width: 56px;
-  height: 56px;
+/* SVG иконки звёзд */
+.star-icon {
+  display: inline-block;
+  vertical-align: middle;
+  color: #FFA726;
+  width: 16px;
+  height: 16px;
+}
+
+.top-app-rating .star-icon {
+  width: 16px;
+  height: 16px;
+}
+
+/* Горизонтальный scroll скриншотов со стрелками (Desktop и Mobile) */
+.top-app-screenshots-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 500px;
+  position: relative;
+  overflow: hidden;
+}
+
+.screenshot-arrow {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  border-radius: 50%;
+  background: rgba(33, 150, 243, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(33, 150, 243, 0.2);
+  color: var(--color-primary);
+  font-size: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
+  flex-shrink: 0;
+  padding: 0;
+  position: relative;
+  z-index: 10;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-.app-info {
+.screenshot-arrow:hover {
+  background: rgba(33, 150, 243, 0.2);
+  transform: scale(1.1);
+}
+
+.screenshot-arrow:active {
+  transform: scale(0.95);
+  background: rgba(33, 150, 243, 0.25);
+}
+
+.top-app-screenshots-scroll {
   flex: 1;
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  padding: 8px 6px;
+  border-radius: 12px;
+  background: rgba(33, 150, 243, 0.05);
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(33, 150, 243, 0.3) rgba(33, 150, 243, 0.1);
+  height: 200px;
+  align-items: center;
 }
 
-.app-info .app-name {
-  font-size: 1.1em;
-  margin-bottom: 4px;
+.top-app-screenshots-scroll::-webkit-scrollbar {
+  height: 6px;
 }
 
-.app-meta {
-  font-size: 0.85em;
-  color: var(--text-secondary);
+.top-app-screenshots-scroll::-webkit-scrollbar-track {
+  background: rgba(33, 150, 243, 0.1);
+  border-radius: 3px;
 }
 
-.app-rating {
+.top-app-screenshots-scroll::-webkit-scrollbar-thumb {
+  background: rgba(33, 150, 243, 0.3);
+  border-radius: 3px;
+  transition: background 0.3s ease;
+}
+
+.top-app-screenshots-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(33, 150, 243, 0.5);
+}
+
+.top-screenshot-item {
+  flex-shrink: 0;
+  scroll-snap-align: start;
+  width: 110px;
+  min-width: 110px;
+  height: 180px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.08) 0%, rgba(227, 242, 253, 0.3) 100%);
+  border: 1px solid rgba(33, 150, 243, 0.12);
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.08);
+  padding: 4px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.top-screenshot-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(33, 150, 243, 0.15);
+}
+
+.top-screenshot-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  display: block;
+}
+
+.loading-state {
+  padding: 48px 24px;
+  text-align: center;
   font-size: 1em;
-  font-weight: 600;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 8px 16px;
-  border-radius: 12px;
+  color: var(--text-secondary);
 }
 
 /* Responsive Design */
@@ -220,35 +653,165 @@
     padding: 16px;
   }
 
-  .hero-card {
-    padding: 40px 20px;
+  .featured-carousel {
+    gap: 8px;
   }
 
-  .hero-title {
-    font-size: 2em;
+  .carousel-arrow {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    font-size: 20px;
+    flex-shrink: 0;
   }
 
-  .hero-subtitle {
-    font-size: 1em;
+  .carousel-container {
+    padding: 30px 0;
   }
 
-  .featured-grid {
-    grid-template-columns: 1fr;
+  .carousel-track {
+    height: 440px;
+  }
+
+  .carousel-slide {
+    max-width: 280px;
+  }
+
+  .carousel-slide .featured-card {
+    max-width: 280px;
+  }
+
+  /* Адаптируем позиции для мобильных */
+  .carousel-slide.position--1 {
+    transform: translate(-50%, -50%) translateX(-110%) scale(0.75);
+    opacity: 0.4;
+  }
+
+  .carousel-slide.position-1 {
+    transform: translate(-50%, -50%) translateX(110%) scale(0.75);
+    opacity: 0.4;
+  }
+
+  .featured-body {
+    padding: 16px;
   }
 
   .categories-quick {
     grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  
+  .category-quick {
+    padding: 18px 10px;
+    gap: 8px;
+  }
+  
+  .category-icon {
+    font-size: 36px;
+  }
+  
+  .category-name {
+    font-size: 0.8em;
+    line-height: 1.2;
   }
 
-  .app-rank {
-    min-width: 30px;
-    font-size: 1.2em;
+  /* Мобильная версия топ недели */
+  .top-list-horizontal {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
-  .app-icon-small {
-    font-size: 40px;
-    width: 48px;
-    height: 48px;
+  .top-app-card {
+    flex-direction: row;
+    padding: 14px;
+    gap: 12px;
+  }
+
+  .top-app-content {
+    min-width: 120px;
+    gap: 8px;
+  }
+
+  .top-app-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .top-app-name {
+    font-size: 0.95em;
+  }
+
+  .top-app-category {
+    font-size: 0.8em;
+  }
+
+  .top-app-rating {
+    font-size: 0.85em;
+  }
+
+  /* Мобильные адаптации для скриншотов */
+  .top-app-screenshots-wrapper {
+    max-width: 100%;
+    gap: 0;
+  }
+  
+  /* Скрываем стрелочки на мобильных - используем свайпы */
+  .screenshot-arrow {
+    display: none;
+  }
+  
+  .top-app-screenshots-scroll {
+    padding: 8px 6px;
+    gap: 8px;
+    height: 160px;
+  }
+
+  .top-screenshot-item {
+    width: 90px;
+    min-width: 90px;
+    height: 145px;
+  }
+  
+  .top-screenshot-image {
+    object-fit: cover;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-content {
+    padding: 12px;
+  }
+
+  .section {
+    margin-bottom: 24px;
+  }
+
+  .categories-quick {
+    gap: 8px;
+  }
+
+  .category-quick {
+    padding: 16px 8px;
+  }
+
+  .category-icon {
+    font-size: 32px;
+  }
+
+  .category-name {
+    font-size: 0.75em;
+  }
+
+  /* Еще меньше на крошечных экранах */
+  .top-app-screenshots-scroll {
+    height: 140px;
+  }
+
+  .top-screenshot-item {
+    width: 80px;
+    min-width: 80px;
+    height: 130px;
   }
 }
 

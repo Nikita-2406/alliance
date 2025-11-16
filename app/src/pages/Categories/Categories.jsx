@@ -1,158 +1,137 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { getCategories, getAllApps } from '../../services/api';
 import './Categories.css';
 
+// SVG иконка звезды
+const StarIcon = ({ filled = true, className = "" }) => (
+  <svg 
+    className={`star-icon ${className}`}
+    width="16" 
+    height="16" 
+    viewBox="0 0 24 24" 
+    fill={filled ? "currentColor" : "none"}
+    stroke="currentColor"
+    strokeWidth="2"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+  </svg>
+);
+
 const Categories = () => {
-  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [topApps, setTopApps] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const categories = [
-    {
-      id: 'games',
-      name: 'Игры',
-      icon: '🎮',
-      color: 'linear-gradient(135deg, #FF2D55 0%, #FF6B9D 100%)',
-      count: 245,
-      apps: [
-        { id: 1, name: 'Racing Master', icon: '🏎️', rating: 4.8, downloads: '50M+' },
-        { id: 2, name: 'Adventure Quest', icon: '⚔️', rating: 4.7, downloads: '30M+' },
-        { id: 3, name: 'Puzzle Mania', icon: '🧩', rating: 4.9, downloads: '25M+' },
-      ]
-    },
-    {
-      id: 'social',
-      name: 'Социальные',
-      icon: '💬',
-      color: 'linear-gradient(135deg, #5856D6 0%, #8E8FFA 100%)',
-      count: 156,
-      apps: [
-        { id: 4, name: 'Chat Connect', icon: '💭', rating: 4.6, downloads: '100M+' },
-        { id: 5, name: 'Social Hub', icon: '🌐', rating: 4.7, downloads: '80M+' },
-      ]
-    },
-    {
-      id: 'entertainment',
-      name: 'Развлечения',
-      icon: '🎬',
-      color: 'linear-gradient(135deg, #FF9500 0%, #FFB84D 100%)',
-      count: 189,
-      apps: [
-        { id: 6, name: 'Video Stream', icon: '📺', rating: 4.8, downloads: '200M+' },
-        { id: 7, name: 'Movie Guide', icon: '🎥', rating: 4.5, downloads: '15M+' },
-      ]
-    },
-    {
-      id: 'productivity',
-      name: 'Продуктивность',
-      icon: '⚡',
-      color: 'linear-gradient(135deg, #34C759 0%, #5EDB77 100%)',
-      count: 312,
-      apps: [
-        { id: 8, name: 'Task Manager', icon: '✅', rating: 4.9, downloads: '40M+' },
-        { id: 9, name: 'Cloud Notes', icon: '📝', rating: 4.8, downloads: '35M+' },
-        { id: 10, name: 'Calendar Pro', icon: '📅', rating: 4.7, downloads: '28M+' },
-      ]
-    },
-    {
-      id: 'photo',
-      name: 'Фото и видео',
-      icon: '📸',
-      color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      count: 167,
-      apps: [
-        { id: 11, name: 'Photo Editor', icon: '🖼️', rating: 4.8, downloads: '45M+' },
-      ]
-    },
-    {
-      id: 'health',
-      name: 'Здоровье',
-      icon: '💪',
-      color: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-      count: 234,
-      apps: [
-        { id: 12, name: 'Fitness Tracker', icon: '🏃', rating: 4.9, downloads: '60M+' },
-        { id: 13, name: 'Meditation', icon: '🧘', rating: 4.7, downloads: '22M+' },
-      ]
-    },
-    {
-      id: 'education',
-      name: 'Образование',
-      icon: '🌍',
-      color: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-      count: 278,
-      apps: [
-        { id: 14, name: 'Language Learn', icon: '📚', rating: 4.8, downloads: '70M+' },
-      ]
-    },
-    {
-      id: 'music',
-      name: 'Музыка',
-      icon: '🎵',
-      color: 'linear-gradient(135deg, #FA709A 0%, #FEE140 100%)',
-      count: 145,
-      apps: [
-        { id: 15, name: 'Music Streaming', icon: '🎧', rating: 4.9, downloads: '150M+' },
-      ]
-    },
-  ];
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        const [cats, apps] = await Promise.all([
+          getCategories(),
+          getAllApps()
+        ]);
 
-  const handleCategoryClick = (categoryId) => {
-    setSelectedCategory(selectedCategory === categoryId ? null : categoryId);
-  };
+        if (cats.success && apps.success) {
+          const categoriesWithCount = cats.data.map(cat => {
+            const categoryApps = apps.data.filter(app => app.category === cat.name);
+            return {
+              ...cat,
+              count: categoryApps.length,
+              color: cat.color || '#2196F3'
+            };
+          });
+          setCategories(categoriesWithCount);
+          
+          // Получаем топ приложений (сортируем по рейтингу)
+          const sortedApps = [...apps.data].sort((a, b) => b.rating - a.rating);
+          setTopApps(sortedApps.slice(0, 8)); // Топ 8 приложений
+        }
+      } catch (error) {
+        console.error('Error loading data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="categories-page">
+        <div className="categories-content">
+          <div className="loading-state glass-card">
+            <p>Загрузка...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="categories-page">
       <div className="categories-content">
-        <section className="categories-intro glass-card">
-          <h1>Категории приложений</h1>
-          <p>Исследуйте тысячи приложений в разных категориях</p>
+        {/* Заголовок страницы */}
+        <section className="categories-hero">
+          <div className="hero-background"></div>
+          <div className="hero-content">
+            <h1 className="hero-title">Категории приложений</h1>
+            <p className="hero-subtitle">Исследуйте тысячи приложений, организованных по категориям</p>
+          </div>
         </section>
 
-        <div className="categories-grid">
-          {categories.map((category) => (
-            <div key={category.id} className="category-section">
-              <div
-                className="category-card glass-card"
-                onClick={() => handleCategoryClick(category.id)}
+        {/* Список категорий */}
+        <section className="categories-list-section">
+          <h2 className="section-heading">Все категории</h2>
+          <div className="categories-grid">
+            {categories.map((category) => (
+              <Link
+                key={category.id}
+                to={`/category/${category.name}`}
+                className="category-card-new glass-card"
               >
-                <div className="category-header" style={{ background: category.color }}>
-                  <span className="category-icon-large">{category.icon}</span>
+                <div className="category-card-gradient" style={{ 
+                  background: `linear-gradient(135deg, ${category.color}30 0%, ${category.color}12 50%, ${category.color}08 100%)` 
+                }}></div>
+                <div className="category-card-content">
+                  <span className="category-icon-new">{category.icon}</span>
+                  <h3 className="category-name">{category.name}</h3>
+                  <p className="category-apps-count">{category.count} приложений</p>
                 </div>
-                <div className="category-body">
-                  <h2 className="category-title">{category.name}</h2>
-                  <p className="category-count">{category.count} приложений</p>
-                  <button className="explore-btn">
-                    {selectedCategory === category.id ? '△ Свернуть' : '▽ Показать'}
-                  </button>
-                </div>
-              </div>
+              </Link>
+            ))}
+          </div>
+        </section>
 
-              {selectedCategory === category.id && (
-                <div className="category-apps">
-                  {category.apps.map((app) => (
-                    <Link
-                      to={`/app/${app.id}`}
-                      key={app.id}
-                      className="category-app-item glass-card"
-                    >
-                      <div className="category-app-icon">{app.icon}</div>
-                      <div className="category-app-info">
-                        <h4>{app.name}</h4>
-                        <div className="category-app-meta">
-                          <span>⭐ {app.rating}</span>
-                          <span>📥 {app.downloads}</span>
-                        </div>
-                      </div>
-                      <button className="mini-download-btn">Скачать</button>
-                    </Link>
-                  ))}
-                  <Link to="/search" className="view-all-btn glass-card">
-                    Показать все приложения →
-                  </Link>
+        {/* Топ приложений */}
+        <section className="top-apps-section">
+          <div className="section-header">
+            <h2 className="section-heading">Топ приложений</h2>
+            <Link to="/search" className="see-all-link">Посмотреть все →</Link>
+          </div>
+          <div className="top-apps-grid">
+            {topApps.map((app) => (
+              <Link
+                key={app.id}
+                to={`/app/${app.id}`}
+                className="top-app-card glass-card"
+              >
+                <img src={app.icon} alt={app.name} className="top-app-icon" />
+                <div className="top-app-info">
+                  <h4 className="top-app-name">{app.name}</h4>
+                  <p className="top-app-category">{app.category}</p>
+                  <div className="top-app-stats">
+                    <span className="top-app-rating">
+                      <StarIcon /> {app.rating}
+                    </span>
+                    <span className="top-app-downloads">📥 {app.downloads}</span>
+                  </div>
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
+              </Link>
+            ))}
+          </div>
+        </section>
       </div>
     </div>
   );

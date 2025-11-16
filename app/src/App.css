@@ -1,0 +1,33 @@
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.app-main {
+  flex: 1;
+  width: 100%;
+  overflow-x: hidden;
+  padding-top: 90px;
+}
+
+.app-main-full {
+  flex: 1;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Адаптивные отступы для header */
+@media (max-width: 768px) {
+  .app-main {
+    padding-top: 80px;
+  }
+}
+
+@media (max-width: 580px) {
+  .app-main {
+    padding-top: 75px;
+  }
+}

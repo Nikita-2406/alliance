@@ -1,113 +1,175 @@
-import { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { getAppById, getReviewsForApp } from '../../services/api';
 import './AppDetails.css';
+
+// SVG иконка звезды
+const StarIcon = ({ filled = true, className = "" }) => (
+  <svg 
+    className={`star-icon ${className}`}
+    width="16" 
+    height="16" 
+    viewBox="0 0 24 24" 
+    fill={filled ? "currentColor" : "none"}
+    stroke="currentColor"
+    strokeWidth="2"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+  </svg>
+);
 
 const AppDetails = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const [selectedTab, setSelectedTab] = useState('about');
+  const [appData, setAppData] = useState(null);
+  const [userReviews, setUserReviews] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [reviewFilter, setReviewFilter] = useState('all'); // all, 5, 4, 3, 2, 1
+  const [sortOrder, setSortOrder] = useState('newest'); // newest, oldest, highest, lowest
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadComplete, setDownloadComplete] = useState(false);
 
-  // Состояния для отзывов - ПЕРЕНЕСЕНО В НАЧАЛО КОМПОНЕНТА
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      author: "Александр",
-      date: "2 дня назад",
-      text: "Лучшее приложение для редактирования! Очень довольны функционалом.",
-      likes: 0
-    },
-    {
-      id: 2,
-      author: "Мария",
-      date: "1 неделя назад", 
-      text: "Хорошее приложение, но иногда тормозит на слабых устройствах.",
-      likes: 0
-    },
-    {
-      id: 3,
-      author: "Дмитрий",
-      date: "2 недели назад",
-      text: "Профессиональные инструменты по доступной цене. Рекомендуем!",
-      likes: 0
-    },
-    {
-      id: 4,
-      author: "Елена",
-      date: "3 недели назад",
-      text: "Использую каждый день! Интуитивный интерфейс и много возможностей.",
-      likes: 0
-    }
-  ]);
-  
-  const [isReviewFormOpen, setReviewFormOpen] = useState(false);
-  const [newReview, setNewReview] = useState({ author: '', text: '' });
+  useEffect(() => {
+    const loadAppData = async () => {
+      try {
+        const [appResult, reviewsResult] = await Promise.all([
+          getAppById(id),
+          getReviewsForApp(id)
+        ]);
 
-  const handleAddReview = () => {
-    if (newReview.author && newReview.text) {
-      const review = {
-        id: reviews.length + 1,
-        author: newReview.author,
-        date: "Только что",
-        text: newReview.text,
-        likes: 0
+        if (appResult.success) {
+          const app = appResult.data;
+          setAppData({
+            ...app,
+            changelog: [
+              { version: app.version, date: app.lastUpdate, changes: ['Исправлены ошибки', 'Улучшена производительность', 'Добавлены новые функции'] },
+              { version: '3.1.0', date: '1 ноября 2024', changes: ['Новый интерфейс', 'Поддержка темной темы', 'Оптимизация работы'] },
+            ]
+          });
+        }
+
+        if (reviewsResult.success) {
+          setUserReviews(reviewsResult.data.length > 0 ? reviewsResult.data : [
+            { id: 1, author: 'Александр', rating: 5, date: '2 дня назад', comment: 'Отличное приложение! Очень довольны функционалом.' },
+            { id: 2, author: 'Мария', rating: 4, date: '1 неделя назад', comment: 'Хорошее приложение, но иногда тормозит на слабых устройствах.' },
+            { id: 3, author: 'Дмитрий', rating: 5, date: '2 недели назад', comment: 'Профессиональные инструменты по доступной цене. Рекомендую!' },
+            { id: 4, author: 'Елена', rating: 5, date: '3 недели назад', comment: 'Использую каждый день! Интуитивный интерфейс и много возможностей.' },
+          ]);
+        }
+      } catch (error) {
+        console.error('Error loading app data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadAppData();
+  }, [id]);
+
+  // Закрытие dropdown при клике вне его
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const dropdown = document.querySelector('.reviews-filter-dropdown');
+      if (dropdown && !dropdown.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    if (isDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
       };
-      setReviews([review, ...reviews]);
-      setNewReview({ author: '', text: '' });
-      setReviewFormOpen(false);
     }
-  };
+  }, [isDropdownOpen]);
 
-  // Mock data - в реальном приложении это будет загружаться по ID
-  const appData = {
-    id: id,
-    name: 'PhotoMaster Pro',
-    icon: '📸',
-    category: 'Фото и видео',
-    developer: 'Creative Studio Inc.',
-    rating: 4.8,
-    reviews: 12500,
-    downloads: '10M+',
-    size: '85 MB',
-    version: '3.2.1',
-    lastUpdate: '15 ноября 2024',
-    ageRating: '4+',
-    color: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    screenshots: ['📱', '🖼️', '✨', '🎨', '📷'],
-    description: 'PhotoMaster Pro - это профессиональное приложение для редактирования фотографий с множеством инструментов и фильтров. Создавайте потрясающие изображения с помощью интуитивно понятного интерфейса.',
-    features: [
-      '✨ Более 100 профессиональных фильтров',
-      '🎨 Расширенные инструменты редактирования',
-      '📐 Точная настройка цвета и экспозиции',
-      '🔄 Пакетная обработка фотографий',
-      '☁️ Облачная синхронизация',
-      '📤 Экспорт в высоком разрешении'
-    ],
-    requirements: {
-      os: 'Windows 10/11, macOS 12+, Linux',
-      ram: '4 GB',
-      storage: '100 MB',
-      internet: 'Требуется для некоторых функций'
-    },
-    changelog: [
-      { version: '3.2.1', date: '15 ноября 2024', changes: ['Исправлены ошибки', 'Улучшена производительность', 'Добавлены новые фильтры'] },
-      { version: '3.2.0', date: '1 ноября 2024', changes: ['Новый интерфейс', 'Поддержка темной темы', 'Оптимизация работы'] },
-    ]
-  };
+  if (loading || !appData) {
+    return (
+      <div className="app-details-page">
+        <div className="app-details-content">
+          <div className="loading-state glass-card">
+            <p>Загрузка...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const renderStars = (rating) => {
     const fullStars = Math.floor(rating);
     const hasHalfStar = rating % 1 >= 0.5;
-    return '⭐'.repeat(fullStars) + (hasHalfStar ? '✨' : '') + '☆'.repeat(5 - fullStars - (hasHalfStar ? 1 : 0));
+    return (
+      <span className="stars-display">
+        {'★'.repeat(fullStars)}
+        {hasHalfStar ? '⯨' : ''}
+        {'☆'.repeat(5 - fullStars - (hasHalfStar ? 1 : 0))}
+      </span>
+    );
   };
 
   const handleDownload = () => {
-    alert(`Начинается скачивание ${appData.name}...`);
+    if (isDownloading || downloadComplete) return;
+    
+    setIsDownloading(true);
+    
+    // Через 2 секунды меняем статус на "готово"
+    setTimeout(() => {
+      setIsDownloading(false);
+      alert("Ошибка, вы не авторизованы")
+      // setDownloadComplete(true);
+    }, 2000);
   };
 
-  const handleLike = (reviewId) => {
-    setReviews(reviews.map(review => 
-      review.id === reviewId ? { ...review, likes: review.likes + 1 } : review
-    ));
+  // Функция для получения отфильтрованных и отсортированных отзывов
+  const getFilteredAndSortedReviews = () => {
+    // Фильтрация
+    let filtered = reviewFilter === 'all' 
+      ? [...userReviews]
+      : userReviews.filter(r => r.rating === reviewFilter);
+    
+    // Сортировка
+    switch (sortOrder) {
+      case 'newest':
+        // Предполагаем, что более новые отзывы имеют больший id
+        filtered.sort((a, b) => b.id - a.id);
+        break;
+      case 'oldest':
+        filtered.sort((a, b) => a.id - b.id);
+        break;
+      case 'highest':
+        filtered.sort((a, b) => b.rating - a.rating);
+        break;
+      case 'lowest':
+        filtered.sort((a, b) => a.rating - b.rating);
+        break;
+      default:
+        break;
+    }
+    
+    return filtered;
+  };
+
+  // Получаем текст для кнопки dropdown
+  const getDropdownLabel = () => {
+    const filterLabels = {
+      'all': 'Все отзывы',
+      5: '5 звёзд',
+      4: '4 звезды',
+      3: '3 звезды',
+      2: '2 звезды',
+      1: '1 звезда'
+    };
+    
+    const sortLabels = {
+      'newest': 'Сначала новые',
+      'oldest': 'Сначала старые',
+      'highest': 'Высокий рейтинг',
+      'lowest': 'Низкий рейтинг'
+    };
+    
+    return `${filterLabels[reviewFilter]} • ${sortLabels[sortOrder]}`;
   };
 
   return (
@@ -117,34 +179,59 @@ const AppDetails = () => {
         <section className="app-hero">
           <div className="app-hero-bg" style={{ background: appData.color }}></div>
           <div className="app-hero-content glass-card">
-            <button className="back-btn" onClick={() => navigate(-1)}>
-              ← Назад
-            </button>
             <div className="app-main-info">
-              <div className="app-icon-large">{appData.icon}</div>
+              <img src={appData.icon} alt={appData.name} className="app-icon-large" />
               <div className="app-title-section">
                 <h1 className="app-title">{appData.name}</h1>
                 <p className="app-developer">{appData.developer}</p>
                 <p className="app-category-badge">{appData.category}</p>
+                
+                {/* Рейтинг отдельно под основным текстом */}
+                <div className="app-rating-inline">
+                  <span className="rating-stars"><StarIcon /></span>
+                  <span className="rating-value">{appData.rating}</span>
+                </div>
               </div>
             </div>
-            <div className="app-quick-stats">
-              <div className="quick-stat">
-                <span className="stat-value-large">{appData.rating}</span>
-                <span className="stat-label-small">⭐ Рейтинг</span>
-              </div>
-              <div className="quick-stat">
-                <span className="stat-value-large">{appData.downloads}</span>
-                <span className="stat-label-small">📥 Скачиваний</span>
-              </div>
-              <div className="quick-stat">
-                <span className="stat-value-large">{appData.size}</span>
-                <span className="stat-label-small">💾 Размер</span>
-              </div>
-            </div>
-            <button className="download-main-btn" onClick={handleDownload}>
-              📥 Скачать сейчас
+            
+            {/* Кнопка скачать */}
+            <button 
+              className={`download-main-btn ${isDownloading ? 'downloading' : ''} ${downloadComplete ? 'complete' : ''}`}
+              onClick={handleDownload}
+              disabled={isDownloading || downloadComplete}
+            >
+              <span className="btn-bg-fill"></span>
+              <span className="btn-text">
+                {downloadComplete ? 'Готово' : 'Скачать'}
+              </span>
             </button>
+            
+            {/* Горизонтальный блок с информацией */}
+            <div className="app-info-bar">
+              <div className="info-bar-item">
+                <span className="info-bar-icon">📥</span>
+                <div className="info-bar-text">
+                  <span className="info-bar-value">{appData.downloads}</span>
+                  <span className="info-bar-label">Скачиваний</span>
+                </div>
+              </div>
+              <div className="info-bar-divider"></div>
+              <div className="info-bar-item">
+                <span className="info-bar-icon">💾</span>
+                <div className="info-bar-text">
+                  <span className="info-bar-value">{appData.size}</span>
+                  <span className="info-bar-label">Размер</span>
+                </div>
+              </div>
+              <div className="info-bar-divider"></div>
+              <div className="info-bar-item">
+                <span className="info-bar-icon">🔞</span>
+                <div className="info-bar-text">
+                  <span className="info-bar-value">{appData.ageRating}</span>
+                  <span className="info-bar-label">Возраст</span>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -154,7 +241,7 @@ const AppDetails = () => {
           <div className="screenshots-grid">
             {appData.screenshots.map((screenshot, idx) => (
               <div key={idx} className="screenshot-card glass-card">
-                <span className="screenshot-icon">{screenshot}</span>
+                <img src={screenshot} alt={`${appData.name} скриншот ${idx + 1}`} className="screenshot-image" />
               </div>
             ))}
           </div>
@@ -172,13 +259,7 @@ const AppDetails = () => {
             className={`details-tab ${selectedTab === 'reviews' ? 'active' : ''}`}
             onClick={() => setSelectedTab('reviews')}
           >
-            ⭐ Отзывы ({reviews.length})
-          </button>
-          <button
-            className={`details-tab ${selectedTab === 'changelog' ? 'active' : ''}`}
-            onClick={() => setSelectedTab('changelog')}
-          >
-            📋 История версий
+            <StarIcon /> Отзывы ({appData.reviews.toLocaleString()})
           </button>
         </div>
 
@@ -189,49 +270,6 @@ const AppDetails = () => {
               <div className="about-card glass-card">
                 <h3>Описание</h3>
                 <p className="app-description">{appData.description}</p>
-              </div>
-
-              <div className="about-card glass-card">
-                <h3>Возможности</h3>
-                <ul className="features-list">
-                  {appData.features.map((feature, idx) => (
-                    <li key={idx}>{feature}</li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="about-card glass-card">
-                <h3>Системные требования</h3>
-                <div className="requirements-grid">
-                  <div className="requirement-item">
-                    <span className="req-icon">💻</span>
-                    <div>
-                      <span className="req-label">Операционная система:</span>
-                      <span className="req-value">{appData.requirements.os}</span>
-                    </div>
-                  </div>
-                  <div className="requirement-item">
-                    <span className="req-icon">🧠</span>
-                    <div>
-                      <span className="req-label">Оперативная память:</span>
-                      <span className="req-value">{appData.requirements.ram}</span>
-                    </div>
-                  </div>
-                  <div className="requirement-item">
-                    <span className="req-icon">💾</span>
-                    <div>
-                      <span className="req-label">Свободное место:</span>
-                      <span className="req-value">{appData.requirements.storage}</span>
-                    </div>
-                  </div>
-                  <div className="requirement-item">
-                    <span className="req-icon">🌐</span>
-                    <div>
-                      <span className="req-label">Интернет:</span>
-                      <span className="req-value">{appData.requirements.internet}</span>
-                    </div>
-                  </div>
-                </div>
               </div>
 
               <div className="about-card glass-card">
@@ -260,108 +298,171 @@ const AppDetails = () => {
 
           {selectedTab === 'reviews' && (
             <div className="reviews-section">
+              {/* Статистика рейтинга */}
               <div className="reviews-summary glass-card">
-                <div className="rating-overview">
-                  <span className="rating-large">{appData.rating}</span>
-                  <div className="rating-details">
-                    <div className="stars-large">{renderStars(appData.rating)}</div>
-                    <span className="reviews-count">{reviews.length} отзывов</span>
+                <div className="rating-overview-detailed">
+                  <div className="rating-main-block">
+                    <span className="rating-large">{appData.rating}</span>
+                    <div className="rating-details">
+                      <div className="stars-large">{renderStars(appData.rating)}</div>
+                      <span className="reviews-count">{appData.reviews.toLocaleString()} отзывов</span>
+                    </div>
+                  </div>
+                  
+                  {/* Распределение по звездам */}
+                  <div className="rating-distribution">
+                    {[5, 4, 3, 2, 1].map((stars) => {
+                      const count = userReviews.filter(r => r.rating === stars).length;
+                      const percentage = userReviews.length > 0 ? (count / userReviews.length) * 100 : 0;
+                      return (
+                        <div key={stars} className="rating-bar-row">
+                          <span className="rating-bar-label">{stars} <StarIcon /></span>
+                          <div className="rating-bar-container">
+                            <div 
+                              className="rating-bar-fill" 
+                              style={{ width: `${percentage}%` }}
+                            ></div>
+                          </div>
+                          <span className="rating-bar-count">{count}</span>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
 
-              {/* Кнопка добавления отзыва */}
-              <div className="reviews-header">
+              {/* Выпадающий список фильтрации */}
+              <div className="reviews-filter-dropdown glass-card">
                 <button 
-                  className="write-review-btn glass-card"
-                  onClick={() => setReviewFormOpen(true)}
+                  className="dropdown-toggle"
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 >
-                  ✏️ Написать отзыв
+                  <span className="dropdown-icon">🔽</span>
+                  <span className="dropdown-label">{getDropdownLabel()}</span>
+                  <span className={`dropdown-arrow ${isDropdownOpen ? 'open' : ''}`}>▼</span>
                 </button>
-              </div>
-
-              {/* Модальное окно для нового отзыва */}
-              {isReviewFormOpen && (
-                <div className="modal-overlay" onClick={() => setReviewFormOpen(false)}>
-                  <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-                    <h3>Добавить отзыв</h3>
-                    <input
-                      type="text"
-                      placeholder="Ваше имя"
-                      value={newReview.author}
-                      onChange={(e) => setNewReview({...newReview, author: e.target.value})}
-                      className="review-input"
-                    />
-                    <textarea
-                      placeholder="Текст отзыва"
-                      value={newReview.text}
-                      onChange={(e) => setNewReview({...newReview, text: e.target.value})}
-                      className="review-textarea"
-                      rows="4"
-                    />
-                    <div className="modal-actions">
+                
+                {isDropdownOpen && (
+                  <div className="dropdown-menu glass-card">
+                    {/* Секция фильтров */}
+                    <div className="dropdown-section">
+                      <div className="dropdown-section-title">Фильтр по рейтингу</div>
                       <button 
-                        className="cancel-btn"
-                        onClick={() => setReviewFormOpen(false)}
+                        className={`dropdown-item ${reviewFilter === 'all' ? 'active' : ''}`}
+                        onClick={() => {
+                          setReviewFilter('all');
+                          setIsDropdownOpen(false);
+                        }}
                       >
-                        Отмена
+                        <span className="dropdown-item-icon">⭐</span>
+                        <span className="dropdown-item-text">Все отзывы</span>
+                        <span className="dropdown-item-count">({userReviews.length})</span>
+                      </button>
+                      {[5, 4, 3, 2, 1].map((stars) => {
+                        const count = userReviews.filter(r => r.rating === stars).length;
+                        return (
+                          <button 
+                            key={stars}
+                            className={`dropdown-item ${reviewFilter === stars ? 'active' : ''}`}
+                            onClick={() => {
+                              setReviewFilter(stars);
+                              setIsDropdownOpen(false);
+                            }}
+                          >
+                            <span className="dropdown-item-icon">{'⭐'.repeat(stars)}</span>
+                            <span className="dropdown-item-text">{stars} звёзд</span>
+                            <span className="dropdown-item-count">({count})</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    
+                    {/* Разделитель */}
+                    <div className="dropdown-divider"></div>
+                    
+                    {/* Секция сортировки */}
+                    <div className="dropdown-section">
+                      <div className="dropdown-section-title">Сортировка</div>
+                      <button 
+                        className={`dropdown-item ${sortOrder === 'newest' ? 'active' : ''}`}
+                        onClick={() => {
+                          setSortOrder('newest');
+                          setIsDropdownOpen(false);
+                        }}
+                      >
+                        <span className="dropdown-item-icon">🕐</span>
+                        <span className="dropdown-item-text">Сначала новые</span>
                       </button>
                       <button 
-                        className="submit-btn"
-                        onClick={handleAddReview}
+                        className={`dropdown-item ${sortOrder === 'oldest' ? 'active' : ''}`}
+                        onClick={() => {
+                          setSortOrder('oldest');
+                          setIsDropdownOpen(false);
+                        }}
                       >
-                        Опубликовать
+                        <span className="dropdown-item-icon">⏰</span>
+                        <span className="dropdown-item-text">Сначала старые</span>
+                      </button>
+                      <button 
+                        className={`dropdown-item ${sortOrder === 'highest' ? 'active' : ''}`}
+                        onClick={() => {
+                          setSortOrder('highest');
+                          setIsDropdownOpen(false);
+                        }}
+                      >
+                        <span className="dropdown-item-icon">⬆️</span>
+                        <span className="dropdown-item-text">Высокий рейтинг</span>
+                      </button>
+                      <button 
+                        className={`dropdown-item ${sortOrder === 'lowest' ? 'active' : ''}`}
+                        onClick={() => {
+                          setSortOrder('lowest');
+                          setIsDropdownOpen(false);
+                        }}
+                      >
+                        <span className="dropdown-item-icon">⬇️</span>
+                        <span className="dropdown-item-text">Низкий рейтинг</span>
                       </button>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
 
               {/* Список отзывов */}
               <div className="reviews-list">
-                {reviews.map(review => (
+                {getFilteredAndSortedReviews().map((review) => (
                   <div key={review.id} className="review-card glass-card">
-                    <div className="review-header">
-                      <div className="review-author">
-                        <span className="author-avatar">👤</span>
-                        <div>
-                          <span className="author-name">{review.author}</span>
-                          <span className="review-date">{review.date}</span>
-                        </div>
-                      </div>
+                    <div className="review-header-detail">
+                  <div className="review-author">
+                    <div className="author-avatar">
+                      {review.author.charAt(0).toUpperCase()}
                     </div>
-                    <p className="review-text">{review.text}</p>
-                    <div className="review-actions">
-                      <button 
-                        className="like-btn"
-                        onClick={() => handleLike(review.id)}
-                      >
-                        👍 Полезно ({review.likes})
+                    <div className="author-info">
+                      <span className="author-name">{review.author}</span>
+                      <span className="review-date-small">{review.date}</span>
+                    </div>
+                  </div>
+                      <div className="review-rating-small">{renderStars(review.rating)}</div>
+                    </div>
+                    <p className="review-text">{review.comment}</p>
+                    <div className="review-helpful">
+                      <button className="helpful-btn">
+                        <span className="helpful-icon">▲</span>
+                        Полезно
                       </button>
                     </div>
                   </div>
                 ))}
               </div>
+
+              {/* Кнопка написать отзыв */}
+              <button className="write-review-btn glass-card">
+                <span className="write-icon">+</span>
+                Написать отзыв
+              </button>
             </div>
           )}
 
-          {selectedTab === 'changelog' && (
-            <div className="changelog-section">
-              {appData.changelog.map((version, idx) => (
-                <div key={idx} className="changelog-card glass-card">
-                  <div className="version-header">
-                    <h3>Версия {version.version}</h3>
-                    <span className="version-date">{version.date}</span>
-                  </div>
-                  <ul className="changes-list">
-                    {version.changes.map((change, changeIdx) => (
-                      <li key={changeIdx}>• {change}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </div>
     </div>
@@ -369,3 +470,4 @@ const AppDetails = () => {
 };
 
 export default AppDetails;
+

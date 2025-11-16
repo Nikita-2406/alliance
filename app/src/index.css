@@ -3,17 +3,29 @@
   line-height: 1.5;
   font-weight: 400;
 
-  --primary-color: #007AFF;
-  --secondary-color: #5856D6;
-  --accent-color: #FF2D55;
-  --success-color: #34C759;
-  --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  --bg-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --glass-bg: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.2);
-  --text-primary: #ffffff;
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --shadow-color: rgba(0, 0, 0, 0.3);
+  /* Светлая голубая палитра */
+  --color-bg-base: #F0F7FC;        /* Очень светлый голубоватый фон */
+  --color-bg-light: #FFFFFF;       /* Белый для карточек */
+  --color-bg-accent: #E3F2FD;      /* Светло-голубой для акцентов */
+  --color-primary: #2196F3;        /* Яркий голубой */
+  --color-primary-dark: #1976D2;   /* Темно-голубой */
+  --color-secondary: #64B5F6;      /* Средний голубой */
+  --color-text-primary: #1A2332;   /* Почти черный для текста */
+  --color-text-secondary: #546E7A; /* Серо-голубой для вторичного текста */
+  --color-border: #CFE8FC;         /* Светло-голубая граница */
+  --color-shadow: rgba(33, 150, 243, 0.08);
+
+  --primary-color: #2196F3;
+  --secondary-color: #64B5F6;
+  --accent-color: #E3F2FD;
+  --success-color: #2196F3;
+  --bg-primary: linear-gradient(135deg, #F0F7FC 0%, #E3F2FD 100%);
+  --bg-secondary: linear-gradient(135deg, #FFFFFF 0%, #E3F2FD 100%);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(33, 150, 243, 0.15);
+  --text-primary: #1A2332;
+  --text-secondary: #546E7A;
+  --shadow-color: rgba(33, 150, 243, 0.12);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -25,6 +37,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -34,11 +47,17 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   overflow-x: hidden;
+  font-weight: 500;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 #root {
   width: 100%;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 a {
@@ -51,19 +70,24 @@ a {
 h1 {
   font-size: 2.5em;
   line-height: 1.2;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: -0.02em;
+  color: var(--text-primary);
+  text-shadow: none;
 }
 
 h2 {
   font-size: 1.8em;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.01em;
+  color: var(--text-primary);
+  text-shadow: none;
 }
 
 h3 {
   font-size: 1.3em;
-  font-weight: 600;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 button {
@@ -71,7 +95,7 @@ button {
   border: none;
   padding: 12px 24px;
   font-size: 1em;
-  font-weight: 600;
+  font-weight: 700;
   font-family: inherit;
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
@@ -80,13 +104,14 @@ button {
   color: var(--text-primary);
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 8px 32px 0 var(--shadow-color);
+  box-shadow: 0 4px 12px 0 var(--shadow-color);
+  text-shadow: none;
 }
 
 button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 40px 0 var(--shadow-color);
-  background: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 6px 20px 0 var(--shadow-color);
+  background: rgba(255, 255, 255, 0.95);
 }
 
 button:active {
@@ -99,18 +124,18 @@ button:active {
   -webkit-backdrop-filter: blur(20px);
   border-radius: 20px;
   border: 1px solid var(--glass-border);
-  box-shadow: 0 8px 32px 0 var(--shadow-color);
+  box-shadow: 0 4px 12px 0 var(--shadow-color);
   padding: 20px;
   transition: all 0.3s ease;
 }
 
 .glass-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 40px 0 var(--shadow-color);
+  box-shadow: 0 8px 24px 0 var(--shadow-color);
 }
 
 input, textarea {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid var(--glass-border);
   border-radius: 12px;
   padding: 12px 16px;
@@ -125,7 +150,8 @@ input, textarea {
 input:focus, textarea:focus {
   outline: none;
   border-color: var(--primary-color);
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
 }
 
 input::placeholder, textarea::placeholder {
@@ -137,14 +163,14 @@ input::placeholder, textarea::placeholder {
 }
 
 ::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(33, 150, 243, 0.05);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(33, 150, 243, 0.2);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(33, 150, 243, 0.35);
 }

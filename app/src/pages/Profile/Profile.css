@@ -1,154 +1,219 @@
 .profile-page {
-  min-height: 100vh;
-  padding-bottom: 100px;
+  padding: 24px;
+  min-height: calc(100vh - 80px);
 }
 
 .profile-content {
-  max-width: 1000px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
-}
-
-/* Profile Header */
-.profile-header {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 24px;
-  padding: 30px;
-  margin-bottom: 30px;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
-  position: relative;
 }
 
-.profile-avatar {
+/* Top Section: User Card + Stats (Desktop: 2 columns) */
+.profile-top-section {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 24px;
+}
+
+/* User Card (Left on Desktop) */
+.profile-user-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px;
+  text-align: center;
+  gap: 20px;
+}
+
+.user-avatar {
   font-size: 80px;
-  width: 100px;
-  height: 100px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
+  width: 120px;
+  height: 120px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 3px solid rgba(255, 255, 255, 0.2);
-  flex-shrink: 0;
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.12) 0%, rgba(227, 242, 253, 0.2) 100%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 50%;
+  border: 3px solid rgba(33, 150, 243, 0.2);
+  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.15);
+  overflow: hidden;
+  padding: 12px;
 }
 
-.profile-info {
-  flex: 1;
+.user-avatar svg {
+  width: 100%;
+  height: 100%;
 }
 
-.profile-name {
+.user-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.user-name {
   font-size: 1.8em;
-  font-weight: 700;
-  margin-bottom: 6px;
+  font-weight: 800;
   color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
 }
 
-.profile-email {
+.user-email {
   font-size: 1em;
   color: var(--text-secondary);
-  margin-bottom: 4px;
+  font-weight: 600;
+  margin: 0;
 }
 
-.profile-member {
+.user-member {
   font-size: 0.9em;
   color: var(--text-secondary);
+  margin: 0;
+  font-weight: 500;
 }
 
-.edit-profile-btn {
+.edit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   padding: 12px 24px;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 12px;
-  color: var(--text-primary);
-  font-weight: 600;
+  width: 100%;
+  background: rgba(33, 150, 243, 0.12);
+  border: 1px solid rgba(33, 150, 243, 0.25);
+  border-radius: 14px;
+  color: var(--color-primary);
+  font-weight: 700;
+  font-size: 1em;
   cursor: pointer;
   transition: all 0.3s ease;
-  white-space: nowrap;
 }
 
-.edit-profile-btn:hover {
-  background: rgba(255, 255, 255, 0.2);
+.edit-btn:hover {
+  background: rgba(33, 150, 243, 0.2);
+  border-color: rgba(33, 150, 243, 0.4);
   transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(33, 150, 243, 0.2);
 }
 
-/* Stats */
-.profile-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+/* Stats Section (Right on Desktop) */
+.profile-stats-section {
+  display: flex;
+  flex-direction: column;
   gap: 16px;
-  margin-bottom: 30px;
 }
 
 .stat-card {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 20px;
   padding: 24px;
-  text-align: center;
-  cursor: default;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(33, 150, 243, 0.15);
 }
 
 .stat-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.2);
+  border-color: rgba(33, 150, 243, 0.3);
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.stat-icon-wrapper {
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.1) 0%, rgba(227, 242, 253, 0.15) 100%);
+  border-radius: 16px;
+  flex-shrink: 0;
 }
 
 .stat-icon {
-  font-size: 32px;
-  margin-bottom: 12px;
+  font-size: 2em;
+  color: var(--color-primary);
+}
+
+.stat-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .stat-value {
   font-size: 2em;
-  font-weight: 700;
+  font-weight: 800;
   color: var(--text-primary);
-  margin-bottom: 4px;
+  line-height: 1;
 }
 
 .stat-label {
-  font-size: 0.9em;
+  font-size: 1em;
   color: var(--text-secondary);
+  font-weight: 600;
 }
 
-/* Tabs */
-.profile-tabs {
+/* Tabs Section */
+.profile-tabs-section {
+  margin-top: 8px;
+}
+
+/* Desktop Tabs */
+.desktop-tabs {
   display: flex;
   gap: 12px;
-  margin-bottom: 24px;
-  background: rgba(255, 255, 255, 0.08);
-  padding: 8px;
-  border-radius: 16px;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 }
 
 .tab-btn {
-  flex: 1;
-  padding: 12px 20px;
-  background: transparent;
-  border: none;
-  border-radius: 12px;
-  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 28px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(33, 150, 243, 0.15);
+  border-radius: 14px;
   font-weight: 600;
+  font-size: 1.05em;
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.3s ease;
-  font-size: 0.95em;
+  flex: 1;
+  justify-content: center;
 }
 
 .tab-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.8);
+  border-color: rgba(33, 150, 243, 0.3);
+  transform: translateY(-2px);
 }
 
 .tab-btn.active {
-  background: rgba(255, 255, 255, 0.15);
-  color: var(--text-primary);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  background: rgba(33, 150, 243, 0.15);
+  border-color: rgba(33, 150, 243, 0.35);
+  color: var(--color-primary);
+  box-shadow: 0 4px 12px rgba(33, 150, 243, 0.2);
+}
+
+.tab-icon {
+  font-size: 1.2em;
+  display: flex;
+  align-items: center;
 }
 
 /* Tab Content */
 .tab-content {
-  animation: fadeIn 0.3s ease;
+  margin-top: 24px;
+  animation: fadeIn 0.4s ease;
 }
 
 @keyframes fadeIn {
@@ -163,89 +228,107 @@
 }
 
 /* Downloads List */
-.downloads-list,
-.favorites-list {
+.downloads-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
+  padding: 4px;
 }
 
-.download-item,
-.favorite-item {
+.download-item {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px;
-  cursor: pointer;
+  gap: 20px;
+  padding: 20px !important;
+  text-decoration: none;
   transition: all 0.3s ease;
 }
 
-.download-item:hover,
-.favorite-item:hover {
-  transform: translateX(8px);
+.download-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.2);
 }
 
-.download-icon,
-.favorite-icon {
+.download-icon {
   font-size: 56px;
   width: 64px;
   height: 64px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(33, 150, 243, 0.08);
   border-radius: 16px;
   flex-shrink: 0;
 }
 
-.download-info,
-.favorite-info {
+.download-info {
   flex: 1;
   min-width: 0;
 }
 
-.download-info h3,
-.favorite-info h3 {
-  font-size: 1.15em;
-  font-weight: 600;
-  margin-bottom: 4px;
+.download-info h3 {
+  font-size: 1.2em;
+  font-weight: 700;
   color: var(--text-primary);
+  margin: 0 0 6px 0;
 }
 
-.download-meta,
-.favorite-category {
-  font-size: 0.9em;
+.download-meta {
+  font-size: 0.95em;
   color: var(--text-secondary);
-  margin-bottom: 4px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
 }
 
 .download-date {
-  font-size: 0.85em;
-  color: var(--text-secondary);
-}
-
-.favorite-rating {
   font-size: 0.9em;
   color: var(--text-secondary);
+  margin: 0;
 }
 
 .action-btn {
   padding: 10px 20px;
-  background: var(--primary-color);
-  border: none;
-  border-radius: 20px;
-  color: white;
-  font-weight: 600;
+  background: rgba(33, 150, 243, 0.12);
+  border: 1px solid rgba(33, 150, 243, 0.25);
+  border-radius: 12px;
+  color: var(--color-primary);
+  font-weight: 700;
   cursor: pointer;
   transition: all 0.3s ease;
-  white-space: nowrap;
-  font-size: 0.9em;
-  box-shadow: 0 4px 12px rgba(0, 122, 255, 0.3);
+  position: relative;
+  overflow: hidden;
 }
 
 .action-btn:hover {
-  background: #0064D2;
+  background: rgba(33, 150, 243, 0.2);
+  border-color: rgba(33, 150, 243, 0.4);
   transform: translateY(-2px);
+}
+
+.btn-bg-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(0, 230, 118, 0.35) 0%, rgba(0, 200, 83, 0.25) 100%);
+  transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+}
+
+.action-btn.downloading .btn-bg-fill {
+  width: 100%;
+}
+
+.action-btn.complete {
+  background: rgba(0, 230, 118, 0.25);
+  border-color: rgba(0, 230, 118, 0.4);
+  color: #00C853;
+}
+
+.btn-text {
+  position: relative;
+  z-index: 1;
 }
 
 /* Reviews List */
@@ -253,110 +336,271 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  padding: 4px;
 }
 
 .review-item {
-  padding: 20px;
-  cursor: default;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px !important;
+  text-decoration: none;
 }
 
 .review-item:hover {
-  transform: translateY(-2px);
+  transform: none !important;
+  box-shadow: 0 4px 12px 0 var(--shadow-color) !important;
 }
 
-.review-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.review-app {
+.review-icon {
+  font-size: 56px;
+  width: 64px;
+  height: 64px;
   display: flex;
   align-items: center;
-  gap: 12px;
+  justify-content: center;
+  background: rgba(33, 150, 243, 0.08);
+  border-radius: 16px;
+  flex-shrink: 0;
 }
 
-.review-app-icon {
-  font-size: 32px;
+.review-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.review-app-name {
-  font-size: 1.1em;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-.review-date {
-  font-size: 0.85em;
-  color: var(--text-secondary);
-}
-
-.review-rating {
+.review-info h3 {
   font-size: 1.2em;
-  margin-bottom: 12px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.3;
+}
+
+.review-rating-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
 }
 
 .review-comment {
-  font-size: 0.95em;
-  line-height: 1.6;
+  font-size: 0.9em;
   color: var(--text-secondary);
-  margin-bottom: 16px;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  line-height: 1.4;
 }
 
-.review-actions {
+.delete-btn {
+  background: rgba(244, 67, 54, 0.08);
+  border-color: rgba(244, 67, 54, 0.2);
+  color: #f44336;
+  padding: 10px 12px;
+}
+
+.delete-btn:hover {
+  background: rgba(244, 67, 54, 0.15);
+  border-color: rgba(244, 67, 54, 0.35);
+}
+
+/* Favorites List */
+.favorites-list {
   display: flex;
-  gap: 12px;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.review-action-btn {
-  padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 10px;
-  color: var(--text-primary);
-  font-size: 0.85em;
-  cursor: pointer;
+.favorite-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px;
+  text-decoration: none;
   transition: all 0.3s ease;
 }
 
-.review-action-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  transform: translateY(-2px);
+.favorite-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(33, 150, 243, 0.2);
+}
+
+.favorite-icon {
+  font-size: 56px;
+  width: 64px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(33, 150, 243, 0.08);
+  border-radius: 16px;
+  flex-shrink: 0;
+}
+
+.favorite-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.favorite-info h3 {
+  font-size: 1.2em;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 6px 0;
+}
+
+.favorite-category {
+  font-size: 0.95em;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.favorite-rating {
+  font-size: 0.95em;
+  color: var(--color-primary);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+}
+
+/* SVG Icons */
+.icon-svg {
+  color: var(--color-primary);
+}
+
+.tab-star-icon,
+.stat-star-icon {
+  color: var(--color-text-secondary) !important;
+}
+
+.stars-display {
+  display: flex;
+  gap: 2px;
+  color: #FFA726;
+}
+
+.stars-display .icon-svg {
+  width: 18px;
+  height: 18px;
+  color: #FFA726;
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .profile-top-section {
+    grid-template-columns: 300px 1fr;
+    gap: 20px;
+  }
+
+  .profile-user-card {
+    padding: 24px;
+  }
+
+  .user-avatar {
+    width: 100px;
+    height: 100px;
+    font-size: 64px;
+    padding: 10px;
+  }
+
+  .user-name {
+    font-size: 1.5em;
+  }
+}
+
 @media (max-width: 768px) {
-  .profile-content {
+  .profile-page {
     padding: 16px;
   }
 
-  .profile-header {
-    flex-direction: column;
-    text-align: center;
-    padding: 24px 16px;
-  }
-
-  .profile-avatar {
-    font-size: 64px;
-    width: 80px;
-    height: 80px;
-  }
-
-  .profile-name {
-    font-size: 1.5em;
-  }
-
-  .edit-profile-btn {
-    width: 100%;
-  }
-
-  .profile-stats {
+  /* Vertical layout for mobile */
+  .profile-top-section {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
-  .profile-tabs {
+  .profile-user-card {
+    padding: 24px;
+  }
+
+  /* Stats horizontal on mobile */
+  .profile-stats-section {
+    flex-direction: row;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .stat-card {
     flex-direction: column;
+    min-width: 140px;
+    padding: 20px;
+    text-align: center;
+    gap: 12px;
+  }
+
+  .stat-icon-wrapper {
+    width: 56px;
+    height: 56px;
+  }
+
+  .stat-icon {
+    font-size: 1.8em;
+  }
+
+  .stat-value {
+    font-size: 1.8em;
+  }
+
+  .stat-label {
+    font-size: 0.9em;
+  }
+
+  /* Hide desktop tabs on mobile */
+  .desktop-tabs {
+    display: none;
+  }
+  
+  /* Make stat cards more prominent on mobile - активный блок подсвечивается */
+  .stat-card.active {
+    background: rgba(33, 150, 243, 0.22);
+    border-color: rgba(33, 150, 243, 0.4);
+    box-shadow: 0 8px 24px rgba(33, 150, 243, 0.3);
+  }
+  
+  .stat-card.active .stat-icon {
+    color: var(--color-primary);
+    filter: drop-shadow(0 2px 4px rgba(33, 150, 243, 0.3));
+  }
+
+  .stat-card.active .stat-value {
+    color: var(--color-primary);
+  }
+
+  .profile-tabs-section {
+    margin-top: 0;
+  }
+
+  .tab-content {
+    margin-top: 0;
+  }
+
+  .download-item,
+  .favorite-item {
+    flex-direction: row;
+    align-items: center;
+    padding: 16px;
+    gap: 16px;
   }
 
   .download-icon,
@@ -364,17 +608,127 @@
     font-size: 48px;
     width: 56px;
     height: 56px;
+    align-self: flex-start;
+  }
+
+  .download-info,
+  .favorite-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .download-info h3,
+  .favorite-info h3 {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .action-btn {
-    padding: 8px 16px;
+    align-self: flex-start;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .review-item {
+    flex-direction: row;
+    align-items: center;
+    padding: 20px !important;
+    gap: 16px;
+  }
+
+  .reviews-list {
+    gap: 12px;
+  }
+
+  .review-icon {
+    font-size: 48px;
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+  }
+
+  .review-info {
+    gap: 6px;
+  }
+
+  .review-info h3 {
+    font-size: 1.05em;
+  }
+
+  .review-comment {
     font-size: 0.85em;
   }
 
-  .review-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+  .delete-btn {
+    padding: 8px 10px !important;
   }
 }
 
+@media (max-width: 480px) {
+  .profile-page {
+    padding: 12px;
+  }
+
+  .profile-top-section {
+    gap: 10px;
+  }
+
+  .user-avatar {
+    width: 80px;
+    height: 80px;
+    font-size: 48px;
+    padding: 8px;
+  }
+
+  .user-name {
+    font-size: 1.3em;
+  }
+
+  .stat-card {
+    min-width: 120px;
+    padding: 16px;
+  }
+
+  .stat-icon-wrapper {
+    width: 48px;
+    height: 48px;
+  }
+
+  .stat-icon {
+    font-size: 1.5em;
+  }
+
+  .stat-value {
+    font-size: 1.5em;
+  }
+
+  .tab-content {
+    margin-top: 0;
+  }
+
+  .download-info h3,
+  .favorite-info h3,
+  .review-info h3 {
+    font-size: 1.1em;
+  }
+
+  .review-item {
+    padding: 18px !important;
+    gap: 14px;
+  }
+
+  .review-icon {
+    font-size: 44px;
+    width: 52px;
+    height: 52px;
+  }
+
+  .review-info {
+    gap: 5px;
+  }
+
+  .review-comment {
+    font-size: 0.8em;
+  }
+}
