@@ -4,22 +4,23 @@
 
 ---
 
-## 🚀 Быстрый запуск
+## Ручной запуск
 
-### Самый простой способ - используйте bat-файлы:
-
-#### Запуск приложения:
+### Backend:
 ```bash
-start-app.bat
-```
-Двойной клик на `start-app.bat` или запустите из командной строки.
-
-#### Остановка приложения:
-```bash
-stop-app.bat
+cd backend/ars
+python -m venv venv
+call venv\Scripts\activate.bat
+pip install -r requirements.txt
+python -m main.main
 ```
 
-**Подробная инструкция**: См. [LAUNCH_GUIDE.md](LAUNCH_GUIDE.md)
+### Frontend:
+```bash
+cd app
+npm install
+npm run dev
+```
 
 ---
 
@@ -90,26 +91,6 @@ alliance/
 - **Backend API**: http://localhost:8000
 - **API Docs**: http://localhost:8000/docs
 - **Redoc**: http://localhost:8000/redoc
-
----
-
-## 🔧 Ручной запуск (альтернатива)
-
-### Backend:
-```bash
-cd backend/ars
-python -m venv venv
-call venv\Scripts\activate.bat
-pip install -r requirements.txt
-python -m main.main
-```
-
-### Frontend:
-```bash
-cd app
-npm install
-npm run dev
-```
 
 ---
 
