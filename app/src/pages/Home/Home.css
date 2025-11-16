@@ -526,12 +526,13 @@
 
 /* Горизонтальный scroll скриншотов со стрелками (Desktop и Mobile) */
 .top-app-screenshots-wrapper {
-  flex: 0 1 auto;
+  flex: 1;
   display: flex;
   align-items: center;
   gap: 8px;
-  max-width: 420px;
+  max-width: 500px;
   position: relative;
+  overflow: hidden;
 }
 
 .screenshot-arrow {
@@ -578,12 +579,14 @@
   overflow-y: hidden;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
-  padding: 12px 8px;
+  padding: 8px 6px;
   border-radius: 12px;
   background: rgba(33, 150, 243, 0.05);
   -webkit-overflow-scrolling: touch;
   scrollbar-width: thin;
   scrollbar-color: rgba(33, 150, 243, 0.3) rgba(33, 150, 243, 0.1);
+  height: 200px;
+  align-items: center;
 }
 
 .top-app-screenshots-scroll::-webkit-scrollbar {
@@ -608,9 +611,9 @@
 .top-screenshot-item {
   flex-shrink: 0;
   scroll-snap-align: start;
-  width: 120px;
-  min-width: 120px;
-  height: auto;
+  width: 110px;
+  min-width: 110px;
+  height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -621,6 +624,7 @@
   padding: 4px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
+  overflow: hidden;
 }
 
 .top-screenshot-item:hover {
@@ -630,9 +634,8 @@
 
 .top-screenshot-image {
   width: 100%;
-  height: auto;
-  max-height: 220px;
-  object-fit: contain;
+  height: 100%;
+  object-fit: cover;
   border-radius: 8px;
   display: block;
 }
@@ -749,29 +752,29 @@
 
   /* Мобильные адаптации для скриншотов */
   .top-app-screenshots-wrapper {
-    max-width: 350px;
+    max-width: 100%;
+    gap: 0;
   }
   
+  /* Скрываем стрелочки на мобильных - используем свайпы */
   .screenshot-arrow {
-    width: 28px;
-    height: 28px;
-    min-width: 28px;
-    min-height: 28px;
-    font-size: 18px;
+    display: none;
   }
   
   .top-app-screenshots-scroll {
     padding: 8px 6px;
     gap: 8px;
+    height: 160px;
   }
 
   .top-screenshot-item {
-    width: 95px;
-    min-width: 95px;
+    width: 90px;
+    min-width: 90px;
+    height: 145px;
   }
   
   .top-screenshot-image {
-    max-height: 170px;
+    object-fit: cover;
   }
 }
 
@@ -798,6 +801,17 @@
 
   .category-name {
     font-size: 0.75em;
+  }
+
+  /* Еще меньше на крошечных экранах */
+  .top-app-screenshots-scroll {
+    height: 140px;
+  }
+
+  .top-screenshot-item {
+    width: 80px;
+    min-width: 80px;
+    height: 130px;
   }
 }
 
